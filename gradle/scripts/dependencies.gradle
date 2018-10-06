@@ -46,10 +46,10 @@ repositories {
         url = "http://maven.tterrag.com/"
     }
 
-    maven  {
-        name = "RX14 Proxy"
-        url = "http://mvn.rx14.co.uk/repo/"
-    }
+//  maven  {
+//     name = "RX14 Proxy"
+//     url = "http://mvn.rx14.co.uk/repo/"
+//  }
 
     maven {
         name "OpenComputers Repo"
@@ -119,7 +119,8 @@ dependencies {
     // provided APIs
     compile "li.cil.oc:OpenComputers:MC${minecraft_version}-${opencomputers_version}:api"
     compile "net.industrial-craft:industrialcraft-2:${ic2_version}-experimental:api"
-    compile "net.mcft.copy.betterstorage:BetterStorage:${minecraft_version}-${betterstorage_version}:api"
+//    compile "net.mcft.copy.betterstorage:BetterStorage:${minecraft_version}-${betterstorage_version}:api"
+	compile files("lib/BetterStorage-1.7.10-0.13.1.126.jar");
 
     // self compiled APIs
     compile "appeng:Waila:${waila_version}_${minecraft_version}:api"

@@ -23,15 +23,12 @@
 
 package appeng.api.features;
 
-
 import net.minecraft.item.ItemStack;
-
 
 /**
  * Registration Records for {@link IGrinderRegistry}
  */
-public interface IGrinderEntry
-{
+public interface IGrinderEntry {
 
 	/**
 	 * the current input
@@ -45,7 +42,7 @@ public interface IGrinderEntry
 	 *
 	 * @param input input item
 	 */
-	void setInput( ItemStack input );
+	void setInput(ItemStack input);
 
 	/**
 	 * gets the current output
@@ -59,7 +56,7 @@ public interface IGrinderEntry
 	 *
 	 * @param output output item
 	 */
-	void setOutput( ItemStack output );
+	void setOutput(ItemStack output);
 
 	/**
 	 * gets the current output
@@ -81,7 +78,7 @@ public interface IGrinderEntry
 	 * @param output output item
 	 * @param chance generation chance
 	 */
-	void setOptionalOutput( ItemStack output, float chance );
+	void setOptionalOutput(ItemStack output, float chance);
 
 	/**
 	 * 0.0 - 1.0 the chance that the optional output will be generated.
@@ -96,7 +93,7 @@ public interface IGrinderEntry
 	 * @param output second optional output item
 	 * @param chance second optional output chance
 	 */
-	void setSecondOptionalOutput( ItemStack output, float chance );
+	void setSecondOptionalOutput(ItemStack output, float chance);
 
 	/**
 	 * 0.0 - 1.0 the chance that the optional output will be generated.
@@ -117,5 +114,5 @@ public interface IGrinderEntry
 	 *
 	 * @param c number of turns to produce output.
 	 */
-	void setEnergyCost( int c );
+	void setEnergyCost(int c);
 }

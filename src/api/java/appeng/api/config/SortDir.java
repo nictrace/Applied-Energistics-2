@@ -23,8 +23,6 @@
 
 package appeng.api.config;
 
-
-public enum SortDir
-{
+public enum SortDir {
 	ASCENDING, DESCENDING
 }

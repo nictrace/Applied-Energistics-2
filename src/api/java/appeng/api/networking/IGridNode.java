@@ -23,26 +23,22 @@
 
 package appeng.api.networking;
 
-
-import java.util.EnumSet;
-
+import appeng.api.IAppEngApi;
+import appeng.api.util.IReadOnlyCollection;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import appeng.api.IAppEngApi;
-import appeng.api.util.IReadOnlyCollection;
-
+import java.util.EnumSet;
 
 /**
  * Gives you a view into your Nodes connections and information.
- *
+ * <p>
  * updateState, getGrid, destroy are required to implement a proper IGridHost.
- *
+ * <p>
  * Don't Implement; Acquire from {@link IAppEngApi}.createGridNode
  */
-public interface IGridNode
-{
+public interface IGridNode {
 
 	/**
 	 * lets you walk the grid stating at the current node using a IGridVisitor, generally not needed, please use only if
@@ -50,14 +46,14 @@ public interface IGridNode
 	 *
 	 * @param visitor visitor
 	 */
-	void beginVisit( IGridVisitor visitor );
+	void beginVisit(IGridVisitor visitor);
 
 	/**
 	 * inform the node that your IGridBlock has changed its internal state, and force the node to update.
-	 *
+	 * <p>
 	 * ALWAYS make sure that your tile entity is in the world, and has its node properly saved to be returned from the
 	 * host before updating state,
-	 *
+	 * <p>
 	 * If your entity is not in the world, or if you IGridHost returns a different node for the same side you will
 	 * likely crash the game.
 	 */
@@ -116,13 +112,13 @@ public interface IGridNode
 	/**
 	 * this should be called for each node you create, if you have a nodeData compound to load from, you can store all
 	 * your nods on a single compound using name.
-	 *
+	 * <p>
 	 * Important: You must call this before updateState.
 	 *
 	 * @param name     nbt name
 	 * @param nodeData to be loaded data
 	 */
-	void loadFromNBT( String name, NBTTagCompound nodeData );
+	void loadFromNBT(String name, NBTTagCompound nodeData);
 
 	/**
 	 * this should be called for each node you maintain, you can save all your nodes to the same tag with different
@@ -131,7 +127,7 @@ public interface IGridNode
 	 * @param name     nbt name
 	 * @param nodeData to be saved data
 	 */
-	void saveToNBT( String name, NBTTagCompound nodeData );
+	void saveToNBT(String name, NBTTagCompound nodeData);
 
 	/**
 	 * @return if the node's channel requirements are currently met, use this for display purposes, use isActive for
@@ -143,10 +139,9 @@ public interface IGridNode
 	 * see if this node has a certain flag
 	 *
 	 * @param flag flags
-	 *
 	 * @return true if has flag
 	 */
-	boolean hasFlag( GridFlags flag );
+	boolean hasFlag(GridFlags flag);
 
 	/**
 	 * @return the ownerID this represents the person who placed the node.
@@ -159,5 +154,5 @@ public interface IGridNode
 	 *
 	 * @param playerID new player id
 	 */
-	void setPlayerID( int playerID );
+	void setPlayerID(int playerID);
 }

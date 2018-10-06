@@ -18,7 +18,6 @@
 
 package appeng.core.api.definitions;
 
-
 import appeng.api.definitions.IItemDefinition;
 import appeng.api.definitions.IParts;
 import appeng.api.exceptions.MissingDefinition;
@@ -28,12 +27,11 @@ import appeng.core.features.DamagedItemDefinition;
 import appeng.items.parts.ItemMultiPart;
 import appeng.items.parts.PartType;
 
-
 /**
  * Internal implementation for the API parts
  */
-public final class ApiParts implements IParts
-{
+public final class ApiParts implements IParts {
+
 	private final AEColoredItemDefinition cableSmart;
 	private final AEColoredItemDefinition cableCovered;
 	private final AEColoredItemDefinition cableGlass;
@@ -73,280 +71,241 @@ public final class ApiParts implements IParts
 	private final IItemDefinition storageMonitor;
 	private final IItemDefinition conversionMonitor;
 
-	public ApiParts( final DefinitionConstructor constructor, final IPartHelper partHelper )
-	{
-		final ItemMultiPart itemMultiPart = new ItemMultiPart( partHelper );
-		constructor.registerItemDefinition( itemMultiPart );
+	public ApiParts(final DefinitionConstructor constructor, final IPartHelper partHelper) {
+		final ItemMultiPart itemMultiPart = new ItemMultiPart(partHelper);
+		constructor.registerItemDefinition(itemMultiPart);
 
-		this.cableSmart = constructor.constructColoredDefinition( itemMultiPart, PartType.CableSmart );
-		this.cableCovered = constructor.constructColoredDefinition( itemMultiPart, PartType.CableCovered );
-		this.cableGlass = constructor.constructColoredDefinition( itemMultiPart, PartType.CableGlass );
-		this.cableDense = constructor.constructColoredDefinition( itemMultiPart, PartType.CableDense );
+		this.cableSmart = constructor.constructColoredDefinition(itemMultiPart, PartType.CableSmart);
+		this.cableCovered = constructor.constructColoredDefinition(itemMultiPart, PartType.CableCovered);
+		this.cableGlass = constructor.constructColoredDefinition(itemMultiPart, PartType.CableGlass);
+		this.cableDense = constructor.constructColoredDefinition(itemMultiPart, PartType.CableDense);
 		// this.lumenCableSmart = Optional.absent(); // has yet to be implemented, no PartType defined for it yet
 		// this.lumenCableCovered = Optional.absent(); // has yet to be implemented, no PartType defined for it yet
 		// this.lumenCableGlass = Optional.absent(); // has yet to be implemented, no PartType defined for it yet
 		// this.lumenCableDense = Optional.absent(); // has yet to be implemented, no PartType defined for it yet
-		this.quartzFiber = new DamagedItemDefinition( itemMultiPart.createPart( PartType.QuartzFiber ) );
-		this.toggleBus = new DamagedItemDefinition( itemMultiPart.createPart( PartType.ToggleBus ) );
-		this.invertedToggleBus = new DamagedItemDefinition( itemMultiPart.createPart( PartType.InvertedToggleBus ) );
-		this.storageBus = new DamagedItemDefinition( itemMultiPart.createPart( PartType.StorageBus ) );
-		this.importBus = new DamagedItemDefinition( itemMultiPart.createPart( PartType.ImportBus ) );
-		this.exportBus = new DamagedItemDefinition( itemMultiPart.createPart( PartType.ExportBus ) );
-		this.iface = new DamagedItemDefinition( itemMultiPart.createPart( PartType.Interface ) );
-		this.levelEmitter = new DamagedItemDefinition( itemMultiPart.createPart( PartType.LevelEmitter ) );
-		this.annihilationPlane = new DamagedItemDefinition( itemMultiPart.createPart( PartType.AnnihilationPlane ) );
-		this.identityAnnihilationPlane = new DamagedItemDefinition( itemMultiPart.createPart( PartType.IdentityAnnihilationPlane ) );
-		this.formationPlane = new DamagedItemDefinition( itemMultiPart.createPart( PartType.FormationPlane ) );
-		this.p2PTunnelME = new DamagedItemDefinition( itemMultiPart.createPart( PartType.P2PTunnelME ) );
-		this.p2PTunnelRedstone = new DamagedItemDefinition( itemMultiPart.createPart( PartType.P2PTunnelRedstone ) );
-		this.p2PTunnelItems = new DamagedItemDefinition( itemMultiPart.createPart( PartType.P2PTunnelItems ) );
-		this.p2PTunnelLiquids = new DamagedItemDefinition( itemMultiPart.createPart( PartType.P2PTunnelLiquids ) );
-		this.p2PTunnelEU = new DamagedItemDefinition( itemMultiPart.createPart( PartType.P2PTunnelEU ) );
-		this.p2PTunnelRF = new DamagedItemDefinition( itemMultiPart.createPart( PartType.P2PTunnelRF ) );
-		this.p2PTunnelLight = new DamagedItemDefinition( itemMultiPart.createPart( PartType.P2PTunnelLight ) );
-		this.p2PTunnelOpenComputers = new DamagedItemDefinition( itemMultiPart.createPart( PartType.P2PTunnelOpenComputers ) );
-		this.p2PTunnelPneumaticCraft = new DamagedItemDefinition( itemMultiPart.createPart( PartType.P2PTunnelPressure ) );
-		this.cableAnchor = new DamagedItemDefinition( itemMultiPart.createPart( PartType.CableAnchor ) );
-		this.monitor = new DamagedItemDefinition( itemMultiPart.createPart( PartType.Monitor ) );
-		this.semiDarkMonitor = new DamagedItemDefinition( itemMultiPart.createPart( PartType.SemiDarkMonitor ) );
-		this.darkMonitor = new DamagedItemDefinition( itemMultiPart.createPart( PartType.DarkMonitor ) );
-		this.interfaceTerminal = new DamagedItemDefinition( itemMultiPart.createPart( PartType.InterfaceTerminal ) );
-		this.patternTerminal = new DamagedItemDefinition( itemMultiPart.createPart( PartType.PatternTerminal ) );
-		this.craftingTerminal = new DamagedItemDefinition( itemMultiPart.createPart( PartType.CraftingTerminal ) );
-		this.terminal = new DamagedItemDefinition( itemMultiPart.createPart( PartType.Terminal ) );
-		this.storageMonitor = new DamagedItemDefinition( itemMultiPart.createPart( PartType.StorageMonitor ) );
-		this.conversionMonitor = new DamagedItemDefinition( itemMultiPart.createPart( PartType.ConversionMonitor ) );
+		this.quartzFiber = new DamagedItemDefinition(itemMultiPart.createPart(PartType.QuartzFiber));
+		this.toggleBus = new DamagedItemDefinition(itemMultiPart.createPart(PartType.ToggleBus));
+		this.invertedToggleBus = new DamagedItemDefinition(itemMultiPart.createPart(PartType.InvertedToggleBus));
+		this.storageBus = new DamagedItemDefinition(itemMultiPart.createPart(PartType.StorageBus));
+		this.importBus = new DamagedItemDefinition(itemMultiPart.createPart(PartType.ImportBus));
+		this.exportBus = new DamagedItemDefinition(itemMultiPart.createPart(PartType.ExportBus));
+		this.iface = new DamagedItemDefinition(itemMultiPart.createPart(PartType.Interface));
+		this.levelEmitter = new DamagedItemDefinition(itemMultiPart.createPart(PartType.LevelEmitter));
+		this.annihilationPlane = new DamagedItemDefinition(itemMultiPart.createPart(PartType.AnnihilationPlane));
+		this.identityAnnihilationPlane = new DamagedItemDefinition(itemMultiPart.createPart(PartType.IdentityAnnihilationPlane));
+		this.formationPlane = new DamagedItemDefinition(itemMultiPart.createPart(PartType.FormationPlane));
+		this.p2PTunnelME = new DamagedItemDefinition(itemMultiPart.createPart(PartType.P2PTunnelME));
+		this.p2PTunnelRedstone = new DamagedItemDefinition(itemMultiPart.createPart(PartType.P2PTunnelRedstone));
+		this.p2PTunnelItems = new DamagedItemDefinition(itemMultiPart.createPart(PartType.P2PTunnelItems));
+		this.p2PTunnelLiquids = new DamagedItemDefinition(itemMultiPart.createPart(PartType.P2PTunnelLiquids));
+		this.p2PTunnelEU = new DamagedItemDefinition(itemMultiPart.createPart(PartType.P2PTunnelEU));
+		this.p2PTunnelRF = new DamagedItemDefinition(itemMultiPart.createPart(PartType.P2PTunnelRF));
+		this.p2PTunnelLight = new DamagedItemDefinition(itemMultiPart.createPart(PartType.P2PTunnelLight));
+		this.p2PTunnelOpenComputers = new DamagedItemDefinition(itemMultiPart.createPart(PartType.P2PTunnelOpenComputers));
+		this.p2PTunnelPneumaticCraft = new DamagedItemDefinition(itemMultiPart.createPart(PartType.P2PTunnelPressure));
+		this.cableAnchor = new DamagedItemDefinition(itemMultiPart.createPart(PartType.CableAnchor));
+		this.monitor = new DamagedItemDefinition(itemMultiPart.createPart(PartType.Monitor));
+		this.semiDarkMonitor = new DamagedItemDefinition(itemMultiPart.createPart(PartType.SemiDarkMonitor));
+		this.darkMonitor = new DamagedItemDefinition(itemMultiPart.createPart(PartType.DarkMonitor));
+		this.interfaceTerminal = new DamagedItemDefinition(itemMultiPart.createPart(PartType.InterfaceTerminal));
+		this.patternTerminal = new DamagedItemDefinition(itemMultiPart.createPart(PartType.PatternTerminal));
+		this.craftingTerminal = new DamagedItemDefinition(itemMultiPart.createPart(PartType.CraftingTerminal));
+		this.terminal = new DamagedItemDefinition(itemMultiPart.createPart(PartType.Terminal));
+		this.storageMonitor = new DamagedItemDefinition(itemMultiPart.createPart(PartType.StorageMonitor));
+		this.conversionMonitor = new DamagedItemDefinition(itemMultiPart.createPart(PartType.ConversionMonitor));
 	}
 
 	@Override
-	public AEColoredItemDefinition cableSmart()
-	{
+	public AEColoredItemDefinition cableSmart() {
 		return this.cableSmart;
 	}
 
 	@Override
-	public AEColoredItemDefinition cableCovered()
-	{
+	public AEColoredItemDefinition cableCovered() {
 		return this.cableCovered;
 	}
 
 	@Override
-	public AEColoredItemDefinition cableGlass()
-	{
+	public AEColoredItemDefinition cableGlass() {
 		return this.cableGlass;
 	}
 
 	@Override
-	public AEColoredItemDefinition cableDense()
-	{
+	public AEColoredItemDefinition cableDense() {
 		return this.cableDense;
 	}
 
 	@Override
-	public AEColoredItemDefinition lumenCableSmart()
-	{
-		throw new MissingDefinition( "Lumen Smart Cable has yet to be implemented." );
+	public AEColoredItemDefinition lumenCableSmart() {
+		throw new MissingDefinition("Lumen Smart Cable has yet to be implemented.");
 		// return this.lumenCableSmart;
 	}
 
 	@Override
-	public AEColoredItemDefinition lumenCableCovered()
-	{
-		throw new MissingDefinition( "Lumen Covered Cable has yet to be implemented." );
+	public AEColoredItemDefinition lumenCableCovered() {
+		throw new MissingDefinition("Lumen Covered Cable has yet to be implemented.");
 		// return this.lumenCableCovered;
 	}
 
 	@Override
-	public AEColoredItemDefinition lumenCableGlass()
-	{
-		throw new MissingDefinition( "Lumen Glass Cable has yet to be implemented." );
+	public AEColoredItemDefinition lumenCableGlass() {
+		throw new MissingDefinition("Lumen Glass Cable has yet to be implemented.");
 		// return this.lumenCableGlass;
 	}
 
 	@Override
-	public AEColoredItemDefinition lumenCableDense()
-	{
-		throw new MissingDefinition( "Lumen Dense Cable has yet to be implemented." );
+	public AEColoredItemDefinition lumenCableDense() {
+		throw new MissingDefinition("Lumen Dense Cable has yet to be implemented.");
 		// return this.lumenCableDense;
 	}
 
 	@Override
-	public IItemDefinition quartzFiber()
-	{
+	public IItemDefinition quartzFiber() {
 		return this.quartzFiber;
 	}
 
 	@Override
-	public IItemDefinition toggleBus()
-	{
+	public IItemDefinition toggleBus() {
 		return this.toggleBus;
 	}
 
 	@Override
-	public IItemDefinition invertedToggleBus()
-	{
+	public IItemDefinition invertedToggleBus() {
 		return this.invertedToggleBus;
 	}
 
 	@Override
-	public IItemDefinition storageBus()
-	{
+	public IItemDefinition storageBus() {
 		return this.storageBus;
 	}
 
 	@Override
-	public IItemDefinition importBus()
-	{
+	public IItemDefinition importBus() {
 		return this.importBus;
 	}
 
 	@Override
-	public IItemDefinition exportBus()
-	{
+	public IItemDefinition exportBus() {
 		return this.exportBus;
 	}
 
 	@Override
-	public IItemDefinition iface()
-	{
+	public IItemDefinition iface() {
 		return this.iface;
 	}
 
 	@Override
-	public IItemDefinition levelEmitter()
-	{
+	public IItemDefinition levelEmitter() {
 		return this.levelEmitter;
 	}
 
 	@Override
-	public IItemDefinition annihilationPlane()
-	{
+	public IItemDefinition annihilationPlane() {
 		return this.annihilationPlane;
 	}
 
 	@Override
-	public IItemDefinition identityAnnihilationPlane()
-	{
+	public IItemDefinition identityAnnihilationPlane() {
 		return this.identityAnnihilationPlane;
 	}
 
 	@Override
-	public IItemDefinition formationPlane()
-	{
+	public IItemDefinition formationPlane() {
 		return this.formationPlane;
 	}
 
 	@Override
-	public IItemDefinition p2PTunnelME()
-	{
+	public IItemDefinition p2PTunnelME() {
 		return this.p2PTunnelME;
 	}
 
 	@Override
-	public IItemDefinition p2PTunnelRedstone()
-	{
+	public IItemDefinition p2PTunnelRedstone() {
 		return this.p2PTunnelRedstone;
 	}
 
 	@Override
-	public IItemDefinition p2PTunnelItems()
-	{
+	public IItemDefinition p2PTunnelItems() {
 		return this.p2PTunnelItems;
 	}
 
 	@Override
-	public IItemDefinition p2PTunnelLiquids()
-	{
+	public IItemDefinition p2PTunnelLiquids() {
 		return this.p2PTunnelLiquids;
 	}
 
 	@Override
-	public IItemDefinition p2PTunnelEU()
-	{
+	public IItemDefinition p2PTunnelEU() {
 		return this.p2PTunnelEU;
 	}
 
 	@Override
-	public IItemDefinition p2PTunnelRF()
-	{
+	public IItemDefinition p2PTunnelRF() {
 		return this.p2PTunnelRF;
 	}
 
 	@Override
-	public IItemDefinition p2PTunnelLight()
-	{
+	public IItemDefinition p2PTunnelLight() {
 		return this.p2PTunnelLight;
 	}
 
 	@Override
-	public IItemDefinition p2PTunnelOpenComputers()
-	{
+	public IItemDefinition p2PTunnelOpenComputers() {
 		return this.p2PTunnelOpenComputers;
 	}
 
 	@Override
-	public IItemDefinition p2PTunnelPneumaticCraft()
-	{
+	public IItemDefinition p2PTunnelPneumaticCraft() {
 		return this.p2PTunnelPneumaticCraft;
 	}
 
 	@Override
-	public IItemDefinition cableAnchor()
-	{
+	public IItemDefinition cableAnchor() {
 		return this.cableAnchor;
 	}
 
 	@Override
-	public IItemDefinition monitor()
-	{
+	public IItemDefinition monitor() {
 		return this.monitor;
 	}
 
 	@Override
-	public IItemDefinition semiDarkMonitor()
-	{
+	public IItemDefinition semiDarkMonitor() {
 		return this.semiDarkMonitor;
 	}
 
 	@Override
-	public IItemDefinition darkMonitor()
-	{
+	public IItemDefinition darkMonitor() {
 		return this.darkMonitor;
 	}
 
 	@Override
-	public IItemDefinition interfaceTerminal()
-	{
+	public IItemDefinition interfaceTerminal() {
 		return this.interfaceTerminal;
 	}
 
 	@Override
-	public IItemDefinition patternTerminal()
-	{
+	public IItemDefinition patternTerminal() {
 		return this.patternTerminal;
 	}
 
 	@Override
-	public IItemDefinition craftingTerminal()
-	{
+	public IItemDefinition craftingTerminal() {
 		return this.craftingTerminal;
 	}
 
 	@Override
-	public IItemDefinition terminal()
-	{
+	public IItemDefinition terminal() {
 		return this.terminal;
 	}
 
 	@Override
-	public IItemDefinition storageMonitor()
-	{
+	public IItemDefinition storageMonitor() {
 		return this.storageMonitor;
 	}
 
 	@Override
-	public IItemDefinition conversionMonitor()
-	{
+	public IItemDefinition conversionMonitor() {
 		return this.conversionMonitor;
 	}
 }

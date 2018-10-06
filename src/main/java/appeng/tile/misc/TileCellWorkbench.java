@@ -18,14 +18,6 @@
 
 package appeng.tile.misc;
 
-
-import java.util.List;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-
 import appeng.api.config.CopyMode;
 import appeng.api.config.Settings;
 import appeng.api.config.Upgrades;
@@ -41,44 +33,42 @@ import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
+import java.util.List;
 
-public class TileCellWorkbench extends AEBaseTile implements IUpgradeableHost, IAEAppEngInventory, IConfigManagerHost
-{
+public class TileCellWorkbench extends AEBaseTile implements IUpgradeableHost, IAEAppEngInventory, IConfigManagerHost {
 
-	private final AppEngInternalInventory cell = new AppEngInternalInventory( this, 1 );
-	private final AppEngInternalAEInventory config = new AppEngInternalAEInventory( this, 63 );
-	private final ConfigManager manager = new ConfigManager( this );
+	private final AppEngInternalInventory cell = new AppEngInternalInventory(this, 1);
+	private final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, 63);
+	private final ConfigManager manager = new ConfigManager(this);
 
 	private IInventory cacheUpgrades = null;
 	private IInventory cacheConfig = null;
 	private boolean locked = false;
 
-	public TileCellWorkbench()
-	{
-		this.manager.registerSetting( Settings.COPY_MODE, CopyMode.CLEAR_ON_REMOVE );
-		this.cell.setEnableClientEvents( true );
+	public TileCellWorkbench() {
+		this.manager.registerSetting(Settings.COPY_MODE, CopyMode.CLEAR_ON_REMOVE);
+		this.cell.setEnableClientEvents(true);
 	}
 
-	public IInventory getCellUpgradeInventory()
-	{
-		if( this.cacheUpgrades == null )
-		{
+	public IInventory getCellUpgradeInventory() {
+		if (this.cacheUpgrades == null) {
 			final ICellWorkbenchItem cell = this.getCell();
-			if( cell == null )
-			{
+			if (cell == null) {
 				return null;
 			}
 
-			final ItemStack is = this.cell.getStackInSlot( 0 );
-			if( is == null )
-			{
+			final ItemStack is = this.cell.getStackInSlot(0);
+			if (is == null) {
 				return null;
 			}
 
-			final IInventory inv = cell.getUpgradesInventory( is );
-			if( inv == null )
-			{
+			final IInventory inv = cell.getUpgradesInventory(is);
+			if (inv == null) {
 				return null;
 			}
 
@@ -87,47 +77,39 @@ public class TileCellWorkbench extends AEBaseTile implements IUpgradeableHost, I
 		return this.cacheUpgrades;
 	}
 
-	public ICellWorkbenchItem getCell()
-	{
-		if( this.cell.getStackInSlot( 0 ) == null )
-		{
+	public ICellWorkbenchItem getCell() {
+		if (this.cell.getStackInSlot(0) == null) {
 			return null;
 		}
 
-		if( this.cell.getStackInSlot( 0 ).getItem() instanceof ICellWorkbenchItem )
-		{
-			return( (ICellWorkbenchItem) this.cell.getStackInSlot( 0 ).getItem() );
+		if (this.cell.getStackInSlot(0).getItem() instanceof ICellWorkbenchItem) {
+			return ((ICellWorkbenchItem) this.cell.getStackInSlot(0).getItem());
 		}
 
 		return null;
 	}
 
-	@TileEvent( TileEventType.WORLD_NBT_WRITE )
-	public void writeToNBT_TileCellWorkbench( final NBTTagCompound data )
-	{
-		this.cell.writeToNBT( data, "cell" );
-		this.config.writeToNBT( data, "config" );
-		this.manager.writeToNBT( data );
+	@TileEvent(TileEventType.WORLD_NBT_WRITE)
+	public void writeToNBT_TileCellWorkbench(final NBTTagCompound data) {
+		this.cell.writeToNBT(data, "cell");
+		this.config.writeToNBT(data, "config");
+		this.manager.writeToNBT(data);
 	}
 
-	@TileEvent( TileEventType.WORLD_NBT_READ )
-	public void readFromNBT_TileCellWorkbench( final NBTTagCompound data )
-	{
-		this.cell.readFromNBT( data, "cell" );
-		this.config.readFromNBT( data, "config" );
-		this.manager.readFromNBT( data );
+	@TileEvent(TileEventType.WORLD_NBT_READ)
+	public void readFromNBT_TileCellWorkbench(final NBTTagCompound data) {
+		this.cell.readFromNBT(data, "cell");
+		this.config.readFromNBT(data, "config");
+		this.manager.readFromNBT(data);
 	}
 
 	@Override
-	public IInventory getInventoryByName( final String name )
-	{
-		if( name.equals( "config" ) )
-		{
+	public IInventory getInventoryByName(final String name) {
+		if (name.equals("config")) {
 			return this.config;
 		}
 
-		if( name.equals( "cell" ) )
-		{
+		if (name.equals("cell")) {
 			return this.cell;
 		}
 
@@ -135,71 +117,53 @@ public class TileCellWorkbench extends AEBaseTile implements IUpgradeableHost, I
 	}
 
 	@Override
-	public int getInstalledUpgrades( final Upgrades u )
-	{
+	public int getInstalledUpgrades(final Upgrades u) {
 		return 0;
 	}
 
 	@Override
-	public void onChangeInventory( final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack )
-	{
-		if( inv == this.cell && !this.locked )
-		{
+	public void onChangeInventory(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack) {
+		if (inv == this.cell && !this.locked) {
 			this.locked = true;
 
 			this.cacheUpgrades = null;
 			this.cacheConfig = null;
 
 			final IInventory configInventory = this.getCellConfigInventory();
-			if( configInventory != null )
-			{
+			if (configInventory != null) {
 				boolean cellHasConfig = false;
-				for( int x = 0; x < configInventory.getSizeInventory(); x++ )
-				{
-					if( configInventory.getStackInSlot( x ) != null )
-					{
+				for (int x = 0; x < configInventory.getSizeInventory(); x++) {
+					if (configInventory.getStackInSlot(x) != null) {
 						cellHasConfig = true;
 						break;
 					}
 				}
 
-				if( cellHasConfig )
-				{
-					for( int x = 0; x < this.config.getSizeInventory(); x++ )
-					{
-						this.config.setInventorySlotContents( x, configInventory.getStackInSlot( x ) );
+				if (cellHasConfig) {
+					for (int x = 0; x < this.config.getSizeInventory(); x++) {
+						this.config.setInventorySlotContents(x, configInventory.getStackInSlot(x));
 					}
-				}
-				else
-				{
-					for( int x = 0; x < this.config.getSizeInventory(); x++ )
-					{
-						configInventory.setInventorySlotContents( x, this.config.getStackInSlot( x ) );
+				} else {
+					for (int x = 0; x < this.config.getSizeInventory(); x++) {
+						configInventory.setInventorySlotContents(x, this.config.getStackInSlot(x));
 					}
 
 					configInventory.markDirty();
 				}
-			}
-			else if( this.manager.getSetting( Settings.COPY_MODE ) == CopyMode.CLEAR_ON_REMOVE )
-			{
-				for( int x = 0; x < this.config.getSizeInventory(); x++ )
-				{
-					this.config.setInventorySlotContents( x, null );
+			} else if (this.manager.getSetting(Settings.COPY_MODE) == CopyMode.CLEAR_ON_REMOVE) {
+				for (int x = 0; x < this.config.getSizeInventory(); x++) {
+					this.config.setInventorySlotContents(x, null);
 				}
 
 				this.markDirty();
 			}
 
 			this.locked = false;
-		}
-		else if( inv == this.config && !this.locked )
-		{
+		} else if (inv == this.config && !this.locked) {
 			final IInventory c = this.getCellConfigInventory();
-			if( c != null )
-			{
-				for( int x = 0; x < this.config.getSizeInventory(); x++ )
-				{
-					c.setInventorySlotContents( x, this.config.getStackInSlot( x ) );
+			if (c != null) {
+				for (int x = 0; x < this.config.getSizeInventory(); x++) {
+					c.setInventorySlotContents(x, this.config.getStackInSlot(x));
 				}
 
 				c.markDirty();
@@ -207,25 +171,20 @@ public class TileCellWorkbench extends AEBaseTile implements IUpgradeableHost, I
 		}
 	}
 
-	private IInventory getCellConfigInventory()
-	{
-		if( this.cacheConfig == null )
-		{
+	private IInventory getCellConfigInventory() {
+		if (this.cacheConfig == null) {
 			final ICellWorkbenchItem cell = this.getCell();
-			if( cell == null )
-			{
+			if (cell == null) {
 				return null;
 			}
 
-			final ItemStack is = this.cell.getStackInSlot( 0 );
-			if( is == null )
-			{
+			final ItemStack is = this.cell.getStackInSlot(0);
+			if (is == null) {
 				return null;
 			}
 
-			final IInventory inv = cell.getConfigInventory( is );
-			if( inv == null )
-			{
+			final IInventory inv = cell.getConfigInventory(is);
+			if (inv == null) {
 				return null;
 			}
 
@@ -235,25 +194,21 @@ public class TileCellWorkbench extends AEBaseTile implements IUpgradeableHost, I
 	}
 
 	@Override
-	public void getDrops( final World w, final int x, final int y, final int z, final List<ItemStack> drops )
-	{
-		super.getDrops( w, x, y, z, drops );
+	public void getDrops(final World w, final int x, final int y, final int z, final List<ItemStack> drops) {
+		super.getDrops(w, x, y, z, drops);
 
-		if( this.cell.getStackInSlot( 0 ) != null )
-		{
-			drops.add( this.cell.getStackInSlot( 0 ) );
+		if (this.cell.getStackInSlot(0) != null) {
+			drops.add(this.cell.getStackInSlot(0));
 		}
 	}
 
 	@Override
-	public IConfigManager getConfigManager()
-	{
+	public IConfigManager getConfigManager() {
 		return this.manager;
 	}
 
 	@Override
-	public void updateSetting( final IConfigManager manager, final Enum settingName, final Enum newValue )
-	{
+	public void updateSetting(final IConfigManager manager, final Enum settingName, final Enum newValue) {
 		// nothing here..
 	}
 }

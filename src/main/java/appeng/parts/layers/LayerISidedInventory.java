@@ -18,34 +18,30 @@
 
 package appeng.parts.layers;
 
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import appeng.api.parts.IPart;
+import appeng.api.parts.IPartHost;
+import appeng.api.parts.LayerBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import appeng.api.parts.IPart;
-import appeng.api.parts.IPartHost;
-import appeng.api.parts.LayerBase;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Inventory wrapper for parts,
- *
+ * <p>
  * this is considerably more complicated then the other wrappers as it requires creating a "unified inventory".
- *
+ * <p>
  * You must use {@link ISidedInventory} instead of {@link IInventory}.
- *
+ * <p>
  * If your inventory changes in between placement and removal, you must trigger a PartChange on the {@link IPartHost} so
  * it can recalculate the inventory wrapper.
  */
-public class LayerISidedInventory extends LayerBase implements ISidedInventory
-{
+public class LayerISidedInventory extends LayerBase implements ISidedInventory {
 
 	// a simple empty array for empty stuff..
 	private static final int[] NULL_SIDES = {};
@@ -56,70 +52,57 @@ public class LayerISidedInventory extends LayerBase implements ISidedInventory
 	 * Recalculate inventory wrapper cache.
 	 */
 	@Override
-	public void notifyNeighbors()
-	{
+	public void notifyNeighbors() {
 		// cache of inventory state.
 
 		List<ISidedInventory> inventories = new ArrayList<ISidedInventory>();
 		int slotCount = 0;
 
-		for( final ForgeDirection side : ForgeDirection.VALID_DIRECTIONS )
-		{
-			final IPart bp = this.getPart( side );
-			if( bp instanceof ISidedInventory )
-			{
+		for (final ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			final IPart bp = this.getPart(side);
+			if (bp instanceof ISidedInventory) {
 				final ISidedInventory part = (ISidedInventory) bp;
 				slotCount += part.getSizeInventory();
-				inventories.add( part );
+				inventories.add(part);
 			}
 		}
 
 		List<InvSot> slots = null;
 		int[][] sideData = null;
-		if( inventories.isEmpty() || slotCount == 0 )
-		{
+		if (inventories.isEmpty() || slotCount == 0) {
 			inventories = null;
-		}
-		else
-		{
-			sideData = new int[][] { NULL_SIDES, NULL_SIDES, NULL_SIDES, NULL_SIDES, NULL_SIDES, NULL_SIDES };
-			slots = new ArrayList<InvSot>( Collections.nCopies( slotCount, (InvSot) null ) );
+		} else {
+			sideData = new int[][]{NULL_SIDES, NULL_SIDES, NULL_SIDES, NULL_SIDES, NULL_SIDES, NULL_SIDES};
+			slots = new ArrayList<InvSot>(Collections.nCopies(slotCount, (InvSot) null));
 
 			int offsetForLayer = 0;
 			int offsetForPart = 0;
-			for( final ISidedInventory sides : inventories )
-			{
+			for (final ISidedInventory sides : inventories) {
 				offsetForPart = 0;
 				slotCount = sides.getSizeInventory();
 
 				ForgeDirection currentSide = ForgeDirection.UNKNOWN;
-				for( final ForgeDirection side : ForgeDirection.VALID_DIRECTIONS )
-				{
-					if( this.getPart( side ) == sides )
-					{
+				for (final ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+					if (this.getPart(side) == sides) {
 						currentSide = side;
 						break;
 					}
 				}
 
 				final int[] cSidesList = sideData[currentSide.ordinal()] = new int[slotCount];
-				for( int cSlot = 0; cSlot < slotCount; cSlot++ )
-				{
+				for (int cSlot = 0; cSlot < slotCount; cSlot++) {
 					cSidesList[cSlot] = offsetForLayer;
-					slots.set( offsetForLayer, new InvSot( sides, offsetForPart ) );
+					slots.set(offsetForLayer, new InvSot(sides, offsetForPart));
 					offsetForLayer++;
 					offsetForPart++;
 				}
 			}
 		}
 
-		if( sideData == null || slots == null )
-		{
+		if (sideData == null || slots == null) {
 			this.invLayer = null;
-		}
-		else
-		{
-			this.invLayer = new InvLayerData( sideData, inventories, slots );
+		} else {
+			this.invLayer = new InvLayerData(sideData, inventories, slots);
 		}
 
 		// make sure inventory is updated before we call FMP.
@@ -127,10 +110,8 @@ public class LayerISidedInventory extends LayerBase implements ISidedInventory
 	}
 
 	@Override
-	public int getSizeInventory()
-	{
-		if( this.invLayer == null )
-		{
+	public int getSizeInventory() {
+		if (this.invLayer == null) {
 			return 0;
 		}
 
@@ -138,94 +119,77 @@ public class LayerISidedInventory extends LayerBase implements ISidedInventory
 	}
 
 	@Override
-	public ItemStack getStackInSlot( final int slot )
-	{
-		if( this.invLayer == null )
-		{
+	public ItemStack getStackInSlot(final int slot) {
+		if (this.invLayer == null) {
 			return null;
 		}
 
-		return this.invLayer.getStackInSlot( slot );
+		return this.invLayer.getStackInSlot(slot);
 	}
 
 	@Override
-	public ItemStack decrStackSize( final int slot, final int amount )
-	{
-		if( this.invLayer == null )
-		{
+	public ItemStack decrStackSize(final int slot, final int amount) {
+		if (this.invLayer == null) {
 			return null;
 		}
 
-		return this.invLayer.decreaseStackSize( slot, amount );
+		return this.invLayer.decreaseStackSize(slot, amount);
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing( final int slot )
-	{
+	public ItemStack getStackInSlotOnClosing(final int slot) {
 		return null;
 	}
 
 	@Override
-	public void setInventorySlotContents( final int slot, final ItemStack itemstack )
-	{
-		if( this.invLayer == null )
-		{
+	public void setInventorySlotContents(final int slot, final ItemStack itemstack) {
+		if (this.invLayer == null) {
 			return;
 		}
 
-		this.invLayer.setInventorySlotContents( slot, itemstack );
+		this.invLayer.setInventorySlotContents(slot, itemstack);
 	}
 
 	@Override
-	public String getInventoryName()
-	{
+	public String getInventoryName() {
 		return "AEMultiPart";
 	}
 
 	@Override
-	public boolean hasCustomInventoryName()
-	{
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 
 	@Override
-	public int getInventoryStackLimit()
-	{
+	public int getInventoryStackLimit() {
 		return 64; // no options here.
 	}
 
 	@Override
-	public boolean isUseableByPlayer( final EntityPlayer entityplayer )
-	{
+	public boolean isUseableByPlayer(final EntityPlayer entityplayer) {
 		return false;
 	}
 
 	@Override
-	public void openInventory()
-	{
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeInventory()
-	{
+	public void closeInventory() {
 	}
 
 	@Override
-	public boolean isItemValidForSlot( final int slot, final ItemStack itemstack )
-	{
-		if( this.invLayer == null )
-		{
+	public boolean isItemValidForSlot(final int slot, final ItemStack itemstack) {
+		if (this.invLayer == null) {
 			return false;
 		}
 
-		return this.invLayer.isItemValidForSlot( slot, itemstack );
+		return this.invLayer.isItemValidForSlot(slot, itemstack);
 	}
 
 	@Override
-	public void markDirty()
-	{
-		if( this.invLayer != null )
-		{
+	public void markDirty() {
+		if (this.invLayer != null) {
 			this.invLayer.markDirty();
 		}
 
@@ -233,35 +197,29 @@ public class LayerISidedInventory extends LayerBase implements ISidedInventory
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide( final int side )
-	{
-		if( this.invLayer != null )
-		{
-			return this.invLayer.getAccessibleSlotsFromSide( side );
+	public int[] getAccessibleSlotsFromSide(final int side) {
+		if (this.invLayer != null) {
+			return this.invLayer.getAccessibleSlotsFromSide(side);
 		}
 
 		return NULL_SIDES;
 	}
 
 	@Override
-	public boolean canInsertItem( final int slot, final ItemStack itemstack, final int side )
-	{
-		if( this.invLayer == null )
-		{
+	public boolean canInsertItem(final int slot, final ItemStack itemstack, final int side) {
+		if (this.invLayer == null) {
 			return false;
 		}
 
-		return this.invLayer.canInsertItem( slot, itemstack, side );
+		return this.invLayer.canInsertItem(slot, itemstack, side);
 	}
 
 	@Override
-	public boolean canExtractItem( final int slot, final ItemStack itemstack, final int side )
-	{
-		if( this.invLayer == null )
-		{
+	public boolean canExtractItem(final int slot, final ItemStack itemstack, final int side) {
+		if (this.invLayer == null) {
 			return false;
 		}
 
-		return this.invLayer.canExtractItem( slot, itemstack, side );
+		return this.invLayer.canExtractItem(slot, itemstack, side);
 	}
 }

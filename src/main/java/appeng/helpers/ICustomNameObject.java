@@ -18,9 +18,7 @@
 
 package appeng.helpers;
 
-
-public interface ICustomNameObject
-{
+public interface ICustomNameObject {
 
 	String getCustomName();
 

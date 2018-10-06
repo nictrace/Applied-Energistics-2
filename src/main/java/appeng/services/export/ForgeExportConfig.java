@@ -18,14 +18,11 @@
 
 package appeng.services.export;
 
-
-import javax.annotation.Nonnull;
-
 import com.google.common.base.Preconditions;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
+import javax.annotation.Nonnull;
 
 /**
  * Offers configuration switches for the user to change the export process
@@ -34,8 +31,8 @@ import net.minecraftforge.common.config.Property;
  * @version rv3 - 14.08.2015
  * @since rv3 14.08.2015
  */
-public final class ForgeExportConfig implements ExportConfig
-{
+public final class ForgeExportConfig implements ExportConfig {
+
 	private static final String GENERAL_CATEGORY = "general";
 	private static final String CACHE_CATEGORY = "cache";
 
@@ -71,59 +68,51 @@ public final class ForgeExportConfig implements ExportConfig
 	 *
 	 * @param config to be wrapped configuration.
 	 */
-	public ForgeExportConfig( @Nonnull final Configuration config )
-	{
-		this.config = Preconditions.checkNotNull( config );
+	public ForgeExportConfig(@Nonnull final Configuration config) {
+		this.config = Preconditions.checkNotNull(config);
 
-		this.exportItemNamesEnabled = this.config.getBoolean( EXPORT_ITEM_NAMES_KEY, GENERAL_CATEGORY, EXPORT_ITEM_NAMES_DEFAULT, EXPORT_ITEM_NAMES_DESCRIPTION );
-		this.cacheEnabled = this.config.getBoolean( ENABLE_CACHE_KEY, CACHE_CATEGORY, ENABLE_CACHE_DEFAULT, ENABLE_CACHE_DESCRIPTION );
-		this.additionalInformationEnabled = this.config.getBoolean( ENABLE_ADDITIONAL_INFO_KEY, GENERAL_CATEGORY, ENABLE_ADDITIONAL_INFO_DEFAULT, ENABLE_ADDITIONAL_INFO_DESCRIPTION );
-		this.cache = this.config.getString( DIGEST_KEY, CACHE_CATEGORY, DIGEST_DEFAULT, DIGEST_DESCRIPTION );
-		this.forceRefreshEnabled = this.config.getBoolean( ENABLE_FORCE_REFRESH_KEY, GENERAL_CATEGORY, ENABLE_FORCE_REFRESH_DEFAULT, ENABLE_FORCE_REFRESH_DESCRIPTION );
+		this.exportItemNamesEnabled = this.config.getBoolean(EXPORT_ITEM_NAMES_KEY, GENERAL_CATEGORY, EXPORT_ITEM_NAMES_DEFAULT, EXPORT_ITEM_NAMES_DESCRIPTION);
+		this.cacheEnabled = this.config.getBoolean(ENABLE_CACHE_KEY, CACHE_CATEGORY, ENABLE_CACHE_DEFAULT, ENABLE_CACHE_DESCRIPTION);
+		this.additionalInformationEnabled = this.config.getBoolean(ENABLE_ADDITIONAL_INFO_KEY, GENERAL_CATEGORY, ENABLE_ADDITIONAL_INFO_DEFAULT, ENABLE_ADDITIONAL_INFO_DESCRIPTION);
+		this.cache = this.config.getString(DIGEST_KEY, CACHE_CATEGORY, DIGEST_DEFAULT, DIGEST_DESCRIPTION);
+		this.forceRefreshEnabled = this.config.getBoolean(ENABLE_FORCE_REFRESH_KEY, GENERAL_CATEGORY, ENABLE_FORCE_REFRESH_DEFAULT, ENABLE_FORCE_REFRESH_DESCRIPTION);
 	}
 
 	@Override
-	public boolean isExportingItemNamesEnabled()
-	{
+	public boolean isExportingItemNamesEnabled() {
 		return this.exportItemNamesEnabled;
 	}
 
 	@Override
-	public boolean isCacheEnabled()
-	{
+	public boolean isCacheEnabled() {
 		return this.cacheEnabled;
 	}
 
 	@Override
-	public boolean isForceRefreshEnabled()
-	{
+	public boolean isForceRefreshEnabled() {
 		return this.forceRefreshEnabled;
 	}
 
 	@Override
-	public boolean isAdditionalInformationEnabled()
-	{
+	public boolean isAdditionalInformationEnabled() {
 		return this.additionalInformationEnabled;
 	}
 
 	@Override
-	public String getCache()
-	{
+	public String getCache() {
 		return this.cache;
 	}
 
 	@Override
-	public void setCache( @Nonnull final String digest )
-	{
-		final Property digestProperty = this.config.get( CACHE_CATEGORY, DIGEST_KEY, DIGEST_DEFAULT );
-		digestProperty.set( digest );
+	public void setCache(@Nonnull final String digest) {
+		final Property digestProperty = this.config.get(CACHE_CATEGORY, DIGEST_KEY, DIGEST_DEFAULT);
+		digestProperty.set(digest);
 
 		this.config.save();
 	}
 
 	@Override
-	public void save()
-	{
+	public void save() {
 		this.config.save();
 	}
 }

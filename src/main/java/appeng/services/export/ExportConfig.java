@@ -18,17 +18,15 @@
 
 package appeng.services.export;
 
-
 import javax.annotation.Nonnull;
-
 
 /**
  * @author thatsIch
  * @version rv3 - 14.08.2015
  * @since rv3 14.08.2015
  */
-public interface ExportConfig
-{
+public interface ExportConfig {
+
 	/**
 	 * config switch to disable the exporting.
 	 * if the recipes system is not used
@@ -73,7 +71,7 @@ public interface ExportConfig
 	 *
 	 * @param digest new digest for the cache
 	 */
-	void setCache( @Nonnull String digest );
+	void setCache(@Nonnull String digest);
 
 	/**
 	 * Will delegate the saving

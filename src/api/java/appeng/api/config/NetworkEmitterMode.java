@@ -23,9 +23,7 @@
 
 package appeng.api.config;
 
-
-public enum NetworkEmitterMode
-{
+public enum NetworkEmitterMode {
 
 	POWER_LEVEL,
 

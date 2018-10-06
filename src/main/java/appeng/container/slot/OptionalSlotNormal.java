@@ -18,31 +18,25 @@
 
 package appeng.container.slot;
 
-
 import net.minecraft.inventory.IInventory;
 
-
-public class OptionalSlotNormal extends AppEngSlot
-{
+public class OptionalSlotNormal extends AppEngSlot {
 
 	private final int groupNum;
 	private final IOptionalSlotHost host;
 
-	public OptionalSlotNormal( final IInventory inv, final IOptionalSlotHost containerBus, final int slot, final int xPos, final int yPos, final int groupNum )
-	{
-		super( inv, slot, xPos, yPos );
+	public OptionalSlotNormal(final IInventory inv, final IOptionalSlotHost containerBus, final int slot, final int xPos, final int yPos, final int groupNum) {
+		super(inv, slot, xPos, yPos);
 		this.groupNum = groupNum;
 		this.host = containerBus;
 	}
 
 	@Override
-	public boolean isEnabled()
-	{
-		if( this.host == null )
-		{
+	public boolean isEnabled() {
+		if (this.host == null) {
 			return false;
 		}
 
-		return this.host.isSlotEnabled( this.groupNum );
+		return this.host.isSlotEnabled(this.groupNum);
 	}
 }

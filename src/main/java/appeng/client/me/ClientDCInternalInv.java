@@ -18,17 +18,13 @@
 
 package appeng.client.me;
 
+import appeng.tile.inventory.AppEngInternalInventory;
+import appeng.util.ItemSorters;
+import net.minecraft.util.StatCollector;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.util.StatCollector;
-
-import appeng.tile.inventory.AppEngInternalInventory;
-import appeng.util.ItemSorters;
-
-
-public class ClientDCInternalInv implements Comparable<ClientDCInternalInv>
-{
+public class ClientDCInternalInv implements Comparable<ClientDCInternalInv> {
 
 	private final String unlocalizedName;
 	private final AppEngInternalInventory inventory;
@@ -36,37 +32,31 @@ public class ClientDCInternalInv implements Comparable<ClientDCInternalInv>
 	private final long id;
 	private final long sortBy;
 
-	public ClientDCInternalInv( final int size, final long id, final long sortBy, final String unlocalizedName )
-	{
-		this.inventory = new AppEngInternalInventory( null, size );
+	public ClientDCInternalInv(final int size, final long id, final long sortBy, final String unlocalizedName) {
+		this.inventory = new AppEngInternalInventory(null, size);
 		this.unlocalizedName = unlocalizedName;
 		this.id = id;
 		this.sortBy = sortBy;
 	}
 
-	public String getName()
-	{
-		final String s = StatCollector.translateToLocal( this.unlocalizedName + ".name" );
-		if( s.equals( this.unlocalizedName + ".name" ) )
-		{
-			return StatCollector.translateToLocal( this.unlocalizedName );
+	public String getName() {
+		final String s = StatCollector.translateToLocal(this.unlocalizedName + ".name");
+		if (s.equals(this.unlocalizedName + ".name")) {
+			return StatCollector.translateToLocal(this.unlocalizedName);
 		}
 		return s;
 	}
 
 	@Override
-	public int compareTo( @Nonnull final ClientDCInternalInv o )
-	{
-		return ItemSorters.compareLong( this.sortBy, o.sortBy );
+	public int compareTo(@Nonnull final ClientDCInternalInv o) {
+		return ItemSorters.compareLong(this.sortBy, o.sortBy);
 	}
 
-	public AppEngInternalInventory getInventory()
-	{
+	public AppEngInternalInventory getInventory() {
 		return this.inventory;
 	}
 
-	public long getId()
-	{
+	public long getId() {
 		return this.id;
 	}
 }

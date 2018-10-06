@@ -1,14 +1,10 @@
-
 package appeng.api.features;
-
-
-import java.util.Collection;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * Lets you manipulate Inscriber Recipes, by adding or editing existing ones.
@@ -17,17 +13,16 @@ import net.minecraft.item.ItemStack;
  * @version rv3
  * @since rv2
  */
-public interface IInscriberRegistry
-{
+public interface IInscriberRegistry {
+
 	/**
 	 * An immutable copy of currently registered recipes.
-	 *
+	 * <p>
 	 * Use the provided methods to actually modify the inscriber recipes.
 	 *
+	 * @return currentlyRegisteredRecipes
 	 * @see IInscriberRegistry#addRecipe(IInscriberRecipe)
 	 * @see IInscriberRegistry#removeRecipe(IInscriberRecipe)
-	 *
-	 * @return currentlyRegisteredRecipes
 	 */
 	@Nonnull
 	Collection<IInscriberRecipe> getRecipes();
@@ -61,16 +56,15 @@ public interface IInscriberRegistry
 	 * Added recipes will be automatically added to the optionals and inputs.
 	 *
 	 * @param recipe new recipe
-	 *
 	 * @throws IllegalArgumentException if null is added
 	 */
-	void addRecipe( IInscriberRecipe recipe );
+	void addRecipe(IInscriberRecipe recipe);
 
 	/**
 	 * Removes all equal recipes from the registry.
 	 *
 	 * @param toBeRemovedRecipe to be removed recipe, can be null, makes just no sense.
 	 */
-	void removeRecipe( IInscriberRecipe toBeRemovedRecipe );
+	void removeRecipe(IInscriberRecipe toBeRemovedRecipe);
 
 }

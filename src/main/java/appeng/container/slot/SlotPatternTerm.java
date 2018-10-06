@@ -18,13 +18,6 @@
 
 package appeng.container.slot;
 
-
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-
 import appeng.api.AEApi;
 import appeng.api.networking.energy.IEnergySource;
 import appeng.api.networking.security.BaseActionSource;
@@ -32,34 +25,32 @@ import appeng.api.storage.IStorageMonitorable;
 import appeng.core.sync.AppEngPacket;
 import appeng.core.sync.packets.PacketPatternSlot;
 import appeng.helpers.IContainerCraftingPacket;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
+import java.io.IOException;
 
-public class SlotPatternTerm extends SlotCraftingTerm
-{
+public class SlotPatternTerm extends SlotCraftingTerm {
 
 	private final int groupNum;
 	private final IOptionalSlotHost host;
 
-	public SlotPatternTerm( final EntityPlayer player, final BaseActionSource mySrc, final IEnergySource energySrc, final IStorageMonitorable storage, final IInventory cMatrix, final IInventory secondMatrix, final IInventory output, final int x, final int y, final IOptionalSlotHost h, final int groupNumber, final IContainerCraftingPacket c )
-	{
-		super( player, mySrc, energySrc, storage, cMatrix, secondMatrix, output, x, y, c );
+	public SlotPatternTerm(final EntityPlayer player, final BaseActionSource mySrc, final IEnergySource energySrc, final IStorageMonitorable storage, final IInventory cMatrix, final IInventory secondMatrix, final IInventory output, final int x, final int y, final IOptionalSlotHost h, final int groupNumber, final IContainerCraftingPacket c) {
+		super(player, mySrc, energySrc, storage, cMatrix, secondMatrix, output, x, y, c);
 
 		this.host = h;
 		this.groupNum = groupNumber;
 	}
 
-	public AppEngPacket getRequest( final boolean shift ) throws IOException
-	{
-		return new PacketPatternSlot( this.getPattern(), AEApi.instance().storage().createItemStack( this.getStack() ), shift );
+	public AppEngPacket getRequest(final boolean shift) throws IOException {
+		return new PacketPatternSlot(this.getPattern(), AEApi.instance().storage().createItemStack(this.getStack()), shift);
 	}
 
 	@Override
-	public ItemStack getStack()
-	{
-		if( !this.isEnabled() )
-		{
-			if( this.getDisplayStack() != null )
-			{
+	public ItemStack getStack() {
+		if (!this.isEnabled()) {
+			if (this.getDisplayStack() != null) {
 				this.clearStack();
 			}
 		}
@@ -68,13 +59,11 @@ public class SlotPatternTerm extends SlotCraftingTerm
 	}
 
 	@Override
-	public boolean isEnabled()
-	{
-		if( this.host == null )
-		{
+	public boolean isEnabled() {
+		if (this.host == null) {
 			return false;
 		}
 
-		return this.host.isSlotEnabled( this.groupNum );
+		return this.host.isSlotEnabled(this.groupNum);
 	}
 }

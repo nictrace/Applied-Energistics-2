@@ -23,9 +23,7 @@
 
 package appeng.api.config;
 
-
-public enum LevelType
-{
+public enum LevelType {
 
 	ITEM_LEVEL,
 

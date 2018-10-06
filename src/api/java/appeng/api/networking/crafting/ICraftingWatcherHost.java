@@ -23,12 +23,9 @@
 
 package appeng.api.networking.crafting;
 
-
 import appeng.api.storage.data.IAEItemStack;
 
-
-public interface ICraftingWatcherHost
-{
+public interface ICraftingWatcherHost {
 
 	/**
 	 * provides the ICraftingWatcher for this host, for the current network, is called when the hot changes networks.
@@ -36,7 +33,7 @@ public interface ICraftingWatcherHost
 	 *
 	 * @param newWatcher crafting watcher for this host
 	 */
-	void updateWatcher( ICraftingWatcher newWatcher );
+	void updateWatcher(ICraftingWatcher newWatcher);
 
 	/**
 	 * Called when a crafting status changes.
@@ -44,5 +41,5 @@ public interface ICraftingWatcherHost
 	 * @param craftingGrid current crafting grid
 	 * @param what         change
 	 */
-	void onRequestChange( ICraftingGrid craftingGrid, IAEItemStack what );
+	void onRequestChange(ICraftingGrid craftingGrid, IAEItemStack what);
 }

@@ -18,59 +18,49 @@
 
 package appeng.core.features;
 
+import appeng.api.definitions.IBlockDefinition;
+import appeng.core.CreativeTab;
+import com.google.common.base.Optional;
+import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.block.BlockStairs;
 
 import java.util.EnumSet;
 
-import com.google.common.base.Optional;
+public class StairBlockFeatureHandler implements IFeatureHandler {
 
-import net.minecraft.block.BlockStairs;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-
-import appeng.api.definitions.IBlockDefinition;
-import appeng.core.CreativeTab;
-
-
-public class StairBlockFeatureHandler implements IFeatureHandler
-{
 	private final BlockStairs stairs;
 	private final FeatureNameExtractor extractor;
 	private final boolean enabled;
 	private final BlockDefinition definition;
 
-	public StairBlockFeatureHandler( final EnumSet<AEFeature> features, final BlockStairs stairs, final Optional<String> subName )
-	{
-		final ActivityState state = new FeaturedActiveChecker( features ).getActivityState();
+	public StairBlockFeatureHandler(final EnumSet<AEFeature> features, final BlockStairs stairs, final Optional<String> subName) {
+		final ActivityState state = new FeaturedActiveChecker(features).getActivityState();
 
 		this.stairs = stairs;
-		this.extractor = new FeatureNameExtractor( stairs.getClass(), subName );
+		this.extractor = new FeatureNameExtractor(stairs.getClass(), subName);
 		this.enabled = state == ActivityState.Enabled;
-		this.definition = new BlockDefinition( stairs, state );
+		this.definition = new BlockDefinition(stairs, state);
 	}
 
 	@Override
-	public final boolean isFeatureAvailable()
-	{
+	public final boolean isFeatureAvailable() {
 		return this.enabled;
 	}
 
 	@Override
-	public final IBlockDefinition getDefinition()
-	{
+	public final IBlockDefinition getDefinition() {
 		return this.definition;
 	}
 
 	@Override
-	public final void register()
-	{
-		if( this.enabled )
-		{
+	public final void register() {
+		if (this.enabled) {
 			final String name = this.extractor.get();
-			this.stairs.setCreativeTab( CreativeTab.instance );
-			this.stairs.setBlockName( "appliedenergistics2." + name );
-			this.stairs.setBlockTextureName( "appliedenergistics2:" + name );
+			this.stairs.setCreativeTab(CreativeTab.instance);
+			this.stairs.setBlockName("appliedenergistics2." + name);
+			this.stairs.setBlockTextureName("appliedenergistics2:" + name);
 
-			GameRegistry.registerBlock( this.stairs, "tile." + name );
+			GameRegistry.registerBlock(this.stairs, "tile." + name);
 		}
 	}
 }

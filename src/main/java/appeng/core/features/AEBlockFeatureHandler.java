@@ -18,62 +18,53 @@
 
 package appeng.core.features;
 
-
-import java.util.EnumSet;
-
-import com.google.common.base.Optional;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-
 import appeng.api.definitions.IBlockDefinition;
 import appeng.block.AEBaseBlock;
 import appeng.core.CreativeTab;
+import com.google.common.base.Optional;
+import cpw.mods.fml.common.registry.GameRegistry;
 
+import java.util.EnumSet;
 
-public final class AEBlockFeatureHandler implements IFeatureHandler
-{
+public final class AEBlockFeatureHandler implements IFeatureHandler {
+
 	private final AEBaseBlock featured;
 	private final FeatureNameExtractor extractor;
 	private final boolean enabled;
 	private final BlockDefinition definition;
 
-	public AEBlockFeatureHandler( final EnumSet<AEFeature> features, final AEBaseBlock featured, final Optional<String> subName )
-	{
-		final ActivityState state = new FeaturedActiveChecker( features ).getActivityState();
+	public AEBlockFeatureHandler(final EnumSet<AEFeature> features, final AEBaseBlock featured, final Optional<String> subName) {
+		final ActivityState state = new FeaturedActiveChecker(features).getActivityState();
 
 		this.featured = featured;
-		this.extractor = new FeatureNameExtractor( featured.getClass(), subName );
+		this.extractor = new FeatureNameExtractor(featured.getClass(), subName);
 		this.enabled = state == ActivityState.Enabled;
-		this.definition = new BlockDefinition( featured, state );
+		this.definition = new BlockDefinition(featured, state);
 	}
 
 	@Override
-	public boolean isFeatureAvailable()
-	{
+	public boolean isFeatureAvailable() {
 		return this.enabled;
 	}
 
 	@Override
-	public IBlockDefinition getDefinition()
-	{
+	public IBlockDefinition getDefinition() {
 		return this.definition;
 	}
 
 	@Override
-	public void register()
-	{
-		if( this.enabled )
-		{
+	public void register() {
+		if (this.enabled) {
 			final String name = this.extractor.get();
-			this.featured.setCreativeTab( CreativeTab.instance );
-			this.featured.setBlockName( /* "tile." */"appliedenergistics2." + name );
-			this.featured.setBlockTextureName( "appliedenergistics2:" + name );
+			this.featured.setCreativeTab(CreativeTab.instance);
+			this.featured.setBlockName( /* "tile." */"appliedenergistics2." + name);
+			this.featured.setBlockTextureName("appliedenergistics2:" + name);
 
 			final String registryName = "tile." + name;
 
 			// Bypass the forge magic with null to register our own itemblock later.
-			GameRegistry.registerBlock( this.featured, null, registryName );
-			GameRegistry.registerItem( this.definition.maybeItem().get(), registryName );
+			GameRegistry.registerBlock(this.featured, null, registryName);
+			GameRegistry.registerItem(this.definition.maybeItem().get(), registryName);
 		}
 	}
 }

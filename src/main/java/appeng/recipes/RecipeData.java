@@ -18,7 +18,6 @@
 
 package appeng.recipes;
 
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -28,9 +27,7 @@ import java.util.Set;
 
 import appeng.api.recipes.ICraftHandler;
 
-
-public class RecipeData
-{
+public class RecipeData {
 
 	final Map<String, String> aliases = new HashMap<String, String>();
 	final Map<String, GroupIngredient> groups = new HashMap<String, GroupIngredient>();

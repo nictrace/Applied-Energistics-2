@@ -18,21 +18,16 @@
 
 package appeng.block.solids;
 
+import appeng.block.AEDecorativeBlock;
+import appeng.core.features.AEFeature;
+import net.minecraft.block.material.Material;
 
 import java.util.EnumSet;
 
-import net.minecraft.block.material.Material;
+public class BlockQuartz extends AEDecorativeBlock {
 
-import appeng.block.AEDecorativeBlock;
-import appeng.core.features.AEFeature;
-
-
-public class BlockQuartz extends AEDecorativeBlock
-{
-
-	public BlockQuartz()
-	{
-		super( Material.rock );
-		this.setFeature( EnumSet.of( AEFeature.DecorativeQuartzBlocks ) );
+	public BlockQuartz() {
+		super(Material.rock);
+		this.setFeature(EnumSet.of(AEFeature.DecorativeQuartzBlocks));
 	}
 }

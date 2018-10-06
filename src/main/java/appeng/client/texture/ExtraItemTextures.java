@@ -18,57 +18,47 @@
 
 package appeng.client.texture;
 
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+public enum ExtraItemTextures {
+	White("White"), ItemPaintBallShimmer("ItemPaintBallShimmer"),
 
+	ToolColorApplicatorTip_Medium("ToolColorApplicatorTip_Medium"),
 
-public enum ExtraItemTextures
-{
-	White( "White" ), ItemPaintBallShimmer( "ItemPaintBallShimmer" ),
+	ToolColorApplicatorTip_Dark("ToolColorApplicatorTip_Dark"),
 
-	ToolColorApplicatorTip_Medium( "ToolColorApplicatorTip_Medium" ),
-
-	ToolColorApplicatorTip_Dark( "ToolColorApplicatorTip_Dark" ),
-
-	ToolColorApplicatorTip_Light( "ToolColorApplicatorTip_Light" );
+	ToolColorApplicatorTip_Light("ToolColorApplicatorTip_Light");
 
 	private final String name;
 	private IIcon IIcon;
 
-	ExtraItemTextures( final String name )
-	{
+	ExtraItemTextures(final String name) {
 		this.name = name;
 	}
 
-	public static ResourceLocation GuiTexture( final String string )
-	{
-		return new ResourceLocation( "appliedenergistics2", "textures/" + string );
+	public static ResourceLocation GuiTexture(final String string) {
+		return new ResourceLocation("appliedenergistics2", "textures/" + string);
 	}
 
-	@SideOnly( Side.CLIENT )
-	public static IIcon getMissing()
-	{
-		return ( (TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture( TextureMap.locationItemsTexture ) ).getAtlasSprite( "missingno" );
+	@SideOnly(Side.CLIENT)
+	public static IIcon getMissing() {
+		return ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationItemsTexture)).getAtlasSprite("missingno");
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return this.name;
 	}
 
-	public IIcon getIcon()
-	{
+	public IIcon getIcon() {
 		return this.IIcon;
 	}
 
-	public void registerIcon( final TextureMap map )
-	{
-		this.IIcon = map.registerIcon( "appliedenergistics2:" + this.name );
+	public void registerIcon(final TextureMap map) {
+		this.IIcon = map.registerIcon("appliedenergistics2:" + this.name);
 	}
 }

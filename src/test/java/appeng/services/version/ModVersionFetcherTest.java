@@ -18,48 +18,41 @@
 
 package appeng.services.version;
 
-
 import org.junit.Assert;
 import org.junit.Test;
-
 
 /**
  * @author thatsIch
  * @version rv3 - 16.05.2015
  * @since rv3 16.05.2015
  */
-public class ModVersionFetcherTest
-{
+public class ModVersionFetcherTest {
 	//	private static final ModVersionFetcher FETCHER = new ModVersionFetcher(  )
 
 	private final ModVersionFetcher indev;
 	private final ModVersionFetcher pullRequest;
 	private final ModVersionFetcher working;
 
-	public ModVersionFetcherTest()
-	{
+	public ModVersionFetcherTest() {
 		final VersionParser parser = new VersionParser();
 
-		this.indev = new ModVersionFetcher( "@version@", parser );
-		this.pullRequest = new ModVersionFetcher( "pr", parser );
-		this.working = new ModVersionFetcher( "rv2-beta-8", parser );
+		this.indev = new ModVersionFetcher("@version@", parser);
+		this.pullRequest = new ModVersionFetcher("pr", parser);
+		this.working = new ModVersionFetcher("rv2-beta-8", parser);
 	}
 
 	@Test
-	public void testInDev() throws Exception
-	{
-		Assert.assertEquals( this.indev.get(), new DoNotCheckVersion() );
+	public void testInDev() throws Exception {
+		Assert.assertEquals(this.indev.get(), new DoNotCheckVersion());
 	}
 
 	@Test
-	public void testPR() throws Exception
-	{
-		Assert.assertEquals( this.pullRequest.get(), new DoNotCheckVersion() );
+	public void testPR() throws Exception {
+		Assert.assertEquals(this.pullRequest.get(), new DoNotCheckVersion());
 	}
 
 	@Test
-	public void testWorking() throws Exception
-	{
-		Assert.assertEquals( this.working.get(), new DefaultVersion( 2, Channel.Beta, 8 ) );
+	public void testWorking() throws Exception {
+		Assert.assertEquals(this.working.get(), new DefaultVersion(2, Channel.Beta, 8));
 	}
 }

@@ -23,66 +23,57 @@
 
 package appeng.api.implementations.items;
 
-
-import net.minecraft.item.ItemStack;
-
 import appeng.api.storage.ICellWorkbenchItem;
 import appeng.api.storage.data.IAEItemStack;
-
+import net.minecraft.item.ItemStack;
 
 /**
  * Any item which implements this can be treated as an IMEInventory via
  * Util.getCell / Util.isCell It automatically handles the internals and NBT
  * data, which is both nice, and bad for you!
- *
+ * <p>
  * Good cause it means you don't have to do anything, bad because you have
  * little to no control over it.
- *
+ * <p>
  * The standard AE implementation only provides 1-63 Types
  */
-public interface IStorageCell extends ICellWorkbenchItem
-{
+public interface IStorageCell extends ICellWorkbenchItem {
 
 	/**
 	 * It wont work if the return is not a multiple of 8.
 	 * The limit is ({@link Integer#MAX_VALUE} + 1) / 8.
 	 *
 	 * @param cellItem item
-	 *
 	 * @return number of bytes
 	 */
-	int getBytes( ItemStack cellItem );
+	int getBytes(ItemStack cellItem);
 
 	/**
 	 * Determines the number of bytes used for any type included on the cell.
 	 *
 	 * @param cellItem item
-	 *
 	 * @return number of bytes
-	 *
 	 * @deprecated use {@link IStorageCell#getBytesPerType(ItemStack)}
 	 */
 	@Deprecated
-	int BytePerType( ItemStack cellItem );
+	int BytePerType(ItemStack cellItem);
 
 	/**
 	 * Determines the number of bytes used for any type included on the cell.
 	 *
 	 * @param cellItem item
-	 *
 	 * @return number of bytes
 	 */
-	int getBytesPerType( ItemStack cellItem );
+	int getBytesPerType(ItemStack cellItem);
 
 	/**
 	 * Must be between 1 and 63, indicates how many types you want to store on
 	 * the item.
 	 *
 	 * @param cellItem item
-	 *
 	 * @return number of types
 	 */
-	int getTotalTypes( ItemStack cellItem );
+	int getTotalTypes(ItemStack cellItem);
 
 	/**
 	 * Allows you to fine tune which items are allowed on a given cell, if you
@@ -91,10 +82,9 @@ public interface IStorageCell extends ICellWorkbenchItem
 	 *
 	 * @param cellItem          item
 	 * @param requestedAddition requested addition
-	 *
 	 * @return true to preventAdditionOfItem
 	 */
-	boolean isBlackListed( ItemStack cellItem, IAEItemStack requestedAddition );
+	boolean isBlackListed(ItemStack cellItem, IAEItemStack requestedAddition);
 
 	/**
 	 * Allows you to specify if this storage cell can be stored inside other
@@ -112,10 +102,9 @@ public interface IStorageCell extends ICellWorkbenchItem
 	 * cell.
 	 *
 	 * @param i item
-	 *
 	 * @return if the ItemStack should behavior as a storage cell.
 	 */
-	boolean isStorageCell( ItemStack i );
+	boolean isStorageCell(ItemStack i);
 
 	/**
 	 * @return drain in ae/t this storage cell will use.

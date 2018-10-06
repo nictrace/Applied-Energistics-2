@@ -23,13 +23,11 @@
 
 package appeng.api.config;
 
-
 /**
  * Represent the security systems basic permissions, these are not for anti-griefing, they are part of the mod as a
  * gameplay feature.
  */
-public enum SecurityPermissions
-{
+public enum SecurityPermissions {
 	/**
 	 * required to insert items into the network via terminal ( also used for machines based on the owner of the
 	 * network, which is determined by its Security Block. )
@@ -59,13 +57,11 @@ public enum SecurityPermissions
 
 	private final String unlocalizedName = "gui.appliedenergistics2.security." + this.name().toLowerCase();
 
-	public String getUnlocalizedName()
-	{
+	public String getUnlocalizedName() {
 		return this.unlocalizedName + ".name";
 	}
 
-	public String getUnlocalizedTip()
-	{
+	public String getUnlocalizedTip() {
 		return this.unlocalizedName + ".tip";
 	}
 }

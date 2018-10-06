@@ -18,11 +18,6 @@
 
 package appeng.recipes.handlers;
 
-
-import java.util.List;
-
-import net.minecraft.item.ItemStack;
-
 import appeng.api.AEApi;
 import appeng.api.exceptions.MissingIngredientError;
 import appeng.api.exceptions.RecipeError;
@@ -31,50 +26,44 @@ import appeng.api.recipes.ICraftHandler;
 import appeng.api.recipes.IIngredient;
 import appeng.recipes.RecipeHandler;
 import appeng.util.Platform;
+import net.minecraft.item.ItemStack;
 
+import java.util.List;
 
-public class Grind implements ICraftHandler, IWebsiteSerializer
-{
+public class Grind implements ICraftHandler, IWebsiteSerializer {
 
 	private IIngredient pro_input;
 	private IIngredient[] pro_output;
 
 	@Override
-	public void setup( final List<List<IIngredient>> input, final List<List<IIngredient>> output ) throws RecipeError
-	{
-		if( input.size() == 1 && output.size() == 1 )
-		{
-			final int outs = output.get( 0 ).size();
-			if( input.get( 0 ).size() == 1 && outs == 1 )
-			{
-				this.pro_input = input.get( 0 ).get( 0 );
-				this.pro_output = output.get( 0 ).toArray( new IIngredient[outs] );
+	public void setup(final List<List<IIngredient>> input, final List<List<IIngredient>> output) throws RecipeError {
+		if (input.size() == 1 && output.size() == 1) {
+			final int outs = output.get(0).size();
+			if (input.get(0).size() == 1 && outs == 1) {
+				this.pro_input = input.get(0).get(0);
+				this.pro_output = output.get(0).toArray(new IIngredient[outs]);
 				return;
 			}
 		}
-		throw new RecipeError( "Grind must have a single input, and single output." );
+		throw new RecipeError("Grind must have a single input, and single output.");
 	}
 
 	@Override
-	public void register() throws RegistrationError, MissingIngredientError
-	{
-		for( final ItemStack is : this.pro_input.getItemStackSet() )
-		{
-			AEApi.instance().registries().grinder().addRecipe( is, this.pro_output[0].getItemStack(), 8 );
+	public void register() throws RegistrationError, MissingIngredientError {
+		for (final ItemStack is : this.pro_input.getItemStackSet()) {
+			AEApi.instance().registries().grinder().addRecipe(is, this.pro_output[0].getItemStack(), 8);
 		}
 	}
 
 	@Override
-	public String getPattern( final RecipeHandler h )
-	{
+	public String getPattern(final RecipeHandler h) {
 		return "grind\n" +
-				h.getName( this.pro_input ) + '\n' +
-				h.getName( this.pro_output[0] );
+			       h.getName(this.pro_input) + '\n' +
+			       h.getName(this.pro_output[0]);
 	}
 
 	@Override
-	public boolean canCraft( final ItemStack output ) throws RegistrationError, MissingIngredientError
-	{
-		return Platform.isSameItemPrecise( this.pro_output[0].getItemStack(), output );
+	public boolean canCraft(final ItemStack output) throws RegistrationError, MissingIngredientError {
+		return Platform.isSameItemPrecise(this.pro_output[0].getItemStack(), output);
 	}
 }

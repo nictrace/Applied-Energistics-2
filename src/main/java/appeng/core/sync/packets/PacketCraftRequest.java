@@ -18,16 +18,6 @@
 
 package appeng.core.sync.packets;
 
-
-import java.util.concurrent.Future;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
@@ -41,87 +31,79 @@ import appeng.core.sync.AppEngPacket;
 import appeng.core.sync.GuiBridge;
 import appeng.core.sync.network.INetworkInfo;
 import appeng.util.Platform;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.concurrent.Future;
 
-public class PacketCraftRequest extends AppEngPacket
-{
+public class PacketCraftRequest extends AppEngPacket {
 
 	private final long amount;
 	private final boolean heldShift;
 
 	// automatic.
-	public PacketCraftRequest( final ByteBuf stream )
-	{
+	public PacketCraftRequest(final ByteBuf stream) {
 		this.heldShift = stream.readBoolean();
 		this.amount = stream.readLong();
 	}
 
-	public PacketCraftRequest( final int craftAmt, final boolean shift )
-	{
+	public PacketCraftRequest(final int craftAmt, final boolean shift) {
 		this.amount = craftAmt;
 		this.heldShift = shift;
 
 		final ByteBuf data = Unpooled.buffer();
 
-		data.writeInt( this.getPacketID() );
-		data.writeBoolean( shift );
-		data.writeLong( this.amount );
+		data.writeInt(this.getPacketID());
+		data.writeBoolean(shift);
+		data.writeLong(this.amount);
 
-		this.configureWrite( data );
+		this.configureWrite(data);
 	}
 
 	@Override
-	public void serverPacketData( final INetworkInfo manager, final AppEngPacket packet, final EntityPlayer player )
-	{
-		if( player.openContainer instanceof ContainerCraftAmount )
-		{
+	public void serverPacketData(final INetworkInfo manager, final AppEngPacket packet, final EntityPlayer player) {
+		if (player.openContainer instanceof ContainerCraftAmount) {
 			final ContainerCraftAmount cca = (ContainerCraftAmount) player.openContainer;
 			final Object target = cca.getTarget();
-			if( target instanceof IGridHost )
-			{
+			if (target instanceof IGridHost) {
 				final IGridHost gh = (IGridHost) target;
-				final IGridNode gn = gh.getGridNode( ForgeDirection.UNKNOWN );
-				if( gn == null )
-				{
+				final IGridNode gn = gh.getGridNode(ForgeDirection.UNKNOWN);
+				if (gn == null) {
 					return;
 				}
 
 				final IGrid g = gn.getGrid();
-				if( g == null || cca.getItemToCraft() == null )
-				{
+				if (g == null || cca.getItemToCraft() == null) {
 					return;
 				}
 
-				cca.getItemToCraft().setStackSize( this.amount );
+				cca.getItemToCraft().setStackSize(this.amount);
 
 				Future<ICraftingJob> futureJob = null;
-				try
-				{
-					final ICraftingGrid cg = g.getCache( ICraftingGrid.class );
-					futureJob = cg.beginCraftingJob( cca.getWorld(), cca.getGrid(), cca.getActionSrc(), cca.getItemToCraft(), null );
+				try {
+					final ICraftingGrid cg = g.getCache(ICraftingGrid.class);
+					futureJob = cg.beginCraftingJob(cca.getWorld(), cca.getGrid(), cca.getActionSrc(), cca.getItemToCraft(), null);
 
 					final ContainerOpenContext context = cca.getOpenContext();
-					if( context != null )
-					{
+					if (context != null) {
 						final TileEntity te = context.getTile();
-						Platform.openGUI( player, te, cca.getOpenContext().getSide(), GuiBridge.GUI_CRAFTING_CONFIRM );
+						Platform.openGUI(player, te, cca.getOpenContext().getSide(), GuiBridge.GUI_CRAFTING_CONFIRM);
 
-						if( player.openContainer instanceof ContainerCraftConfirm )
-						{
+						if (player.openContainer instanceof ContainerCraftConfirm) {
 							final ContainerCraftConfirm ccc = (ContainerCraftConfirm) player.openContainer;
-							ccc.setAutoStart( this.heldShift );
-							ccc.setJob( futureJob );
+							ccc.setAutoStart(this.heldShift);
+							ccc.setJob(futureJob);
 							cca.detectAndSendChanges();
 						}
 					}
-				}
-				catch( final Throwable e )
-				{
-					if( futureJob != null )
-					{
-						futureJob.cancel( true );
+				} catch (final Throwable e) {
+					if (futureJob != null) {
+						futureJob.cancel(true);
 					}
-					AELog.debug( e );
+					AELog.debug(e);
 				}
 			}
 		}

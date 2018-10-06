@@ -18,14 +18,11 @@
 
 package appeng.core.stats;
 
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.StatBasic;
 import net.minecraft.util.ChatComponentTranslation;
 
-
-public enum Stats
-{
+public enum Stats {
 
 	// done
 	ItemsInserted,
@@ -38,20 +35,16 @@ public enum Stats
 
 	private StatBasic stat;
 
-	Stats()
-	{
+	Stats() {
 	}
 
-	public void addToPlayer( final EntityPlayer player, final int howMany )
-	{
-		player.addStat( this.getStat(), howMany );
+	public void addToPlayer(final EntityPlayer player, final int howMany) {
+		player.addStat(this.getStat(), howMany);
 	}
 
-	StatBasic getStat()
-	{
-		if( this.stat == null )
-		{
-			this.stat = new StatBasic( "stat.ae2." + this.name(), new ChatComponentTranslation( "stat.ae2." + this.name() ) );
+	StatBasic getStat() {
+		if (this.stat == null) {
+			this.stat = new StatBasic("stat.ae2." + this.name(), new ChatComponentTranslation("stat.ae2." + this.name()));
 			this.stat.registerStat();
 		}
 

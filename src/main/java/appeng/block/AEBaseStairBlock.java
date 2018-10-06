@@ -18,43 +18,36 @@
 
 package appeng.block;
 
-
-import java.util.EnumSet;
-
-import com.google.common.base.Optional;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockStairs;
-
 import appeng.core.features.AEFeature;
 import appeng.core.features.IAEFeature;
 import appeng.core.features.IFeatureHandler;
 import appeng.core.features.StairBlockFeatureHandler;
+import com.google.common.base.Optional;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockStairs;
 
+import java.util.EnumSet;
 
-public abstract class AEBaseStairBlock extends BlockStairs implements IAEFeature
-{
+public abstract class AEBaseStairBlock extends BlockStairs implements IAEFeature {
+
 	private final IFeatureHandler features;
 
-	protected AEBaseStairBlock( final Block block, final int meta, final EnumSet<AEFeature> features )
-	{
-		super( block, meta );
+	protected AEBaseStairBlock(final Block block, final int meta, final EnumSet<AEFeature> features) {
+		super(block, meta);
 
-		this.features = new StairBlockFeatureHandler( features, this, Optional.<String>absent() );
-		this.setBlockName( block.getUnlocalizedName() );
+		this.features = new StairBlockFeatureHandler(features, this, Optional.<String>absent());
+		this.setBlockName(block.getUnlocalizedName());
 
-		this.setLightOpacity( 0 );
+		this.setLightOpacity(0);
 	}
 
 	@Override
-	public IFeatureHandler handler()
-	{
+	public IFeatureHandler handler() {
 		return this.features;
 	}
 
 	@Override
-	public void postInit()
-	{
+	public void postInit() {
 		// Override to do stuff
 	}
 }

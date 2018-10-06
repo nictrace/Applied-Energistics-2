@@ -23,9 +23,7 @@
 
 package appeng.api.config;
 
-
-public enum Actionable
-{
+public enum Actionable {
 	/**
 	 * Perform the intended action.
 	 */

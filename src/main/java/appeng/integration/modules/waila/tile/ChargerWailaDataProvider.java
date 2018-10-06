@@ -18,21 +18,17 @@
 
 package appeng.integration.modules.waila.tile;
 
-
-import java.util.List;
-
+import appeng.core.localization.WailaText;
+import appeng.integration.modules.waila.BaseWailaDataProvider;
+import appeng.tile.misc.TileCharger;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-
-import appeng.core.localization.WailaText;
-import appeng.integration.modules.waila.BaseWailaDataProvider;
-import appeng.tile.misc.TileCharger;
-
+import java.util.List;
 
 /**
  * Charger provider for WAILA
@@ -41,35 +37,31 @@ import appeng.tile.misc.TileCharger;
  * @version rv2
  * @since rv2
  */
-public final class ChargerWailaDataProvider extends BaseWailaDataProvider
-{
+public final class ChargerWailaDataProvider extends BaseWailaDataProvider {
+
 	/**
 	 * Displays the holding item and its tooltip
 	 *
-	 * @param itemStack stack of charger
+	 * @param itemStack      stack of charger
 	 * @param currentToolTip unmodified tooltip
-	 * @param accessor wrapper information
-	 * @param config config option
-	 *
+	 * @param accessor       wrapper information
+	 * @param config         config option
 	 * @return modified tooltip
 	 */
 	@Override
-	public List<String> getWailaBody( final ItemStack itemStack, final List<String> currentToolTip, final IWailaDataAccessor accessor, final IWailaConfigHandler config )
-	{
+	public List<String> getWailaBody(final ItemStack itemStack, final List<String> currentToolTip, final IWailaDataAccessor accessor, final IWailaConfigHandler config) {
 		final TileEntity te = accessor.getTileEntity();
-		if( te instanceof TileCharger )
-		{
+		if (te instanceof TileCharger) {
 			final TileCharger charger = (TileCharger) te;
 			final IInventory chargerInventory = charger.getInternalInventory();
-			final ItemStack chargingItem = chargerInventory.getStackInSlot( 0 );
+			final ItemStack chargingItem = chargerInventory.getStackInSlot(0);
 
-			if( chargingItem != null )
-			{
+			if (chargingItem != null) {
 				final String currentInventory = chargingItem.getDisplayName();
 				final EntityPlayer player = accessor.getPlayer();
 
-				currentToolTip.add( WailaText.Contains + ": " + currentInventory );
-				chargingItem.getItem().addInformation( chargingItem, player, currentToolTip, true );
+				currentToolTip.add(WailaText.Contains + ": " + currentInventory);
+				chargingItem.getItem().addInformation(chargingItem, player, currentToolTip, true);
 			}
 		}
 

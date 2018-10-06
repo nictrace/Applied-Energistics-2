@@ -23,18 +23,16 @@
 
 package appeng.api.networking.ticking;
 
-
 /**
  * Describes how your tiles ticking is executed.
  */
-public class TickingRequest
-{
+public class TickingRequest {
 
 	/**
 	 * the minimum number of ticks that must pass between ticks.
-	 *
+	 * <p>
 	 * Valid Values are : 1+
-	 *
+	 * <p>
 	 * Suggested is 5-20
 	 */
 	public final int minTickRate;
@@ -42,9 +40,9 @@ public class TickingRequest
 	/**
 	 * the maximum number of ticks that can pass between ticks, if this value is
 	 * exceeded the tile must tick.
-	 *
+	 * <p>
 	 * Valid Values are 1+
-	 *
+	 * <p>
 	 * Suggested is 20-40
 	 */
 	public final int maxTickRate;
@@ -60,8 +58,7 @@ public class TickingRequest
 	 */
 	public final boolean canBeAlerted;
 
-	public TickingRequest( final int min, final int max, final boolean sleep, final boolean alertable )
-	{
+	public TickingRequest(final int min, final int max, final boolean sleep, final boolean alertable) {
 		this.minTickRate = min;
 		this.maxTickRate = max;
 		this.isSleeping = sleep;

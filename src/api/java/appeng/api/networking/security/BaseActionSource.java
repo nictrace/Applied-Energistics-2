@@ -23,17 +23,13 @@
 
 package appeng.api.networking.security;
 
+public class BaseActionSource {
 
-public class BaseActionSource
-{
-
-	public boolean isPlayer()
-	{
+	public boolean isPlayer() {
 		return false;
 	}
 
-	public boolean isMachine()
-	{
+	public boolean isMachine() {
 		return false;
 	}
 }

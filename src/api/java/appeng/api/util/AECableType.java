@@ -23,9 +23,7 @@
 
 package appeng.api.util;
 
-
-public enum AECableType
-{
+public enum AECableType {
 	/**
 	 * No Cable present.
 	 */

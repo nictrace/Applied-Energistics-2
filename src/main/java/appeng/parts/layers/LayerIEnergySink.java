@@ -18,98 +18,78 @@
 
 package appeng.parts.layers;
 
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import ic2.api.energy.tile.IEnergyAcceptor;
-import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergyTile;
-
 import appeng.api.parts.IPart;
 import appeng.api.parts.IPartHost;
 import appeng.api.parts.LayerBase;
 import appeng.api.parts.LayerFlags;
 import appeng.util.Platform;
+import ic2.api.energy.tile.IEnergyAcceptor;
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergyTile;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 
+public class LayerIEnergySink extends LayerBase implements IEnergySink {
 
-public class LayerIEnergySink extends LayerBase implements IEnergySink
-{
-
-	private TileEntity getEnergySinkTile()
-	{
+	private TileEntity getEnergySinkTile() {
 		final IPartHost host = (IPartHost) this;
 		return host.getTile();
 	}
 
-	private World getEnergySinkWorld()
-	{
-		if( this.getEnergySinkTile() == null )
-		{
+	private World getEnergySinkWorld() {
+		if (this.getEnergySinkTile() == null) {
 			return null;
 		}
 
 		return this.getEnergySinkTile().getWorldObj();
 	}
 
-	private boolean isTileValid()
-	{
+	private boolean isTileValid() {
 		final TileEntity te = this.getEnergySinkTile();
 
-		if( te == null )
-		{
+		if (te == null) {
 			return false;
 		}
 
-		return !te.isInvalid() && te.getWorldObj().blockExists( te.xCoord, te.yCoord, te.zCoord );
+		return !te.isInvalid() && te.getWorldObj().blockExists(te.xCoord, te.yCoord, te.zCoord);
 	}
 
-	private void addToENet()
-	{
-		if( this.getEnergySinkWorld() == null )
-		{
+	private void addToENet() {
+		if (this.getEnergySinkWorld() == null) {
 			return;
 		}
 
 		// re-add
 		this.removeFromENet();
 
-		if( !this.isInIC2() && Platform.isServer() && this.isTileValid() )
-		{
-			this.getLayerFlags().add( LayerFlags.IC2_ENET );
-			MinecraftForge.EVENT_BUS.post( new ic2.api.energy.event.EnergyTileLoadEvent( (IEnergyTile) this.getEnergySinkTile() ) );
+		if (!this.isInIC2() && Platform.isServer() && this.isTileValid()) {
+			this.getLayerFlags().add(LayerFlags.IC2_ENET);
+			MinecraftForge.EVENT_BUS.post(new ic2.api.energy.event.EnergyTileLoadEvent((IEnergyTile) this.getEnergySinkTile()));
 		}
 	}
 
-	private void removeFromENet()
-	{
-		if( this.getEnergySinkWorld() == null )
-		{
+	private void removeFromENet() {
+		if (this.getEnergySinkWorld() == null) {
 			return;
 		}
 
-		if( this.isInIC2() && Platform.isServer() )
-		{
-			this.getLayerFlags().remove( LayerFlags.IC2_ENET );
-			MinecraftForge.EVENT_BUS.post( new ic2.api.energy.event.EnergyTileUnloadEvent( (IEnergyTile) this.getEnergySinkTile() ) );
+		if (this.isInIC2() && Platform.isServer()) {
+			this.getLayerFlags().remove(LayerFlags.IC2_ENET);
+			MinecraftForge.EVENT_BUS.post(new ic2.api.energy.event.EnergyTileUnloadEvent((IEnergyTile) this.getEnergySinkTile()));
 		}
 	}
 
-	private boolean interestedInIC2()
-	{
-		if( !( (IPartHost) this ).isInWorld() )
-		{
+	private boolean interestedInIC2() {
+		if (!((IPartHost) this).isInWorld()) {
 			return false;
 		}
 
 		int interested = 0;
-		for( final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS )
-		{
-			final IPart part = this.getPart( dir );
-			if( part instanceof IEnergyTile )
-			{
+		for (final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			final IPart part = this.getPart(dir);
+			if (part instanceof IEnergyTile) {
 				interested++;
 			}
 		}
@@ -117,58 +97,46 @@ public class LayerIEnergySink extends LayerBase implements IEnergySink
 	}
 
 	@Override
-	public void partChanged()
-	{
+	public void partChanged() {
 		super.partChanged();
 
-		if( this.interestedInIC2() )
-		{
+		if (this.interestedInIC2()) {
 			this.addToENet();
-		}
-		else
-		{
+		} else {
 			this.removeFromENet();
 		}
 	}
 
 	@Override
-	public boolean acceptsEnergyFrom( final TileEntity emitter, final ForgeDirection direction )
-	{
-		if( !this.isInIC2() )
-		{
+	public boolean acceptsEnergyFrom(final TileEntity emitter, final ForgeDirection direction) {
+		if (!this.isInIC2()) {
 			return false;
 		}
 
-		final IPart part = this.getPart( direction );
-		if( part instanceof IEnergySink )
-		{
-			return ( (IEnergyAcceptor) part ).acceptsEnergyFrom( emitter, direction );
+		final IPart part = this.getPart(direction);
+		if (part instanceof IEnergySink) {
+			return ((IEnergyAcceptor) part).acceptsEnergyFrom(emitter, direction);
 		}
 		return false;
 	}
 
-	private boolean isInIC2()
-	{
-		return this.getLayerFlags().contains( LayerFlags.IC2_ENET );
+	private boolean isInIC2() {
+		return this.getLayerFlags().contains(LayerFlags.IC2_ENET);
 	}
 
 	@Override
-	public double getDemandedEnergy()
-	{
-		if( !this.isInIC2() )
-		{
+	public double getDemandedEnergy() {
+		if (!this.isInIC2()) {
 			return 0;
 		}
 
 		// this is a flawed implementation, that requires a change to the IC2 API.
 
-		for( final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS )
-		{
-			final IPart part = this.getPart( dir );
-			if( part instanceof IEnergySink )
-			{
+		for (final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			final IPart part = this.getPart(dir);
+			if (part instanceof IEnergySink) {
 				// use lower number cause ic2 deletes power it sends that isn't received.
-				return ( (IEnergySink) part ).getDemandedEnergy();
+				return ((IEnergySink) part).getDemandedEnergy();
 			}
 		}
 
@@ -176,25 +144,20 @@ public class LayerIEnergySink extends LayerBase implements IEnergySink
 	}
 
 	@Override
-	public int getSinkTier()
-	{
+	public int getSinkTier() {
 		return Integer.MAX_VALUE; // no real options here...
 	}
 
 	@Override
-	public double injectEnergy( final ForgeDirection directionFrom, final double amount, final double voltage )
-	{
-		if( !this.isInIC2() )
-		{
+	public double injectEnergy(final ForgeDirection directionFrom, final double amount, final double voltage) {
+		if (!this.isInIC2()) {
 			return amount;
 		}
 
-		for( final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS )
-		{
-			final IPart part = this.getPart( dir );
-			if( part instanceof IEnergySink )
-			{
-				return ( (IEnergySink) part ).injectEnergy( directionFrom, amount, voltage );
+		for (final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			final IPart part = this.getPart(dir);
+			if (part instanceof IEnergySink) {
+				return ((IEnergySink) part).injectEnergy(directionFrom, amount, voltage);
 			}
 		}
 

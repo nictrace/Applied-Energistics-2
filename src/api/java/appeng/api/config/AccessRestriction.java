@@ -23,32 +23,25 @@
 
 package appeng.api.config;
 
-
-public enum AccessRestriction
-{
-	NO_ACCESS( 0 ), READ( 1 ), WRITE( 2 ), READ_WRITE( 3 );
+public enum AccessRestriction {
+	NO_ACCESS(0), READ(1), WRITE(2), READ_WRITE(3);
 
 	private final int permissionBit;
 
-	AccessRestriction( final int v )
-	{
+	AccessRestriction(final int v) {
 		this.permissionBit = v;
 	}
 
-	public boolean hasPermission( final AccessRestriction ar )
-	{
-		return ( this.permissionBit & ar.permissionBit ) == ar.permissionBit;
+	public boolean hasPermission(final AccessRestriction ar) {
+		return (this.permissionBit & ar.permissionBit) == ar.permissionBit;
 	}
 
-	public AccessRestriction restrictPermissions( final AccessRestriction ar )
-	{
-		return this.getPermByBit( this.permissionBit & ar.permissionBit );
+	public AccessRestriction restrictPermissions(final AccessRestriction ar) {
+		return this.getPermByBit(this.permissionBit & ar.permissionBit);
 	}
 
-	private AccessRestriction getPermByBit( final int bit )
-	{
-		switch( bit )
-		{
+	private AccessRestriction getPermByBit(final int bit) {
+		switch (bit) {
 			default:
 			case 0:
 				return NO_ACCESS;
@@ -61,13 +54,11 @@ public enum AccessRestriction
 		}
 	}
 
-	public AccessRestriction addPermissions( final AccessRestriction ar )
-	{
-		return this.getPermByBit( this.permissionBit | ar.permissionBit );
+	public AccessRestriction addPermissions(final AccessRestriction ar) {
+		return this.getPermByBit(this.permissionBit | ar.permissionBit);
 	}
 
-	public AccessRestriction removePermissions( final AccessRestriction ar )
-	{
-		return this.getPermByBit( this.permissionBit & ( ~ar.permissionBit ) );
+	public AccessRestriction removePermissions(final AccessRestriction ar) {
+		return this.getPermByBit(this.permissionBit & (~ar.permissionBit));
 	}
 }

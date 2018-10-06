@@ -18,18 +18,6 @@
 
 package appeng.block.storage;
 
-
-import java.util.EnumSet;
-
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import appeng.api.AEApi;
 import appeng.api.storage.ICellHandler;
 import appeng.block.AEBaseTileBlock;
@@ -39,52 +27,48 @@ import appeng.core.localization.PlayerMessages;
 import appeng.core.sync.GuiBridge;
 import appeng.tile.storage.TileChest;
 import appeng.util.Platform;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.EnumSet;
 
-public class BlockChest extends AEBaseTileBlock
-{
+public class BlockChest extends AEBaseTileBlock {
 
-	public BlockChest()
-	{
-		super( Material.iron );
-		this.setTileEntity( TileChest.class );
-		this.setFeature( EnumSet.of( AEFeature.StorageCells, AEFeature.MEChest ) );
+	public BlockChest() {
+		super(Material.iron);
+		this.setTileEntity(TileChest.class);
+		this.setFeature(EnumSet.of(AEFeature.StorageCells, AEFeature.MEChest));
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	protected RenderMEChest getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	protected RenderMEChest getRenderer() {
 		return new RenderMEChest();
 	}
 
 	@Override
-	public boolean onActivated( final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		final TileChest tg = this.getTileEntity( w, x, y, z );
-		if( tg != null && !p.isSneaking() )
-		{
-			if( Platform.isClient() )
-			{
+	public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ) {
+		final TileChest tg = this.getTileEntity(w, x, y, z);
+		if (tg != null && !p.isSneaking()) {
+			if (Platform.isClient()) {
 				return true;
 			}
 
-			if( side != tg.getUp().ordinal() )
-			{
-				Platform.openGUI( p, tg, ForgeDirection.getOrientation( side ), GuiBridge.GUI_CHEST );
-			}
-			else
-			{
-				final ItemStack cell = tg.getStackInSlot( 1 );
-				if( cell != null )
-				{
-					final ICellHandler ch = AEApi.instance().registries().cell().getHandler( cell );
+			if (side != tg.getUp().ordinal()) {
+				Platform.openGUI(p, tg, ForgeDirection.getOrientation(side), GuiBridge.GUI_CHEST);
+			} else {
+				final ItemStack cell = tg.getStackInSlot(1);
+				if (cell != null) {
+					final ICellHandler ch = AEApi.instance().registries().cell().getHandler(cell);
 
-					tg.openGui( p, ch, cell, side );
-				}
-				else
-				{
-					p.addChatMessage( PlayerMessages.ChestCannotReadStorageCell.get() );
+					tg.openGui(p, ch, cell, side);
+				} else {
+					p.addChatMessage(PlayerMessages.ChestCannotReadStorageCell.get());
 				}
 			}
 

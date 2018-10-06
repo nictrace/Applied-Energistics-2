@@ -18,18 +18,6 @@
 
 package appeng.tile.storage;
 
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.AEApi;
 import appeng.api.implementations.tiles.IChestOrDrive;
 import appeng.api.networking.GridFlags;
@@ -57,13 +45,20 @@ import appeng.tile.grid.AENetworkInvTile;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
-public class TileDrive extends AENetworkInvTile implements IChestOrDrive, IPriorityHost
-{
+public class TileDrive extends AENetworkInvTile implements IChestOrDrive, IPriorityHost {
 
-	private final int[] sides = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-	private final AppEngInternalInventory inv = new AppEngInternalInventory( this, 10 );
+	private final int[] sides = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 10);
 	private final ICellHandler[] handlersBySlot = new ICellHandler[10];
 	private final DriveWatcher<IAEItemStack>[] invBySlot = new DriveWatcher[10];
 	private final BaseActionSource mySrc;
@@ -75,77 +70,60 @@ public class TileDrive extends AENetworkInvTile implements IChestOrDrive, IPrior
 	private int priority = 0;
 	private boolean wasActive = false;
 
-	public TileDrive()
-	{
-		this.mySrc = new MachineSource( this );
-		this.getProxy().setFlags( GridFlags.REQUIRE_CHANNEL );
+	public TileDrive() {
+		this.mySrc = new MachineSource(this);
+		this.getProxy().setFlags(GridFlags.REQUIRE_CHANNEL);
 	}
 
-	@TileEvent( TileEventType.NETWORK_WRITE )
-	public void writeToStream_TileDrive( final ByteBuf data )
-	{
-		if( this.worldObj.getTotalWorldTime() - this.lastStateChange > 8 )
-		{
+	@TileEvent(TileEventType.NETWORK_WRITE)
+	public void writeToStream_TileDrive(final ByteBuf data) {
+		if (this.worldObj.getTotalWorldTime() - this.lastStateChange > 8) {
 			this.state = 0;
-		}
-		else
-		{
+		} else {
 			this.state &= 0x24924924; // just keep the blinks...
 		}
 
-		if( this.getProxy().isActive() )
-		{
+		if (this.getProxy().isActive()) {
 			this.state |= 0x80000000;
-		}
-		else
-		{
+		} else {
 			this.state &= ~0x80000000;
 		}
 
-		for( int x = 0; x < this.getCellCount(); x++ )
-		{
-			this.state |= ( this.getCellStatus( x ) << ( 3 * x ) );
+		for (int x = 0; x < this.getCellCount(); x++) {
+			this.state |= (this.getCellStatus(x) << (3 * x));
 		}
 
-		data.writeInt( this.state );
+		data.writeInt(this.state);
 	}
 
 	@Override
-	public int getCellCount()
-	{
+	public int getCellCount() {
 		return 10;
 	}
 
 	@Override
-	public int getCellStatus( final int slot )
-	{
-		if( Platform.isClient() )
-		{
-			return ( this.state >> ( slot * 3 ) ) & 3;
+	public int getCellStatus(final int slot) {
+		if (Platform.isClient()) {
+			return (this.state >> (slot * 3)) & 3;
 		}
 
-		final ItemStack cell = this.inv.getStackInSlot( 2 );
+		final ItemStack cell = this.inv.getStackInSlot(2);
 		final ICellHandler ch = this.handlersBySlot[slot];
 
 		final MEInventoryHandler handler = this.invBySlot[slot];
-		if( handler == null )
-		{
+		if (handler == null) {
 			return 0;
 		}
 
-		if( handler.getChannel() == StorageChannel.ITEMS )
-		{
-			if( ch != null )
-			{
-				return ch.getStatusForCell( cell, handler.getInternal() );
+		if (handler.getChannel() == StorageChannel.ITEMS) {
+			if (ch != null) {
+				return ch.getStatusForCell(cell, handler.getInternal());
 			}
 		}
 
-		if( handler.getChannel() == StorageChannel.FLUIDS )
-		{
-			if( ch != null )
-			{
-				return ch.getStatusForCell( cell, handler.getInternal() );
+		if (handler.getChannel() == StorageChannel.FLUIDS) {
+			if (ch != null) {
+				return ch.getStatusForCell(cell, handler.getInternal());
 			}
 		}
 
@@ -153,269 +131,220 @@ public class TileDrive extends AENetworkInvTile implements IChestOrDrive, IPrior
 	}
 
 	@Override
-	public boolean isPowered()
-	{
-		if( Platform.isClient() )
-		{
-			return ( this.state & 0x80000000 ) == 0x80000000;
+	public boolean isPowered() {
+		if (Platform.isClient()) {
+			return (this.state & 0x80000000) == 0x80000000;
 		}
 
 		return this.getProxy().isActive();
 	}
 
 	@Override
-	public boolean isCellBlinking( final int slot )
-	{
+	public boolean isCellBlinking(final int slot) {
 		final long now = this.worldObj.getTotalWorldTime();
-		if( now - this.lastStateChange > 8 )
-		{
+		if (now - this.lastStateChange > 8) {
 			return false;
 		}
 
-		return ( ( this.state >> ( slot * 3 + 2 ) ) & 0x01 ) == 0x01;
+		return ((this.state >> (slot * 3 + 2)) & 0x01) == 0x01;
 	}
 
-	@TileEvent( TileEventType.NETWORK_READ )
-	public boolean readFromStream_TileDrive( final ByteBuf data )
-	{
+	@TileEvent(TileEventType.NETWORK_READ)
+	public boolean readFromStream_TileDrive(final ByteBuf data) {
 		final int oldState = this.state;
 		this.state = data.readInt();
 		this.lastStateChange = this.worldObj.getTotalWorldTime();
-		return ( this.state & 0xDB6DB6DB ) != ( oldState & 0xDB6DB6DB );
+		return (this.state & 0xDB6DB6DB) != (oldState & 0xDB6DB6DB);
 	}
 
-	@TileEvent( TileEventType.WORLD_NBT_READ )
-	public void readFromNBT_TileDrive( final NBTTagCompound data )
-	{
+	@TileEvent(TileEventType.WORLD_NBT_READ)
+	public void readFromNBT_TileDrive(final NBTTagCompound data) {
 		this.isCached = false;
-		this.priority = data.getInteger( "priority" );
+		this.priority = data.getInteger("priority");
 	}
 
-	@TileEvent( TileEventType.WORLD_NBT_WRITE )
-	public void writeToNBT_TileDrive( final NBTTagCompound data )
-	{
-		data.setInteger( "priority", this.priority );
+	@TileEvent(TileEventType.WORLD_NBT_WRITE)
+	public void writeToNBT_TileDrive(final NBTTagCompound data) {
+		data.setInteger("priority", this.priority);
 	}
 
 	@MENetworkEventSubscribe
-	public void powerRender( final MENetworkPowerStatusChange c )
-	{
+	public void powerRender(final MENetworkPowerStatusChange c) {
 		this.recalculateDisplay();
 	}
 
-	private void recalculateDisplay()
-	{
+	private void recalculateDisplay() {
 		final boolean currentActive = this.getProxy().isActive();
-		if( currentActive )
-		{
+		if (currentActive) {
 			this.state |= 0x80000000;
-		}
-		else
-		{
+		} else {
 			this.state &= ~0x80000000;
 		}
 
-		if( this.wasActive != currentActive )
-		{
+		if (this.wasActive != currentActive) {
 			this.wasActive = currentActive;
-			try
-			{
-				this.getProxy().getGrid().postEvent( new MENetworkCellArrayUpdate() );
-			}
-			catch( final GridAccessException e )
-			{
+			try {
+				this.getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
+			} catch (final GridAccessException e) {
 				// :P
 			}
 		}
 
-		for( int x = 0; x < this.getCellCount(); x++ )
-		{
-			this.state |= ( this.getCellStatus( x ) << ( 3 * x ) );
+		for (int x = 0; x < this.getCellCount(); x++) {
+			this.state |= (this.getCellStatus(x) << (3 * x));
 		}
 
 		final int oldState = 0;
-		if( oldState != this.state )
-		{
+		if (oldState != this.state) {
 			this.markForUpdate();
 		}
 	}
 
 	@MENetworkEventSubscribe
-	public void channelRender( final MENetworkChannelsChanged c )
-	{
+	public void channelRender(final MENetworkChannelsChanged c) {
 		this.recalculateDisplay();
 	}
 
 	@Override
-	public AECableType getCableConnectionType( final ForgeDirection dir )
-	{
+	public AECableType getCableConnectionType(final ForgeDirection dir) {
 		return AECableType.SMART;
 	}
 
 	@Override
-	public DimensionalCoord getLocation()
-	{
-		return new DimensionalCoord( this );
+	public DimensionalCoord getLocation() {
+		return new DimensionalCoord(this);
 	}
 
 	@Override
-	public IInventory getInternalInventory()
-	{
+	public IInventory getInternalInventory() {
 		return this.inv;
 	}
 
 	@Override
-	public boolean isItemValidForSlot( final int i, final ItemStack itemstack )
-	{
-		return itemstack != null && AEApi.instance().registries().cell().isCellHandled( itemstack );
+	public boolean isItemValidForSlot(final int i, final ItemStack itemstack) {
+		return itemstack != null && AEApi.instance().registries().cell().isCellHandled(itemstack);
 	}
 
 	@Override
-	public void onChangeInventory( final IInventory inv, final int slot, final InvOperation mc, final ItemStack removed, final ItemStack added )
-	{
-		if( this.isCached )
-		{
+	public void onChangeInventory(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removed, final ItemStack added) {
+		if (this.isCached) {
 			this.isCached = false; // recalculate the storage cell.
 			this.updateState();
 		}
 
-		try
-		{
-			this.getProxy().getGrid().postEvent( new MENetworkCellArrayUpdate() );
+		try {
+			this.getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
 
 			final IStorageGrid gs = this.getProxy().getStorage();
-			Platform.postChanges( gs, removed, added, this.mySrc );
-		}
-		catch( final GridAccessException ignored )
-		{
+			Platform.postChanges(gs, removed, added, this.mySrc);
+		} catch (final GridAccessException ignored) {
 		}
 
 		this.markForUpdate();
 	}
 
 	@Override
-	public int[] getAccessibleSlotsBySide( final ForgeDirection side )
-	{
+	public int[] getAccessibleSlotsBySide(final ForgeDirection side) {
 		return this.sides;
 	}
 
-	private void updateState()
-	{
-		if( !this.isCached )
-		{
+	private void updateState() {
+		if (!this.isCached) {
 			this.items = new LinkedList();
 			this.fluids = new LinkedList();
 
 			double power = 2.0;
 
-			for( int x = 0; x < this.inv.getSizeInventory(); x++ )
-			{
-				final ItemStack is = this.inv.getStackInSlot( x );
+			for (int x = 0; x < this.inv.getSizeInventory(); x++) {
+				final ItemStack is = this.inv.getStackInSlot(x);
 				this.invBySlot[x] = null;
 				this.handlersBySlot[x] = null;
 
-				if( is != null )
-				{
-					this.handlersBySlot[x] = AEApi.instance().registries().cell().getHandler( is );
+				if (is != null) {
+					this.handlersBySlot[x] = AEApi.instance().registries().cell().getHandler(is);
 
-					if( this.handlersBySlot[x] != null )
-					{
-						IMEInventoryHandler cell = this.handlersBySlot[x].getCellInventory( is, this, StorageChannel.ITEMS );
+					if (this.handlersBySlot[x] != null) {
+						IMEInventoryHandler cell = this.handlersBySlot[x].getCellInventory(is, this, StorageChannel.ITEMS);
 
-						if( cell != null )
-						{
-							power += this.handlersBySlot[x].cellIdleDrain( is, cell );
+						if (cell != null) {
+							power += this.handlersBySlot[x].cellIdleDrain(is, cell);
 
-							final DriveWatcher<IAEItemStack> ih = new DriveWatcher( cell, is, this.handlersBySlot[x], this );
-							ih.setPriority( this.priority );
+							final DriveWatcher<IAEItemStack> ih = new DriveWatcher(cell, is, this.handlersBySlot[x], this);
+							ih.setPriority(this.priority);
 							this.invBySlot[x] = ih;
-							this.items.add( ih );
-						}
-						else
-						{
-							cell = this.handlersBySlot[x].getCellInventory( is, this, StorageChannel.FLUIDS );
+							this.items.add(ih);
+						} else {
+							cell = this.handlersBySlot[x].getCellInventory(is, this, StorageChannel.FLUIDS);
 
-							if( cell != null )
-							{
-								power += this.handlersBySlot[x].cellIdleDrain( is, cell );
+							if (cell != null) {
+								power += this.handlersBySlot[x].cellIdleDrain(is, cell);
 
-								final DriveWatcher<IAEItemStack> ih = new DriveWatcher( cell, is, this.handlersBySlot[x], this );
-								ih.setPriority( this.priority );
+								final DriveWatcher<IAEItemStack> ih = new DriveWatcher(cell, is, this.handlersBySlot[x], this);
+								ih.setPriority(this.priority);
 								this.invBySlot[x] = ih;
-								this.fluids.add( ih );
+								this.fluids.add(ih);
 							}
 						}
 					}
 				}
 			}
 
-			this.getProxy().setIdlePowerUsage( power );
+			this.getProxy().setIdlePowerUsage(power);
 
 			this.isCached = true;
 		}
 	}
 
 	@Override
-	public void onReady()
-	{
+	public void onReady() {
 		super.onReady();
 		this.updateState();
 	}
 
 	@Override
-	public List<IMEInventoryHandler> getCellArray( final StorageChannel channel )
-	{
-		if( this.getProxy().isActive() )
-		{
+	public List<IMEInventoryHandler> getCellArray(final StorageChannel channel) {
+		if (this.getProxy().isActive()) {
 			this.updateState();
-			return (List) ( channel == StorageChannel.ITEMS ? this.items : this.fluids );
+			return (List) (channel == StorageChannel.ITEMS ? this.items : this.fluids);
 		}
 		return new ArrayList();
 	}
 
 	@Override
-	public int getPriority()
-	{
+	public int getPriority() {
 		return this.priority;
 	}
 
 	@Override
-	public void setPriority( final int newValue )
-	{
+	public void setPriority(final int newValue) {
 		this.priority = newValue;
 		this.markDirty();
 
 		this.isCached = false; // recalculate the storage cell.
 		this.updateState();
 
-		try
-		{
-			this.getProxy().getGrid().postEvent( new MENetworkCellArrayUpdate() );
-		}
-		catch( final GridAccessException e )
-		{
+		try {
+			this.getProxy().getGrid().postEvent(new MENetworkCellArrayUpdate());
+		} catch (final GridAccessException e) {
 			// :P
 		}
 	}
 
 	@Override
-	public void blinkCell( final int slot )
-	{
+	public void blinkCell(final int slot) {
 		final long now = this.worldObj.getTotalWorldTime();
-		if( now - this.lastStateChange > 8 )
-		{
+		if (now - this.lastStateChange > 8) {
 			this.state = 0;
 		}
 		this.lastStateChange = now;
 
-		this.state |= 1 << ( slot * 3 + 2 );
+		this.state |= 1 << (slot * 3 + 2);
 
 		this.recalculateDisplay();
 	}
 
 	@Override
-	public void saveChanges( final IMEInventory cellInventory )
-	{
-		this.worldObj.markTileEntityChunkModified( this.xCoord, this.yCoord, this.zCoord, this );
+	public void saveChanges(final IMEInventory cellInventory) {
+		this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, this);
 	}
 }

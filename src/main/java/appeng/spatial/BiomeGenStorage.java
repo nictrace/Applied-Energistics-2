@@ -18,17 +18,13 @@
 
 package appeng.spatial;
 
-
 import net.minecraft.world.biome.BiomeGenBase;
 
+public class BiomeGenStorage extends BiomeGenBase {
 
-public class BiomeGenStorage extends BiomeGenBase
-{
-
-	public BiomeGenStorage( final int id )
-	{
-		super( id );
-		this.setBiomeName( "Storage Cell" );
+	public BiomeGenStorage(final int id) {
+		super(id);
+		this.setBiomeName("Storage Cell");
 
 		this.setDisableRain();
 		this.temperature = -100;

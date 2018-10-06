@@ -18,7 +18,6 @@
 
 package appeng.block.misc;
 
-
 import appeng.block.AEBaseTileBlock;
 import appeng.client.render.blocks.RenderBlockInscriber;
 import appeng.core.features.AEFeature;
@@ -34,41 +33,33 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.EnumSet;
 
+public class BlockInscriber extends AEBaseTileBlock {
 
-public class BlockInscriber extends AEBaseTileBlock
-{
+	public BlockInscriber() {
+		super(Material.iron);
 
-	public BlockInscriber()
-	{
-		super( Material.iron );
-
-		this.setTileEntity( TileInscriber.class );
-		this.setLightOpacity( 2 );
+		this.setTileEntity(TileInscriber.class);
+		this.setLightOpacity(2);
 		this.isFullSize = this.isOpaque = false;
-		this.setFeature( EnumSet.of( AEFeature.Inscriber ) );
+		this.setFeature(EnumSet.of(AEFeature.Inscriber));
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	protected RenderBlockInscriber getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	protected RenderBlockInscriber getRenderer() {
 		return new RenderBlockInscriber();
 	}
 
 	@Override
-	public boolean onActivated( final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		if( p.isSneaking() )
-		{
+	public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ) {
+		if (p.isSneaking()) {
 			return false;
 		}
 
-		final TileInscriber tg = this.getTileEntity( w, x, y, z );
-		if( tg != null )
-		{
-			if( Platform.isServer() )
-			{
-				Platform.openGUI( p, tg, ForgeDirection.getOrientation( side ), GuiBridge.GUI_INSCRIBER );
+		final TileInscriber tg = this.getTileEntity(w, x, y, z);
+		if (tg != null) {
+			if (Platform.isServer()) {
+				Platform.openGUI(p, tg, ForgeDirection.getOrientation(side), GuiBridge.GUI_INSCRIBER);
 			}
 			return true;
 		}

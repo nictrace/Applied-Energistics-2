@@ -18,119 +18,95 @@
 
 package appeng.util.item;
 
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.NavigableMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-
-import net.minecraftforge.oredict.OreDictionary;
-
 import appeng.api.config.FuzzyMode;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
+import net.minecraftforge.oredict.OreDictionary;
 
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 
-public final class ItemList implements IItemList<IAEItemStack>
-{
+public final class ItemList implements IItemList<IAEItemStack> {
 
 	private final NavigableMap<IAEItemStack, IAEItemStack> records = new ConcurrentSkipListMap<IAEItemStack, IAEItemStack>();
 
 	@Override
-	public void add( final IAEItemStack option )
-	{
-		if( option == null )
-		{
+	public void add(final IAEItemStack option) {
+		if (option == null) {
 			return;
 		}
 
-		final IAEItemStack st = this.records.get( option );
+		final IAEItemStack st = this.records.get(option);
 
-		if( st != null )
-		{
-			st.add( option );
+		if (st != null) {
+			st.add(option);
 			return;
 		}
 
 		final IAEItemStack opt = option.copy();
 
-		this.putItemRecord( opt );
+		this.putItemRecord(opt);
 	}
 
 	@Override
-	public IAEItemStack findPrecise( final IAEItemStack itemStack )
-	{
-		if( itemStack == null )
-		{
+	public IAEItemStack findPrecise(final IAEItemStack itemStack) {
+		if (itemStack == null) {
 			return null;
 		}
 
-		return this.records.get( itemStack );
+		return this.records.get(itemStack);
 	}
 
 	@Override
-	public Collection<IAEItemStack> findFuzzy( final IAEItemStack filter, final FuzzyMode fuzzy )
-	{
-		if( filter == null )
-		{
+	public Collection<IAEItemStack> findFuzzy(final IAEItemStack filter, final FuzzyMode fuzzy) {
+		if (filter == null) {
 			return Collections.emptyList();
 		}
 
 		final AEItemStack ais = (AEItemStack) filter;
 
-		if( ais.isOre() )
-		{
+		if (ais.isOre()) {
 			final OreReference or = ais.getDefinition().getIsOre();
 
-			if( or.getAEEquivalents().size() == 1 )
-			{
-				final IAEItemStack is = or.getAEEquivalents().get( 0 );
+			if (or.getAEEquivalents().size() == 1) {
+				final IAEItemStack is = or.getAEEquivalents().get(0);
 
-				return this.findFuzzyDamage( (AEItemStack) is, fuzzy, is.getItemDamage() == OreDictionary.WILDCARD_VALUE );
-			}
-			else
-			{
+				return this.findFuzzyDamage((AEItemStack) is, fuzzy, is.getItemDamage() == OreDictionary.WILDCARD_VALUE);
+			} else {
 				final Collection<IAEItemStack> output = new LinkedList<IAEItemStack>();
 
-				for( final IAEItemStack is : or.getAEEquivalents() )
-				{
-					output.addAll( this.findFuzzyDamage( (AEItemStack) is, fuzzy, is.getItemDamage() == OreDictionary.WILDCARD_VALUE ) );
+				for (final IAEItemStack is : or.getAEEquivalents()) {
+					output.addAll(this.findFuzzyDamage((AEItemStack) is, fuzzy, is.getItemDamage() == OreDictionary.WILDCARD_VALUE));
 				}
 
 				return output;
 			}
 		}
 
-		return this.findFuzzyDamage( ais, fuzzy, false );
+		return this.findFuzzyDamage(ais, fuzzy, false);
 	}
 
 	@Override
-	public boolean isEmpty()
-	{
+	public boolean isEmpty() {
 		return !this.iterator().hasNext();
 	}
 
 	@Override
-	public void addStorage( final IAEItemStack option )
-	{
-		if( option == null )
-		{
+	public void addStorage(final IAEItemStack option) {
+		if (option == null) {
 			return;
 		}
 
-		final IAEItemStack st = this.records.get( option );
+		final IAEItemStack st = this.records.get(option);
 
-		if( st != null )
-		{
-			st.incStackSize( option.getStackSize() );
+		if (st != null) {
+			st.incStackSize(option.getStackSize());
 			return;
 		}
 
 		final IAEItemStack opt = option.copy();
 
-		this.putItemRecord( opt );
+		this.putItemRecord(opt);
 	}
 
 	/*
@@ -139,57 +115,49 @@ public final class ItemList implements IItemList<IAEItemStack>
 	 */
 
 	@Override
-	public void addCrafting( final IAEItemStack option )
-	{
-		if( option == null )
-		{
+	public void addCrafting(final IAEItemStack option) {
+		if (option == null) {
 			return;
 		}
 
-		final IAEItemStack st = this.records.get( option );
+		final IAEItemStack st = this.records.get(option);
 
-		if( st != null )
-		{
-			st.setCraftable( true );
-			return;
-		}
-
-		final IAEItemStack opt = option.copy();
-		opt.setStackSize( 0 );
-		opt.setCraftable( true );
-
-		this.putItemRecord( opt );
-	}
-
-	@Override
-	public void addRequestable( final IAEItemStack option )
-	{
-		if( option == null )
-		{
-			return;
-		}
-
-		final IAEItemStack st = this.records.get( option );
-
-		if( st != null )
-		{
-			st.setCountRequestable( st.getCountRequestable() + option.getCountRequestable() );
+		if (st != null) {
+			st.setCraftable(true);
 			return;
 		}
 
 		final IAEItemStack opt = option.copy();
-		opt.setStackSize( 0 );
-		opt.setCraftable( false );
-		opt.setCountRequestable( option.getCountRequestable() );
+		opt.setStackSize(0);
+		opt.setCraftable(true);
 
-		this.putItemRecord( opt );
+		this.putItemRecord(opt);
 	}
 
 	@Override
-	public IAEItemStack getFirstItem()
-	{
-		for( final IAEItemStack stackType : this )
-		{
+	public void addRequestable(final IAEItemStack option) {
+		if (option == null) {
+			return;
+		}
+
+		final IAEItemStack st = this.records.get(option);
+
+		if (st != null) {
+			st.setCountRequestable(st.getCountRequestable() + option.getCountRequestable());
+			return;
+		}
+
+		final IAEItemStack opt = option.copy();
+		opt.setStackSize(0);
+		opt.setCraftable(false);
+		opt.setCountRequestable(option.getCountRequestable());
+
+		this.putItemRecord(opt);
+	}
+
+	@Override
+	public IAEItemStack getFirstItem() {
+		for (final IAEItemStack stackType : this) {
 			return stackType;
 		}
 
@@ -197,36 +165,30 @@ public final class ItemList implements IItemList<IAEItemStack>
 	}
 
 	@Override
-	public int size()
-	{
+	public int size() {
 		return this.records.size();
 	}
 
 	@Override
-	public Iterator<IAEItemStack> iterator()
-	{
-		return new MeaningfulItemIterator<IAEItemStack>( this.records.values().iterator() );
+	public Iterator<IAEItemStack> iterator() {
+		return new MeaningfulItemIterator<IAEItemStack>(this.records.values().iterator());
 	}
 
 	@Override
-	public void resetStatus()
-	{
-		for( final IAEItemStack i : this )
-		{
+	public void resetStatus() {
+		for (final IAEItemStack i : this) {
 			i.reset();
 		}
 	}
 
-	private IAEItemStack putItemRecord( final IAEItemStack itemStack )
-	{
-		return this.records.put( itemStack, itemStack );
+	private IAEItemStack putItemRecord(final IAEItemStack itemStack) {
+		return this.records.put(itemStack, itemStack);
 	}
 
-	private Collection<IAEItemStack> findFuzzyDamage( final AEItemStack filter, final FuzzyMode fuzzy, final boolean ignoreMeta )
-	{
-		final IAEItemStack low = filter.getLow( fuzzy, ignoreMeta );
-		final IAEItemStack high = filter.getHigh( fuzzy, ignoreMeta );
+	private Collection<IAEItemStack> findFuzzyDamage(final AEItemStack filter, final FuzzyMode fuzzy, final boolean ignoreMeta) {
+		final IAEItemStack low = filter.getLow(fuzzy, ignoreMeta);
+		final IAEItemStack high = filter.getHigh(fuzzy, ignoreMeta);
 
-		return this.records.subMap( low, true, high, true ).descendingMap().values();
+		return this.records.subMap(low, true, high, true).descendingMap().values();
 	}
 }

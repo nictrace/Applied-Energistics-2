@@ -18,23 +18,20 @@
 
 package appeng.services.version.github;
 
-
-import javax.annotation.Nonnull;
-
 import appeng.services.version.MissingVersion;
 import appeng.services.version.Version;
 
+import javax.annotation.Nonnull;
 
 /**
  * Exceptional template, when no meaningful {@link FormattedRelease} could be obtained
  */
-public final class MissingFormattedRelease implements FormattedRelease
-{
+public final class MissingFormattedRelease implements FormattedRelease {
+
 	@Nonnull
 	private final Version version;
 
-	public MissingFormattedRelease()
-	{
+	public MissingFormattedRelease() {
 		this.version = new MissingVersion();
 	}
 
@@ -42,8 +39,7 @@ public final class MissingFormattedRelease implements FormattedRelease
 	 * @return empty string
 	 */
 	@Override
-	public String changelog()
-	{
+	public String changelog() {
 		return "";
 	}
 
@@ -51,8 +47,7 @@ public final class MissingFormattedRelease implements FormattedRelease
 	 * @return {@link MissingVersion}
 	 */
 	@Override
-	public Version version()
-	{
+	public Version version() {
 		return this.version;
 	}
 }

@@ -18,38 +18,32 @@
 
 package appeng.me;
 
+import appeng.api.networking.IGridHost;
+import appeng.api.networking.IGridNode;
+import appeng.api.util.IReadOnlyCollection;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import appeng.api.networking.IGridHost;
-import appeng.api.networking.IGridNode;
-import appeng.api.util.IReadOnlyCollection;
+public class GridNodeCollection implements IReadOnlyCollection<IGridNode> {
 
-
-public class GridNodeCollection implements IReadOnlyCollection<IGridNode>
-{
 	private final Map<Class<? extends IGridHost>, MachineSet> machines;
 
-	public GridNodeCollection( final Map<Class<? extends IGridHost>, MachineSet> machines )
-	{
+	public GridNodeCollection(final Map<Class<? extends IGridHost>, MachineSet> machines) {
 		this.machines = machines;
 	}
 
 	@Override
-	public Iterator<IGridNode> iterator()
-	{
-		return new GridNodeIterator( this.machines );
+	public Iterator<IGridNode> iterator() {
+		return new GridNodeIterator(this.machines);
 	}
 
 	@Override
-	public int size()
-	{
+	public int size() {
 		int size = 0;
 
-		for( final Set<IGridNode> o : this.machines.values() )
-		{
+		for (final Set<IGridNode> o : this.machines.values()) {
 			size += o.size();
 		}
 
@@ -57,12 +51,9 @@ public class GridNodeCollection implements IReadOnlyCollection<IGridNode>
 	}
 
 	@Override
-	public boolean isEmpty()
-	{
-		for( final Set<IGridNode> o : this.machines.values() )
-		{
-			if( !o.isEmpty() )
-			{
+	public boolean isEmpty() {
+		for (final Set<IGridNode> o : this.machines.values()) {
+			if (!o.isEmpty()) {
 				return false;
 			}
 		}
@@ -71,22 +62,18 @@ public class GridNodeCollection implements IReadOnlyCollection<IGridNode>
 	}
 
 	@Override
-	public boolean contains( final Object maybeGridNode )
-	{
+	public boolean contains(final Object maybeGridNode) {
 		final boolean doesContainNode;
 
-		if( maybeGridNode instanceof IGridNode )
-		{
+		if (maybeGridNode instanceof IGridNode) {
 			final IGridNode node = (IGridNode) maybeGridNode;
 			final IGridHost machine = node.getMachine();
 			final Class<? extends IGridHost> machineClass = machine.getClass();
 
-			final MachineSet machineSet = this.machines.get( machineClass );
+			final MachineSet machineSet = this.machines.get(machineClass);
 
-			doesContainNode = machineSet != null && machineSet.contains( maybeGridNode );
-		}
-		else
-		{
+			doesContainNode = machineSet != null && machineSet.contains(maybeGridNode);
+		} else {
 			doesContainNode = false;
 		}
 

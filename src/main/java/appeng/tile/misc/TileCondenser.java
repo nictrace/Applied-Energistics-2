@@ -18,16 +18,6 @@
 
 package appeng.tile.misc;
 
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-
 import appeng.api.AEApi;
 import appeng.api.config.CondenserOutput;
 import appeng.api.config.Settings;
@@ -43,79 +33,72 @@ import appeng.tile.inventory.InvOperation;
 import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
 import appeng.util.Platform;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
+public class TileCondenser extends AEBaseInvTile implements IFluidHandler, IConfigManagerHost, IConfigurableObject {
 
-public class TileCondenser extends AEBaseInvTile implements IFluidHandler, IConfigManagerHost, IConfigurableObject
-{
-
-	private static final FluidTankInfo[] EMPTY = { new FluidTankInfo( null, 10 ) };
-	private final int[] sides = { 0, 1 };
-	private final AppEngInternalInventory inv = new AppEngInternalInventory( this, 3 );
-	private final ConfigManager cm = new ConfigManager( this );
+	private static final FluidTankInfo[] EMPTY = {new FluidTankInfo(null, 10)};
+	private final int[] sides = {0, 1};
+	private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 3);
+	private final ConfigManager cm = new ConfigManager(this);
 
 	private double storedPower = 0;
 
-	public TileCondenser()
-	{
-		this.cm.registerSetting( Settings.CONDENSER_OUTPUT, CondenserOutput.TRASH );
+	public TileCondenser() {
+		this.cm.registerSetting(Settings.CONDENSER_OUTPUT, CondenserOutput.TRASH);
 	}
 
-	@TileEvent( TileEventType.WORLD_NBT_WRITE )
-	public void writeToNBT_TileCondenser( final NBTTagCompound data )
-	{
-		this.cm.writeToNBT( data );
-		data.setDouble( "storedPower", this.getStoredPower() );
+	@TileEvent(TileEventType.WORLD_NBT_WRITE)
+	public void writeToNBT_TileCondenser(final NBTTagCompound data) {
+		this.cm.writeToNBT(data);
+		data.setDouble("storedPower", this.getStoredPower());
 	}
 
-	@TileEvent( TileEventType.WORLD_NBT_READ )
-	public void readFromNBT_TileCondenser( final NBTTagCompound data )
-	{
-		this.cm.readFromNBT( data );
-		this.setStoredPower( data.getDouble( "storedPower" ) );
+	@TileEvent(TileEventType.WORLD_NBT_READ)
+	public void readFromNBT_TileCondenser(final NBTTagCompound data) {
+		this.cm.readFromNBT(data);
+		this.setStoredPower(data.getDouble("storedPower"));
 	}
 
-	public double getStorage()
-	{
-		final ItemStack is = this.inv.getStackInSlot( 2 );
-		if( is != null )
-		{
-			if( is.getItem() instanceof IStorageComponent )
-			{
+	public double getStorage() {
+		final ItemStack is = this.inv.getStackInSlot(2);
+		if (is != null) {
+			if (is.getItem() instanceof IStorageComponent) {
 				final IStorageComponent sc = (IStorageComponent) is.getItem();
-				if( sc.isStorageComponent( is ) )
-				{
-					return sc.getBytes( is ) * 8;
+				if (sc.isStorageComponent(is)) {
+					return sc.getBytes(is) * 8;
 				}
 			}
 		}
 		return 0;
 	}
 
-	public void addPower( final double rawPower )
-	{
-		this.setStoredPower( this.getStoredPower() + rawPower );
-		this.setStoredPower( Math.max( 0.0, Math.min( this.getStorage(), this.getStoredPower() ) ) );
+	public void addPower(final double rawPower) {
+		this.setStoredPower(this.getStoredPower() + rawPower);
+		this.setStoredPower(Math.max(0.0, Math.min(this.getStorage(), this.getStoredPower())));
 
 		final double requiredPower = this.getRequiredPower();
 		final ItemStack output = this.getOutput();
-		while( requiredPower <= this.getStoredPower() && output != null && requiredPower > 0 )
-		{
-			if( this.canAddOutput( output ) )
-			{
-				this.setStoredPower( this.getStoredPower() - requiredPower );
-				this.addOutput( output );
-			}
-			else
-			{
+		while (requiredPower <= this.getStoredPower() && output != null && requiredPower > 0) {
+			if (this.canAddOutput(output)) {
+				this.setStoredPower(this.getStoredPower() - requiredPower);
+				this.addOutput(output);
+			} else {
 				break;
 			}
 		}
 	}
 
-	private boolean canAddOutput( final ItemStack output )
-	{
-		final ItemStack outputStack = this.getStackInSlot( 1 );
-		return outputStack == null || ( Platform.isSameItem( outputStack, output ) && outputStack.stackSize < outputStack.getMaxStackSize() );
+	private boolean canAddOutput(final ItemStack output) {
+		final ItemStack outputStack = this.getStackInSlot(1);
+		return outputStack == null || (Platform.isSameItem(outputStack, output) && outputStack.stackSize < outputStack.getMaxStackSize());
 	}
 
 	/**
@@ -123,35 +106,27 @@ public class TileCondenser extends AEBaseInvTile implements IFluidHandler, IConf
 	 *
 	 * @param output to be added output
 	 */
-	private void addOutput( final ItemStack output )
-	{
-		final ItemStack outputStack = this.getStackInSlot( 1 );
-		if( outputStack == null )
-		{
-			this.setInventorySlotContents( 1, output.copy() );
-		}
-		else
-		{
+	private void addOutput(final ItemStack output) {
+		final ItemStack outputStack = this.getStackInSlot(1);
+		if (outputStack == null) {
+			this.setInventorySlotContents(1, output.copy());
+		} else {
 			outputStack.stackSize++;
-			this.setInventorySlotContents( 1, outputStack );
+			this.setInventorySlotContents(1, outputStack);
 		}
 	}
 
-	private ItemStack getOutput()
-	{
+	private ItemStack getOutput() {
 		final IMaterials materials = AEApi.instance().definitions().materials();
 
-		switch( (CondenserOutput) this.cm.getSetting( Settings.CONDENSER_OUTPUT ) )
-		{
+		switch ((CondenserOutput) this.cm.getSetting(Settings.CONDENSER_OUTPUT)) {
 			case MATTER_BALLS:
-				for( final ItemStack matterBallStack : materials.matterBall().maybeStack( 1 ).asSet() )
-				{
+				for (final ItemStack matterBallStack : materials.matterBall().maybeStack(1).asSet()) {
 					return matterBallStack;
 				}
 
 			case SINGULARITY:
-				for( final ItemStack singularityStack : materials.singularity().maybeStack( 1 ).asSet() )
-				{
+				for (final ItemStack singularityStack : materials.singularity().maybeStack(1).asSet()) {
 					return singularityStack;
 				}
 
@@ -161,131 +136,106 @@ public class TileCondenser extends AEBaseInvTile implements IFluidHandler, IConf
 		return null;
 	}
 
-	public double getRequiredPower()
-	{
-		return ( (CondenserOutput) this.cm.getSetting( Settings.CONDENSER_OUTPUT ) ).requiredPower;
+	public double getRequiredPower() {
+		return ((CondenserOutput) this.cm.getSetting(Settings.CONDENSER_OUTPUT)).requiredPower;
 	}
 
 	@Override
-	public IInventory getInternalInventory()
-	{
+	public IInventory getInternalInventory() {
 		return this.inv;
 	}
 
 	@Override
-	public void setInventorySlotContents( final int i, final ItemStack itemstack )
-	{
-		if( i == 0 )
-		{
-			if( itemstack != null )
-			{
-				this.addPower( itemstack.stackSize );
+	public void setInventorySlotContents(final int i, final ItemStack itemstack) {
+		if (i == 0) {
+			if (itemstack != null) {
+				this.addPower(itemstack.stackSize);
 			}
-		}
-		else
-		{
-			this.inv.setInventorySlotContents( 1, itemstack );
+		} else {
+			this.inv.setInventorySlotContents(1, itemstack);
 		}
 	}
 
 	@Override
-	public boolean isItemValidForSlot( final int i, final ItemStack itemstack )
-	{
+	public boolean isItemValidForSlot(final int i, final ItemStack itemstack) {
 		return i == 0;
 	}
 
 	@Override
-	public void onChangeInventory( final IInventory inv, final int slot, final InvOperation mc, final ItemStack removed, final ItemStack added )
-	{
-		if( slot == 0 )
-		{
-			final ItemStack is = inv.getStackInSlot( 0 );
-			if( is != null )
-			{
-				this.addPower( is.stackSize );
-				inv.setInventorySlotContents( 0, null );
+	public void onChangeInventory(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removed, final ItemStack added) {
+		if (slot == 0) {
+			final ItemStack is = inv.getStackInSlot(0);
+			if (is != null) {
+				this.addPower(is.stackSize);
+				inv.setInventorySlotContents(0, null);
 			}
 		}
 	}
 
 	@Override
-	public boolean canInsertItem( final int slotIndex, final ItemStack insertingItem, final int side )
-	{
+	public boolean canInsertItem(final int slotIndex, final ItemStack insertingItem, final int side) {
 		return slotIndex == 0;
 	}
 
 	@Override
-	public boolean canExtractItem( final int slotIndex, final ItemStack extractedItem, final int side )
-	{
+	public boolean canExtractItem(final int slotIndex, final ItemStack extractedItem, final int side) {
 		return slotIndex != 0;
 	}
 
 	@Override
-	public int[] getAccessibleSlotsBySide( final ForgeDirection side )
-	{
+	public int[] getAccessibleSlotsBySide(final ForgeDirection side) {
 		return this.sides;
 	}
 
 	@Override
-	public int fill( final ForgeDirection from, final FluidStack resource, final boolean doFill )
-	{
-		if( doFill )
-		{
-			this.addPower( ( resource == null ? 0.0 : (double) resource.amount ) / 500.0 );
+	public int fill(final ForgeDirection from, final FluidStack resource, final boolean doFill) {
+		if (doFill) {
+			this.addPower((resource == null ? 0.0 : (double) resource.amount) / 500.0);
 		}
 
 		return resource == null ? 0 : resource.amount;
 	}
 
 	@Override
-	public FluidStack drain( final ForgeDirection from, final FluidStack resource, final boolean doDrain )
-	{
+	public FluidStack drain(final ForgeDirection from, final FluidStack resource, final boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public FluidStack drain( final ForgeDirection from, final int maxDrain, final boolean doDrain )
-	{
+	public FluidStack drain(final ForgeDirection from, final int maxDrain, final boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public boolean canFill( final ForgeDirection from, final Fluid fluid )
-	{
+	public boolean canFill(final ForgeDirection from, final Fluid fluid) {
 		return true;
 	}
 
 	@Override
-	public boolean canDrain( final ForgeDirection from, final Fluid fluid )
-	{
+	public boolean canDrain(final ForgeDirection from, final Fluid fluid) {
 		return false;
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo( final ForgeDirection from )
-	{
+	public FluidTankInfo[] getTankInfo(final ForgeDirection from) {
 		return EMPTY;
 	}
 
 	@Override
-	public void updateSetting( final IConfigManager manager, final Enum settingName, final Enum newValue )
-	{
-		this.addPower( 0 );
+	public void updateSetting(final IConfigManager manager, final Enum settingName, final Enum newValue) {
+		this.addPower(0);
 	}
 
 	@Override
-	public IConfigManager getConfigManager()
-	{
+	public IConfigManager getConfigManager() {
 		return this.cm;
 	}
 
-	public double getStoredPower()
-	{
+	public double getStoredPower() {
 		return this.storedPower;
 	}
 
-	private void setStoredPower( final double storedPower )
-	{
+	private void setStoredPower(final double storedPower) {
 		this.storedPower = storedPower;
 	}
 }

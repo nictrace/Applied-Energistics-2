@@ -18,11 +18,9 @@
 
 package appeng.recipes.game;
 
-
 import appeng.api.exceptions.RegistrationError;
 
+public interface IRecipeBakeable {
 
-public interface IRecipeBakeable
-{
 	void bake() throws RegistrationError;
 }

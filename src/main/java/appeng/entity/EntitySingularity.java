@@ -18,7 +18,6 @@
 
 package appeng.entity;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -38,44 +37,35 @@ import appeng.core.features.AEFeature;
 import appeng.helpers.Reflected;
 import appeng.util.Platform;
 
-
-public final class EntitySingularity extends AEBaseEntityItem
-{
+public final class EntitySingularity extends AEBaseEntityItem {
 
 	private static int randTickSeed = 0;
 
 	@Reflected
-	public EntitySingularity( final World w )
-	{
-		super( w );
+	public EntitySingularity(final World w) {
+		super(w);
 	}
 
-	public EntitySingularity( final World w, final double x, final double y, final double z, final ItemStack is )
-	{
-		super( w, x, y, z, is );
+	public EntitySingularity(final World w, final double x, final double y, final double z, final ItemStack is) {
+		super(w, x, y, z, is);
 	}
 
 	@Override
-	public boolean attackEntityFrom( final DamageSource src, final float dmg )
-	{
-		if( src.isExplosion() )
-		{
+	public boolean attackEntityFrom(final DamageSource src, final float dmg) {
+		if (src.isExplosion()) {
 			this.doExplosion();
 			return false;
 		}
 
-		return super.attackEntityFrom( src, dmg );
+		return super.attackEntityFrom(src, dmg);
 	}
 
-	private void doExplosion()
-	{
-		if( Platform.isClient() )
-		{
+	private void doExplosion() {
+		if (Platform.isClient()) {
 			return;
 		}
 
-		if( !AEConfig.instance.isFeatureEnabled( AEFeature.InWorldSingularity ) )
-		{
+		if (!AEConfig.instance.isFeatureEnabled(AEFeature.InWorldSingularity)) {
 			return;
 		}
 
@@ -83,65 +73,51 @@ public final class EntitySingularity extends AEBaseEntityItem
 
 		final IMaterials materials = AEApi.instance().definitions().materials();
 
-		if( materials.singularity().isSameAs( item ) )
-		{
-			final AxisAlignedBB region = AxisAlignedBB.getBoundingBox( this.posX - 4, this.posY - 4, this.posZ - 4, this.posX + 4, this.posY + 4, this.posZ + 4 );
-			final List<Entity> l = this.getCheckedEntitiesWithinAABBExcludingEntity( region );
+		if (materials.singularity().isSameAs(item)) {
+			final AxisAlignedBB region = AxisAlignedBB.getBoundingBox(this.posX - 4, this.posY - 4, this.posZ - 4, this.posX + 4, this.posY + 4, this.posZ + 4);
+			final List<Entity> l = this.getCheckedEntitiesWithinAABBExcludingEntity(region);
 
-			for( final Entity e : l )
-			{
-				if( e instanceof EntityItem )
-				{
-					final ItemStack other = ( (EntityItem) e ).getEntityItem();
-					if( other != null )
-					{
+			for (final Entity e : l) {
+				if (e instanceof EntityItem) {
+					final ItemStack other = ((EntityItem) e).getEntityItem();
+					if (other != null) {
 						boolean matches = false;
-						for( final ItemStack is : OreDictionary.getOres( "dustEnder" ) )
-						{
-							if( OreDictionary.itemMatches( other, is, false ) )
-							{
+						for (final ItemStack is : OreDictionary.getOres("dustEnder")) {
+							if (OreDictionary.itemMatches(other, is, false)) {
 								matches = true;
 								break;
 							}
 						}
 
 						// check... other name.
-						if( !matches )
-						{
-							for( final ItemStack is : OreDictionary.getOres( "dustEnderPearl" ) )
-							{
-								if( OreDictionary.itemMatches( other, is, false ) )
-								{
+						if (!matches) {
+							for (final ItemStack is : OreDictionary.getOres("dustEnderPearl")) {
+								if (OreDictionary.itemMatches(other, is, false)) {
 									matches = true;
 									break;
 								}
 							}
 						}
 
-						if( matches )
-						{
-							while( item.stackSize > 0 && other.stackSize > 0 )
-							{
+						if (matches) {
+							while (item.stackSize > 0 && other.stackSize > 0) {
 								other.stackSize--;
-								if( other.stackSize == 0 )
-								{
+								if (other.stackSize == 0) {
 									e.setDead();
 								}
 
-								for( final ItemStack singularityStack : materials.qESingularity().maybeStack( 2 ).asSet() )
-								{
-									final NBTTagCompound cmp = Platform.openNbtData( singularityStack );
-									cmp.setLong( "freq", ( new Date() ).getTime() * 100 + ( randTickSeed ) % 100 );
+								for (final ItemStack singularityStack : materials.qESingularity().maybeStack(2).asSet()) {
+									final NBTTagCompound cmp = Platform.openNbtData(singularityStack);
+									cmp.setLong("freq", (new Date()).getTime() * 100 + (randTickSeed) % 100);
 									randTickSeed++;
 									item.stackSize--;
 
-									final EntitySingularity entity = new EntitySingularity( this.worldObj, this.posX, this.posY, this.posZ, singularityStack );
-									this.worldObj.spawnEntityInWorld( entity );
+									final EntitySingularity entity = new EntitySingularity(this.worldObj, this.posX, this.posY, this.posZ, singularityStack);
+									this.worldObj.spawnEntityInWorld(entity);
 								}
 							}
 
-							if( item.stackSize <= 0 )
-							{
+							if (item.stackSize <= 0) {
 								this.setDead();
 							}
 						}

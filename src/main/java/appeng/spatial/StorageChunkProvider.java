@@ -18,7 +18,6 @@
 
 package appeng.spatial;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +31,16 @@ import net.minecraft.world.gen.ChunkProviderGenerate;
 import appeng.api.AEApi;
 import appeng.core.AEConfig;
 
+public class StorageChunkProvider extends ChunkProviderGenerate {
 
-public class StorageChunkProvider extends ChunkProviderGenerate
-{
 	private static final int SQUARE_CHUNK_SIZE = 256;
 	private static final Block[] BLOCKS;
 
-	static
-	{
+	static {
 		BLOCKS = new Block[255 * SQUARE_CHUNK_SIZE];
 
-		for( final Block matrixFrameBlock : AEApi.instance().definitions().blocks().matrixFrame().maybeBlock().asSet() )
-		{
-			for( int x = 0; x < BLOCKS.length; x++ )
-			{
+		for (final Block matrixFrameBlock : AEApi.instance().definitions().blocks().matrixFrame().maybeBlock().asSet()) {
+			for (int x = 0; x < BLOCKS.length; x++) {
 				BLOCKS[x] = matrixFrameBlock;
 			}
 		}
@@ -53,27 +48,23 @@ public class StorageChunkProvider extends ChunkProviderGenerate
 
 	private final World world;
 
-	public StorageChunkProvider( final World world, final long i )
-	{
-		super( world, i, false );
+	public StorageChunkProvider(final World world, final long i) {
+		super(world, i, false);
 		this.world = world;
 	}
 
 	@Override
-	public Chunk provideChunk( final int x, final int z )
-	{
-		final Chunk chunk = new Chunk( this.world, BLOCKS, x, z );
+	public Chunk provideChunk(final int x, final int z) {
+		final Chunk chunk = new Chunk(this.world, BLOCKS, x, z);
 
 		final byte[] biomes = chunk.getBiomeArray();
 		final AEConfig config = AEConfig.instance;
 
-		for( int k = 0; k < biomes.length; ++k )
-		{
+		for (int k = 0; k < biomes.length; ++k) {
 			biomes[k] = (byte) config.storageBiomeID;
 		}
 
-		if( !chunk.isTerrainPopulated )
-		{
+		if (!chunk.isTerrainPopulated) {
 			chunk.isTerrainPopulated = true;
 			chunk.resetRelightChecks();
 		}
@@ -82,20 +73,17 @@ public class StorageChunkProvider extends ChunkProviderGenerate
 	}
 
 	@Override
-	public void populate( final IChunkProvider par1iChunkProvider, final int par2, final int par3 )
-	{
+	public void populate(final IChunkProvider par1iChunkProvider, final int par2, final int par3) {
 
 	}
 
 	@Override
-	public boolean unloadQueuedChunks()
-	{
+	public boolean unloadQueuedChunks() {
 		return true;
 	}
 
 	@Override
-	public List getPossibleCreatures( final EnumCreatureType a, final int b, final int c, final int d )
-	{
+	public List getPossibleCreatures(final EnumCreatureType a, final int b, final int c, final int d) {
 		return new ArrayList();
 	}
 }

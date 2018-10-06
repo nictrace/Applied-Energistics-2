@@ -18,16 +18,12 @@
 
 package appeng.integration.abstraction;
 
-
+import appeng.api.storage.IMEInventory;
 import net.minecraft.tileentity.TileEntity;
 
-import appeng.api.storage.IMEInventory;
+public interface IDSU {
 
+	IMEInventory getDSU(TileEntity te);
 
-public interface IDSU
-{
-
-	IMEInventory getDSU( TileEntity te );
-
-	boolean isDSU( TileEntity te );
+	boolean isDSU(TileEntity te);
 }

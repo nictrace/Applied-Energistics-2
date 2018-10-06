@@ -18,9 +18,6 @@
 
 package appeng.container.implementations;
 
-
-import net.minecraft.entity.player.InventoryPlayer;
-
 import appeng.api.config.CondenserOutput;
 import appeng.api.config.Settings;
 import appeng.container.AEBaseContainer;
@@ -30,66 +27,58 @@ import appeng.container.slot.SlotOutput;
 import appeng.container.slot.SlotRestrictedInput;
 import appeng.tile.misc.TileCondenser;
 import appeng.util.Platform;
+import net.minecraft.entity.player.InventoryPlayer;
 
-
-public class ContainerCondenser extends AEBaseContainer implements IProgressProvider
-{
+public class ContainerCondenser extends AEBaseContainer implements IProgressProvider {
 
 	private final TileCondenser condenser;
-	@GuiSync( 0 )
+	@GuiSync(0)
 	public long requiredEnergy = 0;
-	@GuiSync( 1 )
+	@GuiSync(1)
 	public long storedPower = 0;
-	@GuiSync( 2 )
+	@GuiSync(2)
 	public CondenserOutput output = CondenserOutput.TRASH;
 
-	public ContainerCondenser( final InventoryPlayer ip, final TileCondenser condenser )
-	{
-		super( ip, condenser, null );
+	public ContainerCondenser(final InventoryPlayer ip, final TileCondenser condenser) {
+		super(ip, condenser, null);
 		this.condenser = condenser;
 
-		this.addSlotToContainer( new SlotRestrictedInput( SlotRestrictedInput.PlacableItemType.TRASH, condenser, 0, 51, 52, ip ) );
-		this.addSlotToContainer( new SlotOutput( condenser, 1, 105, 52, -1 ) );
-		this.addSlotToContainer( ( new SlotRestrictedInput( SlotRestrictedInput.PlacableItemType.STORAGE_COMPONENT, condenser.getInternalInventory(), 2, 101, 26, ip ) ).setStackLimit( 1 ) );
+		this.addSlotToContainer(new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.TRASH, condenser, 0, 51, 52, ip));
+		this.addSlotToContainer(new SlotOutput(condenser, 1, 105, 52, -1));
+		this.addSlotToContainer((new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.STORAGE_COMPONENT, condenser.getInternalInventory(), 2, 101, 26, ip)).setStackLimit(1));
 
-		this.bindPlayerInventory( ip, 0, 197 - /* height of player inventory */82 );
+		this.bindPlayerInventory(ip, 0, 197 - /* height of player inventory */82);
 	}
 
 	@Override
-	public void detectAndSendChanges()
-	{
-		if( Platform.isServer() )
-		{
+	public void detectAndSendChanges() {
+		if (Platform.isServer()) {
 			final double maxStorage = this.condenser.getStorage();
 			final double requiredEnergy = this.condenser.getRequiredPower();
 
-			this.requiredEnergy = requiredEnergy == 0 ? (int) maxStorage : (int) Math.min( requiredEnergy, maxStorage );
+			this.requiredEnergy = requiredEnergy == 0 ? (int) maxStorage : (int) Math.min(requiredEnergy, maxStorage);
 			this.storedPower = (int) this.condenser.getStoredPower();
-			this.setOutput( (CondenserOutput) this.condenser.getConfigManager().getSetting( Settings.CONDENSER_OUTPUT ) );
+			this.setOutput((CondenserOutput) this.condenser.getConfigManager().getSetting(Settings.CONDENSER_OUTPUT));
 		}
 
 		super.detectAndSendChanges();
 	}
 
 	@Override
-	public int getCurrentProgress()
-	{
+	public int getCurrentProgress() {
 		return (int) this.storedPower;
 	}
 
 	@Override
-	public int getMaxProgress()
-	{
+	public int getMaxProgress() {
 		return (int) this.requiredEnergy;
 	}
 
-	public CondenserOutput getOutput()
-	{
+	public CondenserOutput getOutput() {
 		return this.output;
 	}
 
-	private void setOutput( final CondenserOutput output )
-	{
+	private void setOutput(final CondenserOutput output) {
 		this.output = output;
 	}
 }

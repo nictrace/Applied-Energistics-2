@@ -23,9 +23,7 @@
 
 package appeng.api.networking.pathing;
 
-
-public enum ControllerState
-{
+public enum ControllerState {
 	/**
 	 * No controller blocks are present in the network.
 	 */

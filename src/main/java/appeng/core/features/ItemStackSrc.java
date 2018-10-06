@@ -18,28 +18,23 @@
 
 package appeng.core.features;
 
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Preconditions;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nullable;
 
-public class ItemStackSrc implements IStackSrc
-{
+public class ItemStackSrc implements IStackSrc {
 
 	private final Item item;
 	private final int damage;
 	private final boolean enabled;
 
-	public ItemStackSrc( final Item item, final int damage, final ActivityState state )
-	{
-		Preconditions.checkNotNull( item );
-		Preconditions.checkArgument( damage >= 0 );
-		Preconditions.checkNotNull( state );
-		Preconditions.checkArgument( state == ActivityState.Enabled || state == ActivityState.Disabled );
+	public ItemStackSrc(final Item item, final int damage, final ActivityState state) {
+		Preconditions.checkNotNull(item);
+		Preconditions.checkArgument(damage >= 0);
+		Preconditions.checkNotNull(state);
+		Preconditions.checkArgument(state == ActivityState.Enabled || state == ActivityState.Disabled);
 
 		this.item = item;
 		this.damage = damage;
@@ -48,26 +43,22 @@ public class ItemStackSrc implements IStackSrc
 
 	@Nullable
 	@Override
-	public ItemStack stack( final int i )
-	{
-		return new ItemStack( this.item, i, this.damage );
+	public ItemStack stack(final int i) {
+		return new ItemStack(this.item, i, this.damage);
 	}
 
 	@Override
-	public Item getItem()
-	{
+	public Item getItem() {
 		return this.item;
 	}
 
 	@Override
-	public int getDamage()
-	{
+	public int getDamage() {
 		return this.damage;
 	}
 
 	@Override
-	public boolean isEnabled()
-	{
+	public boolean isEnabled() {
 		return this.enabled;
 	}
 }

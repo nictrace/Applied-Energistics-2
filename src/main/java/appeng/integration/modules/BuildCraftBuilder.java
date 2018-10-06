@@ -18,18 +18,6 @@
 
 package appeng.integration.modules;
 
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import com.google.common.base.Optional;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-
-import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.blueprints.ISchematicRegistry;
-
 import appeng.api.AEApi;
 import appeng.api.definitions.IBlockDefinition;
 import appeng.api.definitions.IBlocks;
@@ -42,7 +30,14 @@ import appeng.integration.IntegrationHelper;
 import appeng.integration.modules.BCHelpers.AECableSchematicTile;
 import appeng.integration.modules.BCHelpers.AEGenericSchematicTile;
 import appeng.integration.modules.BCHelpers.AERotatableBlockSchematic;
+import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.blueprints.ISchematicRegistry;
+import com.google.common.base.Optional;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * The builder has no interface, because it provides no functionality
@@ -52,78 +47,59 @@ import appeng.integration.modules.BCHelpers.AERotatableBlockSchematic;
  * @since rv3 12.06.2015
  */
 @Reflected
-public class BuildCraftBuilder implements IIntegrationModule
-{
+public class BuildCraftBuilder implements IIntegrationModule {
+
 	@Reflected
 	public static BuildCraftBuilder instance;
 
 	@Reflected
-	public BuildCraftBuilder()
-	{
-		IntegrationHelper.testClassExistence( this, buildcraft.api.blueprints.BuilderAPI.class );
-		IntegrationHelper.testClassExistence( this, buildcraft.api.blueprints.IBuilderContext.class );
-		IntegrationHelper.testClassExistence( this, buildcraft.api.blueprints.ISchematicRegistry.class );
-		IntegrationHelper.testClassExistence( this, buildcraft.api.blueprints.SchematicTile.class );
-		IntegrationHelper.testClassExistence( this, buildcraft.api.blueprints.SchematicBlock.class );
+	public BuildCraftBuilder() {
+		IntegrationHelper.testClassExistence(this, buildcraft.api.blueprints.BuilderAPI.class);
+		IntegrationHelper.testClassExistence(this, buildcraft.api.blueprints.IBuilderContext.class);
+		IntegrationHelper.testClassExistence(this, buildcraft.api.blueprints.ISchematicRegistry.class);
+		IntegrationHelper.testClassExistence(this, buildcraft.api.blueprints.SchematicTile.class);
+		IntegrationHelper.testClassExistence(this, buildcraft.api.blueprints.SchematicBlock.class);
 	}
 
 	@Override
-	public void init() throws Throwable
-	{
-		try
-		{
+	public void init() throws Throwable {
+		try {
 			this.initBuilderSupport();
-		}
-		catch( final Exception builderSupport )
-		{
+		} catch (final Exception builderSupport) {
 			// not supported?
 		}
 	}
 
 	@Override
-	public void postInit()
-	{
+	public void postInit() {
 	}
 
-	private void initBuilderSupport()
-	{
+	private void initBuilderSupport() {
 		final ISchematicRegistry schematicRegistry = BuilderAPI.schematicRegistry;
 
 		final IBlocks blocks = AEApi.instance().definitions().blocks();
 		final IBlockDefinition maybeMultiPart = blocks.multiPart();
 
-		for( final Method blockDefinition : blocks.getClass().getMethods() )
-		{
-			try
-			{
-				final IBlockDefinition def = (IBlockDefinition) blockDefinition.invoke( blocks );
+		for (final Method blockDefinition : blocks.getClass().getMethods()) {
+			try {
+				final IBlockDefinition def = (IBlockDefinition) blockDefinition.invoke(blocks);
 				final Optional<Block> maybeBlock = def.maybeBlock();
-				if( !maybeBlock.isPresent() )
-				{
+				if (!maybeBlock.isPresent()) {
 					continue;
 				}
 
 				final Block block = maybeBlock.get();
-				if( block instanceof IOrientableBlock && ( (IOrientableBlock) block ).usesMetadata() && !( def instanceof ITileDefinition ) )
-				{
-					schematicRegistry.registerSchematicBlock( block, AERotatableBlockSchematic.class );
+				if (block instanceof IOrientableBlock && ((IOrientableBlock) block).usesMetadata() && !(def instanceof ITileDefinition)) {
+					schematicRegistry.registerSchematicBlock(block, AERotatableBlockSchematic.class);
+				} else if (maybeMultiPart.isSameAs(new ItemStack(block))) {
+					schematicRegistry.registerSchematicBlock(block, AECableSchematicTile.class);
+				} else if (def instanceof ITileDefinition) {
+					schematicRegistry.registerSchematicBlock(block, AEGenericSchematicTile.class);
 				}
-				else if( maybeMultiPart.isSameAs( new ItemStack( block ) ) )
-				{
-					schematicRegistry.registerSchematicBlock( block, AECableSchematicTile.class );
-				}
-				else if( def instanceof ITileDefinition )
-				{
-					schematicRegistry.registerSchematicBlock( block, AEGenericSchematicTile.class );
-				}
-			}
-			catch( final InvocationTargetException ignore )
-			{
-				AELog.warn( "Encountered problems while initializing the BuildCraft Builder support. Can not invoke the method %s", blockDefinition );
-			}
-			catch( final IllegalAccessException ignore )
-			{
-				AELog.warn( "Encountered problems while initializing the BuildCraft Builder support. Can not access the method %s", blockDefinition );
+			} catch (final InvocationTargetException ignore) {
+				AELog.warn("Encountered problems while initializing the BuildCraft Builder support. Can not invoke the method %s", blockDefinition);
+			} catch (final IllegalAccessException ignore) {
+				AELog.warn("Encountered problems while initializing the BuildCraft Builder support. Can not access the method %s", blockDefinition);
 			}
 		}
 	}

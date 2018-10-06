@@ -23,45 +23,39 @@
 
 package appeng.api.networking;
 
-
 import appeng.api.networking.events.MENetworkEvent;
 import appeng.api.util.IReadOnlyCollection;
 
-
 /**
  * Gives you access to Grid based information.
- *
+ * <p>
  * Don't Implement.
  */
-public interface IGrid
-{
+public interface IGrid {
 
 	/**
 	 * Get Access to various grid modules
 	 *
 	 * @param iface face
-	 *
 	 * @return the IGridCache you requested.
 	 */
-	<C extends IGridCache> C getCache( Class<? extends IGridCache> iface );
+	<C extends IGridCache> C getCache(Class<? extends IGridCache> iface);
 
 	/**
 	 * Post an event into the network event bus.
 	 *
 	 * @param ev - event to post
-	 *
 	 * @return returns ev back to original poster
 	 */
-	MENetworkEvent postEvent( MENetworkEvent ev );
+	MENetworkEvent postEvent(MENetworkEvent ev);
 
 	/**
 	 * Post an event into the network event bus, but direct it at a single node.
 	 *
 	 * @param ev event to post
-	 *
 	 * @return returns ev back to original poster
 	 */
-	MENetworkEvent postEventTo( IGridNode node, MENetworkEvent ev );
+	MENetworkEvent postEventTo(IGridNode node, MENetworkEvent ev);
 
 	/**
 	 * get a list of the diversity of classes, you can use this to better detect which machines your interested in,
@@ -75,10 +69,9 @@ public interface IGrid
 	 * Get machines on the network.
 	 *
 	 * @param gridHostClass class of the grid host
-	 *
 	 * @return IMachineSet of all nodes belonging to hosts of specified class.
 	 */
-	IMachineSet getMachines( Class<? extends IGridHost> gridHostClass );
+	IMachineSet getMachines(Class<? extends IGridHost> gridHostClass);
 
 	/**
 	 * @return IReadOnlyCollection for all nodes on the network, node visitors are preferred.

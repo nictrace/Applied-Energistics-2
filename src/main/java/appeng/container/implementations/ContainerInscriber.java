@@ -18,11 +18,6 @@
 
 package appeng.container.implementations;
 
-
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-
 import appeng.api.AEApi;
 import appeng.api.definitions.IItemDefinition;
 import appeng.api.features.IInscriberRecipe;
@@ -32,7 +27,9 @@ import appeng.container.slot.SlotOutput;
 import appeng.container.slot.SlotRestrictedInput;
 import appeng.tile.misc.TileInscriber;
 import appeng.util.Platform;
-
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 /**
  * @author AlgorithmX2
@@ -40,8 +37,7 @@ import appeng.util.Platform;
  * @version rv2
  * @since rv0
  */
-public class ContainerInscriber extends ContainerUpgradeable implements IProgressProvider
-{
+public class ContainerInscriber extends ContainerUpgradeable implements IProgressProvider {
 
 	private final TileInscriber ti;
 
@@ -49,74 +45,63 @@ public class ContainerInscriber extends ContainerUpgradeable implements IProgres
 	private final Slot middle;
 	private final Slot bottom;
 
-	@GuiSync( 2 )
+	@GuiSync(2)
 	public int maxProcessingTime = -1;
 
-	@GuiSync( 3 )
+	@GuiSync(3)
 	public int processingTime = -1;
 
-	public ContainerInscriber( final InventoryPlayer ip, final TileInscriber te )
-	{
-		super( ip, te );
+	public ContainerInscriber(final InventoryPlayer ip, final TileInscriber te) {
+		super(ip, te);
 		this.ti = te;
 
-		this.addSlotToContainer( this.top = new SlotRestrictedInput( SlotRestrictedInput.PlacableItemType.INSCRIBER_PLATE, this.ti, 0, 45, 16, this.getInventoryPlayer() ) );
-		this.addSlotToContainer( this.bottom = new SlotRestrictedInput( SlotRestrictedInput.PlacableItemType.INSCRIBER_PLATE, this.ti, 1, 45, 62, this.getInventoryPlayer() ) );
-		this.addSlotToContainer( this.middle = new SlotRestrictedInput( SlotRestrictedInput.PlacableItemType.INSCRIBER_INPUT, this.ti, 2, 63, 39, this.getInventoryPlayer() ) );
+		this.addSlotToContainer(this.top = new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.INSCRIBER_PLATE, this.ti, 0, 45, 16, this.getInventoryPlayer()));
+		this.addSlotToContainer(this.bottom = new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.INSCRIBER_PLATE, this.ti, 1, 45, 62, this.getInventoryPlayer()));
+		this.addSlotToContainer(this.middle = new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.INSCRIBER_INPUT, this.ti, 2, 63, 39, this.getInventoryPlayer()));
 
-		this.addSlotToContainer( new SlotOutput( this.ti, 3, 113, 40, -1 ) );
+		this.addSlotToContainer(new SlotOutput(this.ti, 3, 113, 40, -1));
 	}
 
 	@Override
-	protected int getHeight()
-	{
+	protected int getHeight() {
 		return 176;
 	}
 
 	@Override
 	/**
 	 * Overridden super.setupConfig to prevent setting up the fake slots
-	 */protected void setupConfig()
-	{
+	 */ protected void setupConfig() {
 		this.setupUpgrades();
 	}
 
 	@Override
-	protected boolean supportCapacity()
-	{
+	protected boolean supportCapacity() {
 		return false;
 	}
 
 	@Override
-	public int availableUpgrades()
-	{
+	public int availableUpgrades() {
 		return 3;
 	}
 
 	@Override
-	public void detectAndSendChanges()
-	{
+	public void detectAndSendChanges() {
 		this.standardDetectAndSendChanges();
 
-		if( Platform.isServer() )
-		{
+		if (Platform.isServer()) {
 			this.maxProcessingTime = this.ti.getMaxProcessingTime();
 			this.processingTime = this.ti.getProcessingTime();
 		}
 	}
 
 	@Override
-	public boolean isValidForSlot( final Slot s, final ItemStack is )
-	{
-		final ItemStack top = this.ti.getStackInSlot( 0 );
-		final ItemStack bot = this.ti.getStackInSlot( 1 );
+	public boolean isValidForSlot(final Slot s, final ItemStack is) {
+		final ItemStack top = this.ti.getStackInSlot(0);
+		final ItemStack bot = this.ti.getStackInSlot(1);
 
-		if( s == this.middle )
-		{
-			for( final ItemStack optional : AEApi.instance().registries().inscriber().getOptionals() )
-			{
-				if( Platform.isSameItemPrecise( optional, is ) )
-				{
+		if (s == this.middle) {
+			for (final ItemStack optional : AEApi.instance().registries().inscriber().getOptionals()) {
+				if (Platform.isSameItemPrecise(optional, is)) {
 					return false;
 				}
 			}
@@ -124,73 +109,57 @@ public class ContainerInscriber extends ContainerUpgradeable implements IProgres
 			boolean matches = false;
 			boolean found = false;
 
-			for( final IInscriberRecipe recipe : AEApi.instance().registries().inscriber().getRecipes() )
-			{
-				final boolean matchA = ( top == null && !recipe.getTopOptional().isPresent() ) || ( Platform.isSameItemPrecise( top, recipe.getTopOptional().orNull() ) ) && // and...
-				( bot == null && !recipe.getBottomOptional().isPresent() ) | ( Platform.isSameItemPrecise( bot, recipe.getBottomOptional().orNull() ) );
+			for (final IInscriberRecipe recipe : AEApi.instance().registries().inscriber().getRecipes()) {
+				final boolean matchA = (top == null && !recipe.getTopOptional().isPresent()) || (Platform.isSameItemPrecise(top, recipe.getTopOptional().orNull())) && // and...
+					                                                                                (bot == null && !recipe.getBottomOptional().isPresent()) | (Platform.isSameItemPrecise(bot, recipe.getBottomOptional().orNull()));
 
-				final boolean matchB = ( bot == null && !recipe.getTopOptional().isPresent() ) || ( Platform.isSameItemPrecise( bot, recipe.getTopOptional().orNull() ) ) && // and...
-				( top == null && !recipe.getBottomOptional().isPresent() ) | ( Platform.isSameItemPrecise( top, recipe.getBottomOptional().orNull() ) );
+				final boolean matchB = (bot == null && !recipe.getTopOptional().isPresent()) || (Platform.isSameItemPrecise(bot, recipe.getTopOptional().orNull())) && // and...
+					                                                                                (top == null && !recipe.getBottomOptional().isPresent()) | (Platform.isSameItemPrecise(top, recipe.getBottomOptional().orNull()));
 
-				if( matchA || matchB )
-				{
+				if (matchA || matchB) {
 					matches = true;
-					for( final ItemStack option : recipe.getInputs() )
-					{
-						if( Platform.isSameItemPrecise( is, option ) )
-						{
+					for (final ItemStack option : recipe.getInputs()) {
+						if (Platform.isSameItemPrecise(is, option)) {
 							found = true;
 						}
 					}
 				}
 			}
 
-			if( matches && !found )
-			{
+			if (matches && !found) {
 				return false;
 			}
 		}
 
-		if( ( s == this.top && bot != null ) || ( s == this.bottom && top != null ) )
-		{
+		if ((s == this.top && bot != null) || (s == this.bottom && top != null)) {
 			ItemStack otherSlot = null;
-			if( s == this.top )
-			{
+			if (s == this.top) {
 				otherSlot = this.bottom.getStack();
-			}
-			else
-			{
+			} else {
 				otherSlot = this.top.getStack();
 			}
 
 			// name presses
 			final IItemDefinition namePress = AEApi.instance().definitions().materials().namePress();
-			if( namePress.isSameAs( otherSlot ) )
-			{
-				return namePress.isSameAs( is );
+			if (namePress.isSameAs(otherSlot)) {
+				return namePress.isSameAs(is);
 			}
 
 			// everything else
 			boolean isValid = false;
-			for( final IInscriberRecipe recipe : AEApi.instance().registries().inscriber().getRecipes() )
-			{
-				if( Platform.isSameItemPrecise( recipe.getTopOptional().orNull(), otherSlot ) )
-				{
-					isValid = Platform.isSameItemPrecise( is, recipe.getBottomOptional().orNull() );
-				}
-				else if( Platform.isSameItemPrecise( recipe.getBottomOptional().orNull(), otherSlot ) )
-				{
-					isValid = Platform.isSameItemPrecise( is, recipe.getTopOptional().orNull() );
+			for (final IInscriberRecipe recipe : AEApi.instance().registries().inscriber().getRecipes()) {
+				if (Platform.isSameItemPrecise(recipe.getTopOptional().orNull(), otherSlot)) {
+					isValid = Platform.isSameItemPrecise(is, recipe.getBottomOptional().orNull());
+				} else if (Platform.isSameItemPrecise(recipe.getBottomOptional().orNull(), otherSlot)) {
+					isValid = Platform.isSameItemPrecise(is, recipe.getTopOptional().orNull());
 				}
 
-				if( isValid )
-				{
+				if (isValid) {
 					break;
 				}
 			}
 
-			if( !isValid )
-			{
+			if (!isValid) {
 				return false;
 			}
 		}
@@ -199,14 +168,12 @@ public class ContainerInscriber extends ContainerUpgradeable implements IProgres
 	}
 
 	@Override
-	public int getCurrentProgress()
-	{
+	public int getCurrentProgress() {
 		return this.processingTime;
 	}
 
 	@Override
-	public int getMaxProgress()
-	{
+	public int getMaxProgress() {
 		return this.maxProcessingTime;
 	}
 }

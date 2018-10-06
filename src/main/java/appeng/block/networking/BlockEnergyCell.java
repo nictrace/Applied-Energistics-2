@@ -18,19 +18,6 @@
 
 package appeng.block.networking;
 
-
-import java.util.EnumSet;
-import java.util.List;
-
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import appeng.block.AEBaseItemBlock;
 import appeng.block.AEBaseItemBlockChargeable;
 import appeng.block.AEBaseTileBlock;
@@ -40,31 +27,35 @@ import appeng.core.features.AEFeature;
 import appeng.helpers.AEGlassMaterial;
 import appeng.tile.networking.TileEnergyCell;
 import appeng.util.Platform;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IIcon;
 
+import java.util.EnumSet;
+import java.util.List;
 
-public class BlockEnergyCell extends AEBaseTileBlock
-{
+public class BlockEnergyCell extends AEBaseTileBlock {
 
-	public BlockEnergyCell()
-	{
-		super( AEGlassMaterial.INSTANCE );
+	public BlockEnergyCell() {
+		super(AEGlassMaterial.INSTANCE);
 
-		this.setTileEntity( TileEnergyCell.class );
-		this.setFeature( EnumSet.of( AEFeature.Core ) );
+		this.setTileEntity(TileEnergyCell.class);
+		this.setFeature(EnumSet.of(AEFeature.Core));
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	protected RenderBlockEnergyCube getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	protected RenderBlockEnergyCube getRenderer() {
 		return new RenderBlockEnergyCube();
 	}
 
 	@Override
-	public IIcon getIcon( final int direction, final int metadata )
-	{
-		switch( metadata )
-		{
+	public IIcon getIcon(final int direction, final int metadata) {
+		switch (metadata) {
 			case 0:
 				return ExtraBlockTextures.MEEnergyCell0.getIcon();
 			case 1:
@@ -82,31 +73,28 @@ public class BlockEnergyCell extends AEBaseTileBlock
 			case 7:
 				return ExtraBlockTextures.MEEnergyCell7.getIcon();
 		}
-		return super.getIcon( direction, metadata );
+		return super.getIcon(direction, metadata);
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public void getCheckedSubBlocks( final Item item, final CreativeTabs tabs, final List<ItemStack> itemStacks )
-	{
-		super.getCheckedSubBlocks( item, tabs, itemStacks );
+	@SideOnly(Side.CLIENT)
+	public void getCheckedSubBlocks(final Item item, final CreativeTabs tabs, final List<ItemStack> itemStacks) {
+		super.getCheckedSubBlocks(item, tabs, itemStacks);
 
-		final ItemStack charged = new ItemStack( this, 1 );
-		final NBTTagCompound tag = Platform.openNbtData( charged );
-		tag.setDouble( "internalCurrentPower", this.getMaxPower() );
-		tag.setDouble( "internalMaxPower", this.getMaxPower() );
+		final ItemStack charged = new ItemStack(this, 1);
+		final NBTTagCompound tag = Platform.openNbtData(charged);
+		tag.setDouble("internalCurrentPower", this.getMaxPower());
+		tag.setDouble("internalMaxPower", this.getMaxPower());
 
-		itemStacks.add( charged );
+		itemStacks.add(charged);
 	}
 
-	public double getMaxPower()
-	{
+	public double getMaxPower() {
 		return 200000.0;
 	}
 
 	@Override
-	public Class<? extends AEBaseItemBlock> getItemBlockClass()
-	{
+	public Class<? extends AEBaseItemBlock> getItemBlockClass() {
 		return AEBaseItemBlockChargeable.class;
 	}
 }

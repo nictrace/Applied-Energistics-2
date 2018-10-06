@@ -18,15 +18,6 @@
 
 package appeng.core.api;
 
-
-import java.io.IOException;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.FluidStack;
-
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.energy.IEnergySource;
@@ -40,64 +31,59 @@ import appeng.crafting.CraftingLink;
 import appeng.util.Platform;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
-import appeng.util.item.ItemList;
 import appeng.util.item.FluidList;
+import appeng.util.item.ItemList;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.FluidStack;
 
+import java.io.IOException;
 
-public class ApiStorage implements IStorageHelper
-{
+public class ApiStorage implements IStorageHelper {
 
 	@Override
-	public ICraftingLink loadCraftingLink( final NBTTagCompound data, final ICraftingRequester req )
-	{
-		return new CraftingLink( data, req );
+	public ICraftingLink loadCraftingLink(final NBTTagCompound data, final ICraftingRequester req) {
+		return new CraftingLink(data, req);
 	}
 
 	@Override
-	public IAEItemStack createItemStack( final ItemStack is )
-	{
-		return AEItemStack.create( is );
+	public IAEItemStack createItemStack(final ItemStack is) {
+		return AEItemStack.create(is);
 	}
 
 	@Override
-	public IAEFluidStack createFluidStack( final FluidStack is )
-	{
-		return AEFluidStack.create( is );
+	public IAEFluidStack createFluidStack(final FluidStack is) {
+		return AEFluidStack.create(is);
 	}
 
 	@Override
-	public IItemList<IAEItemStack> createItemList()
-	{
+	public IItemList<IAEItemStack> createItemList() {
 		return new ItemList();
 	}
 
 	@Override
-	public IItemList<IAEFluidStack> createFluidList()
-	{
+	public IItemList<IAEFluidStack> createFluidList() {
 		return new FluidList();
 	}
 
 	@Override
-	public IAEItemStack readItemFromPacket( final ByteBuf input ) throws IOException
-	{
-		return AEItemStack.loadItemStackFromPacket( input );
+	public IAEItemStack readItemFromPacket(final ByteBuf input) throws IOException {
+		return AEItemStack.loadItemStackFromPacket(input);
 	}
 
 	@Override
-	public IAEFluidStack readFluidFromPacket( final ByteBuf input ) throws IOException
-	{
-		return AEFluidStack.loadFluidStackFromPacket( input );
+	public IAEFluidStack readFluidFromPacket(final ByteBuf input) throws IOException {
+		return AEFluidStack.loadFluidStackFromPacket(input);
 	}
 
 	@Override
-	public IAEItemStack poweredExtraction( final IEnergySource energy, final IMEInventory<IAEItemStack> cell, final IAEItemStack request, final BaseActionSource src )
-	{
-		return Platform.poweredExtraction( energy, cell, request, src );
+	public IAEItemStack poweredExtraction(final IEnergySource energy, final IMEInventory<IAEItemStack> cell, final IAEItemStack request, final BaseActionSource src) {
+		return Platform.poweredExtraction(energy, cell, request, src);
 	}
 
 	@Override
-	public IAEItemStack poweredInsert( final IEnergySource energy, final IMEInventory<IAEItemStack> cell, final IAEItemStack input, final BaseActionSource src )
-	{
-		return Platform.poweredInsert( energy, cell, input, src );
+	public IAEItemStack poweredInsert(final IEnergySource energy, final IMEInventory<IAEItemStack> cell, final IAEItemStack input, final BaseActionSource src) {
+		return Platform.poweredInsert(energy, cell, input, src);
 	}
 }

@@ -18,61 +18,46 @@
 
 package appeng.core;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import net.minecraft.block.Block;
+import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.minecraft.block.Block;
-import net.minecraftforge.common.config.Configuration;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
-
-
-public class FacadeConfig extends Configuration
-{
+public class FacadeConfig extends Configuration {
 
 	public static FacadeConfig instance;
 	private final Pattern replacementPattern;
 
-	public FacadeConfig( final File facadeFile )
-	{
-		super( facadeFile );
-		this.replacementPattern = Pattern.compile( "[^a-zA-Z0-9]" );
+	public FacadeConfig(final File facadeFile) {
+		super(facadeFile);
+		this.replacementPattern = Pattern.compile("[^a-zA-Z0-9]");
 	}
 
-	public boolean checkEnabled( final Block id, final int metadata, final boolean automatic )
-	{
-		if( id == null )
-		{
+	public boolean checkEnabled(final Block id, final int metadata, final boolean automatic) {
+		if (id == null) {
 			return false;
 		}
 
-		final UniqueIdentifier blk = GameRegistry.findUniqueIdentifierFor( id );
-		if( blk == null )
-		{
-			for( final Field f : Block.class.getFields() )
-			{
-				try
-				{
-					if( f.get( Block.class ) == id )
-					{
-						return this.get( "minecraft", f.getName() + ( metadata == 0 ? "" : "." + metadata ), automatic ).getBoolean( automatic );
+		final UniqueIdentifier blk = GameRegistry.findUniqueIdentifierFor(id);
+		if (blk == null) {
+			for (final Field f : Block.class.getFields()) {
+				try {
+					if (f.get(Block.class) == id) {
+						return this.get("minecraft", f.getName() + (metadata == 0 ? "" : "." + metadata), automatic).getBoolean(automatic);
 					}
-				}
-				catch( final Throwable e )
-				{
+				} catch (final Throwable e) {
 					// :P
 				}
 			}
-		}
-		else
-		{
-			final Matcher mod = this.replacementPattern.matcher( blk.modId );
-			final Matcher name = this.replacementPattern.matcher( blk.name );
-			return this.get( mod.replaceAll( "" ), name.replaceAll( "" ) + ( metadata == 0 ? "" : "." + metadata ), automatic ).getBoolean( automatic );
+		} else {
+			final Matcher mod = this.replacementPattern.matcher(blk.modId);
+			final Matcher name = this.replacementPattern.matcher(blk.name);
+			return this.get(mod.replaceAll(""), name.replaceAll("") + (metadata == 0 ? "" : "." + metadata), automatic).getBoolean(automatic);
 		}
 
 		return false;

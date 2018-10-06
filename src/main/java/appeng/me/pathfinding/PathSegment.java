@@ -18,21 +18,14 @@
 
 package appeng.me.pathfinding;
 
-
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGridMultiblock;
 import appeng.api.networking.IGridNode;
 import appeng.me.cache.PathGridCache;
 
+import java.util.*;
 
-public class PathSegment
-{
+public class PathSegment {
 
 	private final PathGridCache pgc;
 	private final Set<IPathItem> semiOpen;
@@ -40,68 +33,53 @@ public class PathSegment
 	private boolean isDead;
 	private List<IPathItem> open;
 
-	public PathSegment( final PathGridCache myPGC, final List<IPathItem> open, final Set<IPathItem> semiOpen, final Set<IPathItem> closed )
-	{
+	public PathSegment(final PathGridCache myPGC, final List<IPathItem> open, final Set<IPathItem> semiOpen, final Set<IPathItem> closed) {
 		this.open = open;
 		this.semiOpen = semiOpen;
 		this.closed = closed;
 		this.pgc = myPGC;
-		this.setDead( false );
+		this.setDead(false);
 	}
 
-	public boolean step()
-	{
+	public boolean step() {
 		final List<IPathItem> oldOpen = this.open;
 		this.open = new LinkedList<IPathItem>();
 
-		for( final IPathItem i : oldOpen )
-		{
-			for( final IPathItem pi : i.getPossibleOptions() )
-			{
+		for (final IPathItem i : oldOpen) {
+			for (final IPathItem pi : i.getPossibleOptions()) {
 				final EnumSet<GridFlags> flags = pi.getFlags();
 
-				if( !this.closed.contains( pi ) )
-				{
-					pi.setControllerRoute( i, true );
+				if (!this.closed.contains(pi)) {
+					pi.setControllerRoute(i, true);
 
-					if( flags.contains( GridFlags.REQUIRE_CHANNEL ) )
-					{
+					if (flags.contains(GridFlags.REQUIRE_CHANNEL)) {
 						// close the semi open.
-						if( !this.semiOpen.contains( pi ) )
-						{
+						if (!this.semiOpen.contains(pi)) {
 							final boolean worked;
 
-							if( flags.contains( GridFlags.COMPRESSED_CHANNEL ) )
-							{
-								worked = this.useDenseChannel( pi );
-							}
-							else
-							{
-								worked = this.useChannel( pi );
+							if (flags.contains(GridFlags.COMPRESSED_CHANNEL)) {
+								worked = this.useDenseChannel(pi);
+							} else {
+								worked = this.useChannel(pi);
 							}
 
-							if( worked && flags.contains( GridFlags.MULTIBLOCK ) )
-							{
-								final Iterator<IGridNode> oni = ( (IGridMultiblock) ( (IGridNode) pi ).getGridBlock() ).getMultiblockNodes();
-								while( oni.hasNext() )
-								{
+							if (worked && flags.contains(GridFlags.MULTIBLOCK)) {
+								final Iterator<IGridNode> oni = ((IGridMultiblock) ((IGridNode) pi).getGridBlock()).getMultiblockNodes();
+								while (oni.hasNext()) {
 									final IGridNode otherNodes = oni.next();
-									if( otherNodes != pi )
-									{
-										this.semiOpen.add( (IPathItem) otherNodes );
+									if (otherNodes != pi) {
+										this.semiOpen.add((IPathItem) otherNodes);
 									}
 								}
 							}
-						}
-						else
-						{
-							pi.incrementChannelCount( 1 ); // give a channel.
-							this.semiOpen.remove( pi );
+						} else {
+							pi.incrementChannelCount(1); // give a channel.
+							this.semiOpen.remove(pi);
 						}
 					}
 
-					this.closed.add( pi );
-					this.open.add( pi );
+					this.closed.add(pi);
+					this.open.add(pi);
 				}
 			}
 		}
@@ -109,13 +87,10 @@ public class PathSegment
 		return this.open.isEmpty();
 	}
 
-	private boolean useDenseChannel( final IPathItem start )
-	{
+	private boolean useDenseChannel(final IPathItem start) {
 		IPathItem pi = start;
-		while( pi != null )
-		{
-			if( !pi.canSupportMoreChannels() || pi.getFlags().contains( GridFlags.CANNOT_CARRY_COMPRESSED ) )
-			{
+		while (pi != null) {
+			if (!pi.canSupportMoreChannels() || pi.getFlags().contains(GridFlags.CANNOT_CARRY_COMPRESSED)) {
 				return false;
 			}
 
@@ -123,24 +98,20 @@ public class PathSegment
 		}
 
 		pi = start;
-		while( pi != null )
-		{
-			this.pgc.setChannelsByBlocks( this.pgc.getChannelsByBlocks() + 1 );
-			pi.incrementChannelCount( 1 );
+		while (pi != null) {
+			this.pgc.setChannelsByBlocks(this.pgc.getChannelsByBlocks() + 1);
+			pi.incrementChannelCount(1);
 			pi = pi.getControllerRoute();
 		}
 
-		this.pgc.setChannelsInUse( this.pgc.getChannelsInUse() + 1 );
+		this.pgc.setChannelsInUse(this.pgc.getChannelsInUse() + 1);
 		return true;
 	}
 
-	private boolean useChannel( final IPathItem start )
-	{
+	private boolean useChannel(final IPathItem start) {
 		IPathItem pi = start;
-		while( pi != null )
-		{
-			if( !pi.canSupportMoreChannels() )
-			{
+		while (pi != null) {
+			if (!pi.canSupportMoreChannels()) {
 				return false;
 			}
 
@@ -148,24 +119,21 @@ public class PathSegment
 		}
 
 		pi = start;
-		while( pi != null )
-		{
-			this.pgc.setChannelsByBlocks( this.pgc.getChannelsByBlocks() + 1 );
-			pi.incrementChannelCount( 1 );
+		while (pi != null) {
+			this.pgc.setChannelsByBlocks(this.pgc.getChannelsByBlocks() + 1);
+			pi.incrementChannelCount(1);
 			pi = pi.getControllerRoute();
 		}
 
-		this.pgc.setChannelsInUse( this.pgc.getChannelsInUse() + 1 );
+		this.pgc.setChannelsInUse(this.pgc.getChannelsInUse() + 1);
 		return true;
 	}
 
-	public boolean isDead()
-	{
+	public boolean isDead() {
 		return this.isDead;
 	}
 
-	public void setDead( final boolean isDead )
-	{
+	public void setDead(final boolean isDead) {
 		this.isDead = isDead;
 	}
 }

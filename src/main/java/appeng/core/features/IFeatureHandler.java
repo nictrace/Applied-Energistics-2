@@ -18,12 +18,10 @@
 
 package appeng.core.features;
 
-
 import appeng.api.definitions.IItemDefinition;
 
+public interface IFeatureHandler {
 
-public interface IFeatureHandler
-{
 	boolean isFeatureAvailable();
 
 	IItemDefinition getDefinition();

@@ -18,9 +18,6 @@
 
 package appeng.core.api.definitions;
 
-
-import net.minecraft.item.Item;
-
 import appeng.api.definitions.IBlockDefinition;
 import appeng.api.definitions.IItemDefinition;
 import appeng.api.definitions.ITileDefinition;
@@ -28,58 +25,47 @@ import appeng.api.util.AEColor;
 import appeng.api.util.AEColoredItemDefinition;
 import appeng.core.FeatureHandlerRegistry;
 import appeng.core.FeatureRegistry;
-import appeng.core.features.ActivityState;
-import appeng.core.features.ColoredItemDefinition;
-import appeng.core.features.IAEFeature;
-import appeng.core.features.IFeatureHandler;
-import appeng.core.features.ItemStackSrc;
+import appeng.core.features.*;
 import appeng.items.parts.ItemMultiPart;
 import appeng.items.parts.PartType;
+import net.minecraft.item.Item;
 
+public class DefinitionConstructor {
 
-public class DefinitionConstructor
-{
 	private final FeatureRegistry features;
 	private final FeatureHandlerRegistry handlers;
 
-	public DefinitionConstructor( final FeatureRegistry features, final FeatureHandlerRegistry handlers )
-	{
+	public DefinitionConstructor(final FeatureRegistry features, final FeatureHandlerRegistry handlers) {
 		this.features = features;
 		this.handlers = handlers;
 	}
 
-	final ITileDefinition registerTileDefinition( final IAEFeature feature )
-	{
-		final IBlockDefinition definition = this.registerBlockDefinition( feature );
+	final ITileDefinition registerTileDefinition(final IAEFeature feature) {
+		final IBlockDefinition definition = this.registerBlockDefinition(feature);
 
-		if( definition instanceof ITileDefinition )
-		{
-			return( (ITileDefinition) definition );
+		if (definition instanceof ITileDefinition) {
+			return ((ITileDefinition) definition);
 		}
 
-		throw new IllegalStateException( "No tile definition for " + feature );
+		throw new IllegalStateException("No tile definition for " + feature);
 	}
 
-	final IBlockDefinition registerBlockDefinition( final IAEFeature feature )
-	{
-		final IItemDefinition definition = this.registerItemDefinition( feature );
+	final IBlockDefinition registerBlockDefinition(final IAEFeature feature) {
+		final IItemDefinition definition = this.registerItemDefinition(feature);
 
-		if( definition instanceof IBlockDefinition )
-		{
-			return( (IBlockDefinition) definition );
+		if (definition instanceof IBlockDefinition) {
+			return ((IBlockDefinition) definition);
 		}
 
-		throw new IllegalStateException( "No block definition for " + feature );
+		throw new IllegalStateException("No block definition for " + feature);
 	}
 
-	final IItemDefinition registerItemDefinition( final IAEFeature feature )
-	{
+	final IItemDefinition registerItemDefinition(final IAEFeature feature) {
 		final IFeatureHandler handler = feature.handler();
 
-		if( handler.isFeatureAvailable() )
-		{
-			this.handlers.addFeatureHandler( handler );
-			this.features.addFeature( feature );
+		if (handler.isFeatureAvailable()) {
+			this.handlers.addFeatureHandler(handler);
+			this.features.addFeature(feature);
 		}
 
 		final IItemDefinition definition = handler.getDefinition();
@@ -87,32 +73,27 @@ public class DefinitionConstructor
 		return definition;
 	}
 
-	final AEColoredItemDefinition constructColoredDefinition( final IItemDefinition target, final int offset )
-	{
+	final AEColoredItemDefinition constructColoredDefinition(final IItemDefinition target, final int offset) {
 		final ColoredItemDefinition definition = new ColoredItemDefinition();
 
-		for( final Item targetItem : target.maybeItem().asSet() )
-		{
-			for( final AEColor color : AEColor.VALID_COLORS )
-			{
-				final ActivityState state = ActivityState.from( target.isEnabled() );
+		for (final Item targetItem : target.maybeItem().asSet()) {
+			for (final AEColor color : AEColor.VALID_COLORS) {
+				final ActivityState state = ActivityState.from(target.isEnabled());
 
-				definition.add( color, new ItemStackSrc( targetItem, offset + color.ordinal(), state ) );
+				definition.add(color, new ItemStackSrc(targetItem, offset + color.ordinal(), state));
 			}
 		}
 
 		return definition;
 	}
 
-	final AEColoredItemDefinition constructColoredDefinition( final ItemMultiPart target, final PartType type )
-	{
+	final AEColoredItemDefinition constructColoredDefinition(final ItemMultiPart target, final PartType type) {
 		final ColoredItemDefinition definition = new ColoredItemDefinition();
 
-		for( final AEColor color : AEColor.values() )
-		{
-			final ItemStackSrc multiPartSource = target.createPart( type, color );
+		for (final AEColor color : AEColor.values()) {
+			final ItemStackSrc multiPartSource = target.createPart(type, color);
 
-			definition.add( color, multiPartSource );
+			definition.add(color, multiPartSource);
 		}
 
 		return definition;

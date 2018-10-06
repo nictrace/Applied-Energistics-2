@@ -18,35 +18,27 @@
 
 package appeng.container.slot;
 
-
 import net.minecraft.inventory.IInventory;
 
+public class SlotFakeBlacklist extends SlotFakeTypeOnly {
 
-public class SlotFakeBlacklist extends SlotFakeTypeOnly
-{
-
-	public SlotFakeBlacklist( final IInventory inv, final int idx, final int x, final int y )
-	{
-		super( inv, idx, x, y );
+	public SlotFakeBlacklist(final IInventory inv, final int idx, final int x, final int y) {
+		super(inv, idx, x, y);
 	}
 
 	@Override
-	public float getOpacityOfIcon()
-	{
+	public float getOpacityOfIcon() {
 		return 0.8f;
 	}
 
 	@Override
-	public boolean renderIconWithItem()
-	{
+	public boolean renderIconWithItem() {
 		return true;
 	}
 
 	@Override
-	public int getIcon()
-	{
-		if( this.getHasStack() )
-		{
+	public int getIcon() {
+		if (this.getHasStack()) {
 			return this.getStack().stackSize > 0 ? 16 + 14 : 14;
 		}
 		return -1;

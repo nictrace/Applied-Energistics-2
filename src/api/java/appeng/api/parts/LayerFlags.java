@@ -23,9 +23,7 @@
 
 package appeng.api.parts;
 
-
-public enum LayerFlags
-{
+public enum LayerFlags {
 
 	IC2_ENET
 

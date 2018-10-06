@@ -23,12 +23,11 @@
 
 package appeng.api.definitions;
 
-
 /**
  * All definitions in AE
  */
-public interface IDefinitions
-{
+public interface IDefinitions {
+
 	/**
 	 * @return an accessible list of all of AE's blocks
 	 */

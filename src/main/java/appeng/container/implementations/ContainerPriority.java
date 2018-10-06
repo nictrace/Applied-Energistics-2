@@ -18,75 +18,62 @@
 
 package appeng.container.implementations;
 
-
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.tileentity.TileEntity;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import appeng.api.config.SecurityPermissions;
 import appeng.api.parts.IPart;
 import appeng.container.AEBaseContainer;
 import appeng.container.guisync.GuiSync;
 import appeng.helpers.IPriorityHost;
 import appeng.util.Platform;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.tileentity.TileEntity;
 
-
-public class ContainerPriority extends AEBaseContainer
-{
+public class ContainerPriority extends AEBaseContainer {
 
 	private final IPriorityHost priHost;
 
-	@SideOnly( Side.CLIENT )
+	@SideOnly(Side.CLIENT)
 	private GuiTextField textField;
-	@GuiSync( 2 )
+	@GuiSync(2)
 	public long PriorityValue = -1;
 
-	public ContainerPriority( final InventoryPlayer ip, final IPriorityHost te )
-	{
-		super( ip, (TileEntity) ( te instanceof TileEntity ? te : null ), (IPart) ( te instanceof IPart ? te : null ) );
+	public ContainerPriority(final InventoryPlayer ip, final IPriorityHost te) {
+		super(ip, (TileEntity) (te instanceof TileEntity ? te : null), (IPart) (te instanceof IPart ? te : null));
 		this.priHost = te;
 	}
 
-	@SideOnly( Side.CLIENT )
-	public void setTextField( final GuiTextField level )
-	{
+	@SideOnly(Side.CLIENT)
+	public void setTextField(final GuiTextField level) {
 		this.textField = level;
-		this.textField.setText( String.valueOf( this.PriorityValue ) );
+		this.textField.setText(String.valueOf(this.PriorityValue));
 	}
 
-	public void setPriority( final int newValue, final EntityPlayer player )
-	{
-		this.priHost.setPriority( newValue );
+	public void setPriority(final int newValue, final EntityPlayer player) {
+		this.priHost.setPriority(newValue);
 		this.PriorityValue = newValue;
 	}
 
 	@Override
-	public void detectAndSendChanges()
-	{
+	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		this.verifyPermissions( SecurityPermissions.BUILD, false );
+		this.verifyPermissions(SecurityPermissions.BUILD, false);
 
-		if( Platform.isServer() )
-		{
+		if (Platform.isServer()) {
 			this.PriorityValue = this.priHost.getPriority();
 		}
 	}
 
 	@Override
-	public void onUpdate( final String field, final Object oldValue, final Object newValue )
-	{
-		if( field.equals( "PriorityValue" ) )
-		{
-			if( this.textField != null )
-			{
-				this.textField.setText( String.valueOf( this.PriorityValue ) );
+	public void onUpdate(final String field, final Object oldValue, final Object newValue) {
+		if (field.equals("PriorityValue")) {
+			if (this.textField != null) {
+				this.textField.setText(String.valueOf(this.PriorityValue));
 			}
 		}
 
-		super.onUpdate( field, oldValue, newValue );
+		super.onUpdate(field, oldValue, newValue);
 	}
 }

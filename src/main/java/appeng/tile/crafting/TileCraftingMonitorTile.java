@@ -18,141 +18,112 @@
 
 package appeng.tile.crafting;
 
-
-import java.io.IOException;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import appeng.api.implementations.tiles.IColorableTile;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.AEColor;
 import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
 import appeng.util.item.AEItemStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.io.IOException;
 
-public class TileCraftingMonitorTile extends TileCraftingTile implements IColorableTile
-{
+public class TileCraftingMonitorTile extends TileCraftingTile implements IColorableTile {
 
-	@SideOnly( Side.CLIENT )
+	@SideOnly(Side.CLIENT)
 	private Integer dspList;
 
-	@SideOnly( Side.CLIENT )
+	@SideOnly(Side.CLIENT)
 	private boolean updateList;
 
 	private IAEItemStack dspPlay;
 	private AEColor paintedColor = AEColor.Transparent;
 
-	@TileEvent( TileEventType.NETWORK_READ )
-	public boolean readFromStream_TileCraftingMonitorTile( final ByteBuf data ) throws IOException
-	{
+	@TileEvent(TileEventType.NETWORK_READ)
+	public boolean readFromStream_TileCraftingMonitorTile(final ByteBuf data) throws IOException {
 		final AEColor oldPaintedColor = this.paintedColor;
 		this.paintedColor = AEColor.values()[data.readByte()];
 
 		final boolean hasItem = data.readBoolean();
 
-		if( hasItem )
-		{
-			this.dspPlay = AEItemStack.loadItemStackFromPacket( data );
-		}
-		else
-		{
+		if (hasItem) {
+			this.dspPlay = AEItemStack.loadItemStackFromPacket(data);
+		} else {
 			this.dspPlay = null;
 		}
 
-		this.setUpdateList( true );
+		this.setUpdateList(true);
 		return oldPaintedColor != this.paintedColor; // tesr!
 	}
 
-	@TileEvent( TileEventType.NETWORK_WRITE )
-	public void writeToStream_TileCraftingMonitorTile( final ByteBuf data ) throws IOException
-	{
-		data.writeByte( this.paintedColor.ordinal() );
+	@TileEvent(TileEventType.NETWORK_WRITE)
+	public void writeToStream_TileCraftingMonitorTile(final ByteBuf data) throws IOException {
+		data.writeByte(this.paintedColor.ordinal());
 
-		if( this.dspPlay == null )
-		{
-			data.writeBoolean( false );
-		}
-		else
-		{
-			data.writeBoolean( true );
-			this.dspPlay.writeToPacket( data );
+		if (this.dspPlay == null) {
+			data.writeBoolean(false);
+		} else {
+			data.writeBoolean(true);
+			this.dspPlay.writeToPacket(data);
 		}
 	}
 
-	@TileEvent( TileEventType.WORLD_NBT_READ )
-	public void readFromNBT_TileCraftingMonitorTile( final NBTTagCompound data )
-	{
-		if( data.hasKey( "paintedColor" ) )
-		{
-			this.paintedColor = AEColor.values()[data.getByte( "paintedColor" )];
+	@TileEvent(TileEventType.WORLD_NBT_READ)
+	public void readFromNBT_TileCraftingMonitorTile(final NBTTagCompound data) {
+		if (data.hasKey("paintedColor")) {
+			this.paintedColor = AEColor.values()[data.getByte("paintedColor")];
 		}
 	}
 
-	@TileEvent( TileEventType.WORLD_NBT_WRITE )
-	public void writeToNBT_TileCraftingMonitorTile( final NBTTagCompound data )
-	{
-		data.setByte( "paintedColor", (byte) this.paintedColor.ordinal() );
+	@TileEvent(TileEventType.WORLD_NBT_WRITE)
+	public void writeToNBT_TileCraftingMonitorTile(final NBTTagCompound data) {
+		data.setByte("paintedColor", (byte) this.paintedColor.ordinal());
 	}
 
 	@Override
-	public boolean isAccelerator()
-	{
+	public boolean isAccelerator() {
 		return false;
 	}
 
 	@Override
-	public boolean isStatus()
-	{
+	public boolean isStatus() {
 		return true;
 	}
 
-	public void setJob( final IAEItemStack is )
-	{
-		if( ( is == null ) != ( this.dspPlay == null ) )
-		{
+	public void setJob(final IAEItemStack is) {
+		if ((is == null) != (this.dspPlay == null)) {
 			this.dspPlay = is == null ? null : is.copy();
 			this.markForUpdate();
-		}
-		else if( is != null && this.dspPlay != null )
-		{
-			if( is.getStackSize() != this.dspPlay.getStackSize() )
-			{
+		} else if (is != null && this.dspPlay != null) {
+			if (is.getStackSize() != this.dspPlay.getStackSize()) {
 				this.dspPlay = is.copy();
 				this.markForUpdate();
 			}
 		}
 	}
 
-	public IAEItemStack getJobProgress()
-	{
+	public IAEItemStack getJobProgress() {
 		return this.dspPlay;// AEItemStack.create( new ItemStack( Items.diamond, 64 ) );
 	}
 
 	@Override
-	public boolean requiresTESR()
-	{
+	public boolean requiresTESR() {
 		return this.dspPlay != null;
 	}
 
 	@Override
-	public AEColor getColor()
-	{
+	public AEColor getColor() {
 		return this.paintedColor;
 	}
 
 	@Override
-	public boolean recolourBlock( final ForgeDirection side, final AEColor newPaintedColor, final EntityPlayer who )
-	{
-		if( this.paintedColor == newPaintedColor )
-		{
+	public boolean recolourBlock(final ForgeDirection side, final AEColor newPaintedColor, final EntityPlayer who) {
+		if (this.paintedColor == newPaintedColor) {
 			return false;
 		}
 
@@ -162,23 +133,19 @@ public class TileCraftingMonitorTile extends TileCraftingTile implements IColora
 		return true;
 	}
 
-	public Integer getDisplayList()
-	{
+	public Integer getDisplayList() {
 		return this.dspList;
 	}
 
-	public void setDisplayList( final Integer dspList )
-	{
+	public void setDisplayList(final Integer dspList) {
 		this.dspList = dspList;
 	}
 
-	public boolean isUpdateList()
-	{
+	public boolean isUpdateList() {
 		return this.updateList;
 	}
 
-	public void setUpdateList( final boolean updateList )
-	{
+	public void setUpdateList(final boolean updateList) {
 		this.updateList = updateList;
 	}
 }

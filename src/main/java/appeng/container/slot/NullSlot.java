@@ -18,84 +18,69 @@
 
 package appeng.container.slot;
 
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+public class NullSlot extends Slot {
 
-public class NullSlot extends Slot
-{
-
-	public NullSlot()
-	{
-		super( null, 0, 0, 0 );
+	public NullSlot() {
+		super(null, 0, 0, 0);
 	}
 
 	@Override
-	public void onSlotChange( final ItemStack par1ItemStack, final ItemStack par2ItemStack )
-	{
+	public void onSlotChange(final ItemStack par1ItemStack, final ItemStack par2ItemStack) {
 
 	}
 
 	@Override
-	public void onPickupFromSlot( final EntityPlayer par1EntityPlayer, final ItemStack par2ItemStack )
-	{
+	public void onPickupFromSlot(final EntityPlayer par1EntityPlayer, final ItemStack par2ItemStack) {
 
 	}
 
 	@Override
-	public boolean isItemValid( final ItemStack par1ItemStack )
-	{
+	public boolean isItemValid(final ItemStack par1ItemStack) {
 		return false;
 	}
 
 	@Override
-	public ItemStack getStack()
-	{
+	public ItemStack getStack() {
 		return null;
 	}
 
 	@Override
-	public void putStack( final ItemStack par1ItemStack )
-	{
+	public void putStack(final ItemStack par1ItemStack) {
 
 	}
 
 	@Override
-	public void onSlotChanged()
-	{
+	public void onSlotChanged() {
 
 	}
 
 	@Override
-	public int getSlotStackLimit()
-	{
+	public int getSlotStackLimit() {
 		return 0;
 	}
 
 	@Override
-	public ItemStack decrStackSize( final int par1 )
-	{
+	public ItemStack decrStackSize(final int par1) {
 		return null;
 	}
 
 	@Override
-	public boolean isSlotInInventory( final IInventory par1IInventory, final int par2 )
-	{
+	public boolean isSlotInInventory(final IInventory par1IInventory, final int par2) {
 		return false;
 	}
 
 	@Override
-	public boolean canTakeStack( final EntityPlayer par1EntityPlayer )
-	{
+	public boolean canTakeStack(final EntityPlayer par1EntityPlayer) {
 		return false;
 	}
 
 	@Override
-	public int getSlotIndex()
-	{
+	public int getSlotIndex() {
 		return 0;
 	}
 }

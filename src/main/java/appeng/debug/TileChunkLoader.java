@@ -18,9 +18,13 @@
 
 package appeng.debug;
 
-
-import java.util.List;
-
+import appeng.core.AELog;
+import appeng.core.AppEng;
+import appeng.tile.AEBaseTile;
+import appeng.tile.TileEvent;
+import appeng.tile.events.TileEventType;
+import appeng.util.Platform;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
@@ -29,68 +33,50 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 
-import cpw.mods.fml.common.FMLCommonHandler;
+import java.util.List;
 
-import appeng.core.AELog;
-import appeng.core.AppEng;
-import appeng.tile.AEBaseTile;
-import appeng.tile.TileEvent;
-import appeng.tile.events.TileEventType;
-import appeng.util.Platform;
-
-
-public class TileChunkLoader extends AEBaseTile
-{
+public class TileChunkLoader extends AEBaseTile {
 
 	private boolean requestTicket = true;
 	private Ticket ct = null;
 
-	@TileEvent( TileEventType.TICK )
-	public void onTickEvent()
-	{
-		if( this.requestTicket )
-		{
+	@TileEvent(TileEventType.TICK)
+	public void onTickEvent() {
+		if (this.requestTicket) {
 			this.requestTicket = false;
 			this.initTicket();
 		}
 	}
 
-	private void initTicket()
-	{
-		if( Platform.isClient() )
-		{
+	private void initTicket() {
+		if (Platform.isClient()) {
 			return;
 		}
 
-		this.ct = ForgeChunkManager.requestTicket( AppEng.instance(), this.worldObj, Type.NORMAL );
+		this.ct = ForgeChunkManager.requestTicket(AppEng.instance(), this.worldObj, Type.NORMAL);
 
-		if( this.ct == null )
-		{
+		if (this.ct == null) {
 			final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-			if( server != null )
-			{
+			if (server != null) {
 				final List<EntityPlayerMP> pl = server.getConfigurationManager().playerEntityList;
-				for( final EntityPlayerMP p : pl )
-				{
-					p.addChatMessage( new ChatComponentText( "Can't chunk load.." ) );
+				for (final EntityPlayerMP p : pl) {
+					p.addChatMessage(new ChatComponentText("Can't chunk load.."));
 				}
 			}
 			return;
 		}
 
-		AELog.info( "New Ticket " + this.ct.toString() );
-		ForgeChunkManager.forceChunk( this.ct, new ChunkCoordIntPair( this.xCoord >> 4, this.zCoord >> 4 ) );
+		AELog.info("New Ticket " + this.ct.toString());
+		ForgeChunkManager.forceChunk(this.ct, new ChunkCoordIntPair(this.xCoord >> 4, this.zCoord >> 4));
 	}
 
 	@Override
-	public void invalidate()
-	{
-		if( Platform.isClient() )
-		{
+	public void invalidate() {
+		if (Platform.isClient()) {
 			return;
 		}
 
-		AELog.info( "Released Ticket " + this.ct.toString() );
-		ForgeChunkManager.releaseTicket( this.ct );
+		AELog.info("Released Ticket " + this.ct.toString());
+		ForgeChunkManager.releaseTicket(this.ct);
 	}
 }

@@ -18,7 +18,9 @@
 
 package appeng.client.render.effects;
 
-
+import appeng.client.texture.ExtraBlockTextures;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EntityBreakingFX;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.Item;
@@ -27,15 +29,8 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import appeng.client.texture.ExtraBlockTextures;
-
-
-@SideOnly( Side.CLIENT )
-public class CraftingFx extends EntityBreakingFX
-{
+@SideOnly(Side.CLIENT)
+public class CraftingFx extends EntityBreakingFX {
 
 	private final IIcon particleTextureIndex;
 
@@ -43,9 +38,8 @@ public class CraftingFx extends EntityBreakingFX
 	private final int startBlkY;
 	private final int startBlkZ;
 
-	public CraftingFx( final World par1World, final double par2, final double par4, final double par6, final Item par8Item )
-	{
-		super( par1World, par2, par4, par6, par8Item );
+	public CraftingFx(final World par1World, final double par2, final double par4, final double par6, final Item par8Item) {
+		super(par1World, par2, par4, par6, par8Item);
 		this.particleGravity = 0;
 		this.particleBlue = 1;
 		this.particleGreen = 0.9f;
@@ -55,24 +49,21 @@ public class CraftingFx extends EntityBreakingFX
 		this.particleTextureIndex = ExtraBlockTextures.BlockEnergyParticle.getIcon();
 		this.particleMaxAge /= 1.2;
 
-		this.startBlkX = MathHelper.floor_double( this.posX );
-		this.startBlkY = MathHelper.floor_double( this.posY );
-		this.startBlkZ = MathHelper.floor_double( this.posZ );
+		this.startBlkX = MathHelper.floor_double(this.posX);
+		this.startBlkY = MathHelper.floor_double(this.posY);
+		this.startBlkZ = MathHelper.floor_double(this.posZ);
 
 		this.noClip = true;
 	}
 
 	@Override
-	public int getFXLayer()
-	{
+	public int getFXLayer() {
 		return 1;
 	}
 
 	@Override
-	public void renderParticle( final Tessellator par1Tessellator, final float partialTick, final float x, final float y, final float z, final float rx, final float rz )
-	{
-		if( partialTick < 0 || partialTick > 1 )
-		{
+	public void renderParticle(final Tessellator par1Tessellator, final float partialTick, final float x, final float y, final float z, final float rx, final float rz) {
+		if (partialTick < 0 || partialTick > 1) {
 			return;
 		}
 
@@ -82,32 +73,30 @@ public class CraftingFx extends EntityBreakingFX
 		final float f9 = this.particleTextureIndex.getMaxV();
 		final float scale = 0.1F * this.particleScale;
 
-		float offX = (float) ( this.prevPosX + ( this.posX - this.prevPosX ) * partialTick );
-		float offY = (float) ( this.prevPosY + ( this.posY - this.prevPosY ) * partialTick );
-		float offZ = (float) ( this.prevPosZ + ( this.posZ - this.prevPosZ ) * partialTick );
+		float offX = (float) (this.prevPosX + (this.posX - this.prevPosX) * partialTick);
+		float offY = (float) (this.prevPosY + (this.posY - this.prevPosY) * partialTick);
+		float offZ = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * partialTick);
 
-		final int blkX = MathHelper.floor_double( offX );
-		final int blkY = MathHelper.floor_double( offY );
-		final int blkZ = MathHelper.floor_double( offZ );
+		final int blkX = MathHelper.floor_double(offX);
+		final int blkY = MathHelper.floor_double(offY);
+		final int blkZ = MathHelper.floor_double(offZ);
 
-		if( blkX == this.startBlkX && blkY == this.startBlkY && blkZ == this.startBlkZ )
-		{
+		if (blkX == this.startBlkX && blkY == this.startBlkY && blkZ == this.startBlkZ) {
 			offX -= interpPosX;
 			offY -= interpPosY;
 			offZ -= interpPosZ;
 
 			// AELog.info( "" + partialTick );
 			final float f14 = 1.0F;
-			par1Tessellator.setColorRGBA_F( this.particleRed * f14, this.particleGreen * f14, this.particleBlue * f14, this.particleAlpha );
-			par1Tessellator.addVertexWithUV( offX - x * scale - rx * scale, offY - y * scale, offZ - z * scale - rz * scale, f7, f9 );
-			par1Tessellator.addVertexWithUV( offX - x * scale + rx * scale, offY + y * scale, offZ - z * scale + rz * scale, f7, f8 );
-			par1Tessellator.addVertexWithUV( offX + x * scale + rx * scale, offY + y * scale, offZ + z * scale + rz * scale, f6, f8 );
-			par1Tessellator.addVertexWithUV( offX + x * scale - rx * scale, offY - y * scale, offZ + z * scale - rz * scale, f6, f9 );
+			par1Tessellator.setColorRGBA_F(this.particleRed * f14, this.particleGreen * f14, this.particleBlue * f14, this.particleAlpha);
+			par1Tessellator.addVertexWithUV(offX - x * scale - rx * scale, offY - y * scale, offZ - z * scale - rz * scale, f7, f9);
+			par1Tessellator.addVertexWithUV(offX - x * scale + rx * scale, offY + y * scale, offZ - z * scale + rz * scale, f7, f8);
+			par1Tessellator.addVertexWithUV(offX + x * scale + rx * scale, offY + y * scale, offZ + z * scale + rz * scale, f6, f8);
+			par1Tessellator.addVertexWithUV(offX + x * scale - rx * scale, offY - y * scale, offZ + z * scale - rz * scale, f6, f9);
 		}
 	}
 
-	public void fromItem( final ForgeDirection d )
-	{
+	public void fromItem(final ForgeDirection d) {
 		this.posX += 0.2 * d.offsetX;
 		this.posY += 0.2 * d.offsetY;
 		this.posZ += 0.2 * d.offsetZ;
@@ -115,8 +104,7 @@ public class CraftingFx extends EntityBreakingFX
 	}
 
 	@Override
-	public void onUpdate()
-	{
+	public void onUpdate() {
 		super.onUpdate();
 		this.particleScale *= 0.51f;
 		this.particleAlpha *= 0.51f;

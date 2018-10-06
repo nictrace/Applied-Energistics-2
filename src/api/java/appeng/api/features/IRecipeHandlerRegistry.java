@@ -23,13 +23,11 @@
 
 package appeng.api.features;
 
-
-import javax.annotation.Nullable;
-
 import appeng.api.recipes.ICraftHandler;
 import appeng.api.recipes.IRecipeHandler;
 import appeng.api.recipes.ISubItemResolver;
 
+import javax.annotation.Nullable;
 
 /**
  * @author AlgorithmX2
@@ -37,35 +35,33 @@ import appeng.api.recipes.ISubItemResolver;
  * @version rv3 - 10.08.2015
  * @since rv0
  */
-public interface IRecipeHandlerRegistry
-{
+public interface IRecipeHandlerRegistry {
 
 	/**
 	 * Add a new Recipe Handler to the parser.
-	 *
+	 * <p>
 	 * MUST BE CALLED IN PRE-INIT
 	 *
-	 * @param name name of crafthandler
+	 * @param name    name of crafthandler
 	 * @param handler class of crafthandler
 	 */
-	void addNewCraftHandler( String name, Class<? extends ICraftHandler> handler );
+	void addNewCraftHandler(String name, Class<? extends ICraftHandler> handler);
 
 	/**
 	 * Add a new resolver to the parser.
-	 *
+	 * <p>
 	 * MUST BE CALLED IN PRE-INIT
 	 *
 	 * @param sir sub item resolver
 	 */
-	void addNewSubItemResolver( ISubItemResolver sir );
+	void addNewSubItemResolver(ISubItemResolver sir);
 
 	/**
 	 * @param name name of crafting handler
-	 *
 	 * @return A recipe handler by name, returns null on failure.
 	 */
 	@Nullable
-	ICraftHandler getCraftHandlerFor( String name );
+	ICraftHandler getCraftHandlerFor(String name);
 
 	/**
 	 * @return a new recipe handler, which can be used to parse, and read recipe files.
@@ -76,10 +72,9 @@ public interface IRecipeHandlerRegistry
 	 * resolve sub items by name.
 	 *
 	 * @param nameSpace namespace of item
-	 * @param itemName full name of item
-	 *
+	 * @param itemName  full name of item
 	 * @return ResolverResult or ResolverResultSet or null if could not resolve
 	 */
 	@Nullable
-	Object resolveItem( String nameSpace, String itemName );
+	Object resolveItem(String nameSpace, String itemName);
 }

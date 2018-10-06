@@ -18,9 +18,6 @@
 
 package appeng.me.storage;
 
-
-import com.mojang.authlib.GameProfile;
-
 import appeng.api.AEApi;
 import appeng.api.config.AccessRestriction;
 import appeng.api.config.Actionable;
@@ -34,34 +31,27 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.me.GridAccessException;
 import appeng.tile.misc.TileSecurity;
+import com.mojang.authlib.GameProfile;
 
-
-public class SecurityInventory implements IMEInventoryHandler<IAEItemStack>
-{
+public class SecurityInventory implements IMEInventoryHandler<IAEItemStack> {
 
 	private final IItemList<IAEItemStack> storedItems = AEApi.instance().storage().createItemList();
 	private final TileSecurity securityTile;
 
-	public SecurityInventory( final TileSecurity ts )
-	{
+	public SecurityInventory(final TileSecurity ts) {
 		this.securityTile = ts;
 	}
 
 	@Override
-	public IAEItemStack injectItems( final IAEItemStack input, final Actionable type, final BaseActionSource src )
-	{
-		if( this.hasPermission( src ) )
-		{
-			if( AEApi.instance().definitions().items().biometricCard().isSameAs( input.getItemStack() ) )
-			{
-				if( this.canAccept( input ) )
-				{
-					if( type == Actionable.SIMULATE )
-					{
+	public IAEItemStack injectItems(final IAEItemStack input, final Actionable type, final BaseActionSource src) {
+		if (this.hasPermission(src)) {
+			if (AEApi.instance().definitions().items().biometricCard().isSameAs(input.getItemStack())) {
+				if (this.canAccept(input)) {
+					if (type == Actionable.SIMULATE) {
 						return null;
 					}
 
-					this.getStoredItems().add( input );
+					this.getStoredItems().add(input);
 					this.securityTile.inventoryChanged();
 					return null;
 				}
@@ -70,16 +60,11 @@ public class SecurityInventory implements IMEInventoryHandler<IAEItemStack>
 		return input;
 	}
 
-	private boolean hasPermission( final BaseActionSource src )
-	{
-		if( src.isPlayer() )
-		{
-			try
-			{
-				return this.securityTile.getProxy().getSecurity().hasPermission( ( (PlayerSource) src ).player, SecurityPermissions.SECURITY );
-			}
-			catch( final GridAccessException e )
-			{
+	private boolean hasPermission(final BaseActionSource src) {
+		if (src.isPlayer()) {
+			try {
+				return this.securityTile.getProxy().getSecurity().hasPermission(((PlayerSource) src).player, SecurityPermissions.SECURITY);
+			} catch (final GridAccessException e) {
 				// :P
 			}
 		}
@@ -87,21 +72,17 @@ public class SecurityInventory implements IMEInventoryHandler<IAEItemStack>
 	}
 
 	@Override
-	public IAEItemStack extractItems( final IAEItemStack request, final Actionable mode, final BaseActionSource src )
-	{
-		if( this.hasPermission( src ) )
-		{
-			final IAEItemStack target = this.getStoredItems().findPrecise( request );
-			if( target != null )
-			{
+	public IAEItemStack extractItems(final IAEItemStack request, final Actionable mode, final BaseActionSource src) {
+		if (this.hasPermission(src)) {
+			final IAEItemStack target = this.getStoredItems().findPrecise(request);
+			if (target != null) {
 				final IAEItemStack output = target.copy();
 
-				if( mode == Actionable.SIMULATE )
-				{
+				if (mode == Actionable.SIMULATE) {
 					return output;
 				}
 
-				target.setStackSize( 0 );
+				target.setStackSize(0);
 				this.securityTile.inventoryChanged();
 				return output;
 			}
@@ -110,60 +91,48 @@ public class SecurityInventory implements IMEInventoryHandler<IAEItemStack>
 	}
 
 	@Override
-	public IItemList<IAEItemStack> getAvailableItems( final IItemList out )
-	{
-		for( final IAEItemStack ais : this.getStoredItems() )
-		{
-			out.add( ais );
+	public IItemList<IAEItemStack> getAvailableItems(final IItemList out) {
+		for (final IAEItemStack ais : this.getStoredItems()) {
+			out.add(ais);
 		}
 
 		return out;
 	}
 
 	@Override
-	public StorageChannel getChannel()
-	{
+	public StorageChannel getChannel() {
 		return StorageChannel.ITEMS;
 	}
 
 	@Override
-	public AccessRestriction getAccess()
-	{
+	public AccessRestriction getAccess() {
 		return AccessRestriction.READ_WRITE;
 	}
 
 	@Override
-	public boolean isPrioritized( final IAEItemStack input )
-	{
+	public boolean isPrioritized(final IAEItemStack input) {
 		return false;
 	}
 
 	@Override
-	public boolean canAccept( final IAEItemStack input )
-	{
-		if( input.getItem() instanceof IBiometricCard )
-		{
+	public boolean canAccept(final IAEItemStack input) {
+		if (input.getItem() instanceof IBiometricCard) {
 			final IBiometricCard tbc = (IBiometricCard) input.getItem();
-			final GameProfile newUser = tbc.getProfile( input.getItemStack() );
+			final GameProfile newUser = tbc.getProfile(input.getItemStack());
 
-			final int PlayerID = AEApi.instance().registries().players().getID( newUser );
-			if( this.securityTile.getOwner() == PlayerID )
-			{
+			final int PlayerID = AEApi.instance().registries().players().getID(newUser);
+			if (this.securityTile.getOwner() == PlayerID) {
 				return false;
 			}
 
-			for( final IAEItemStack ais : this.getStoredItems() )
-			{
-				if( ais.isMeaningful() )
-				{
-					final GameProfile thisUser = tbc.getProfile( ais.getItemStack() );
-					if( thisUser == newUser )
-					{
+			for (final IAEItemStack ais : this.getStoredItems()) {
+				if (ais.isMeaningful()) {
+					final GameProfile thisUser = tbc.getProfile(ais.getItemStack());
+					if (thisUser == newUser) {
 						return false;
 					}
 
-					if( thisUser != null && thisUser.equals( newUser ) )
-					{
+					if (thisUser != null && thisUser.equals(newUser)) {
 						return false;
 					}
 				}
@@ -175,25 +144,21 @@ public class SecurityInventory implements IMEInventoryHandler<IAEItemStack>
 	}
 
 	@Override
-	public int getPriority()
-	{
+	public int getPriority() {
 		return 0;
 	}
 
 	@Override
-	public int getSlot()
-	{
+	public int getSlot() {
 		return 0;
 	}
 
 	@Override
-	public boolean validForPass( final int i )
-	{
+	public boolean validForPass(final int i) {
 		return true;
 	}
 
-	public IItemList<IAEItemStack> getStoredItems()
-	{
+	public IItemList<IAEItemStack> getStoredItems() {
 		return this.storedItems;
 	}
 }

@@ -1,10 +1,8 @@
 package appeng.util;
 
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-
 
 /**
  * Test for {@link IWideReadableNumberConverter}
@@ -13,8 +11,8 @@ import static org.junit.Assert.assertEquals;
  * @version rv2
  * @since rv2
  */
-public final class WideReadableNumberConverterTest
-{
+public final class WideReadableNumberConverterTest {
+
 	private static final long NUMBER_NEG_999999 = -999999L;
 	private static final String RESULT_NEG_999999 = "-0M";
 
@@ -53,75 +51,63 @@ public final class WideReadableNumberConverterTest
 
 	private final IWideReadableNumberConverter converter = ReadableNumberConverter.INSTANCE;
 
-	@Test( expected = AssertionError.class )
-	public void testConvertNeg999999()
-	{
-		assertEquals( RESULT_NEG_999999, this.converter.toWideReadableForm( NUMBER_NEG_999999 ) );
+	@Test(expected = AssertionError.class)
+	public void testConvertNeg999999() {
+		assertEquals(RESULT_NEG_999999, this.converter.toWideReadableForm(NUMBER_NEG_999999));
 	}
 
-	@Test( expected = AssertionError.class )
-	public void testConvertNeg9999()
-	{
-		assertEquals( RESULT_NEG_9999, this.converter.toWideReadableForm( NUMBER_NEG_9999 ) );
+	@Test(expected = AssertionError.class)
+	public void testConvertNeg9999() {
+		assertEquals(RESULT_NEG_9999, this.converter.toWideReadableForm(NUMBER_NEG_9999));
 	}
 
-	@Test( expected = AssertionError.class )
-	public void testConvertNeg999()
-	{
-		assertEquals( RESULT_NEG_999, this.converter.toWideReadableForm( NUMBER_NEG_999 ) );
+	@Test(expected = AssertionError.class)
+	public void testConvertNeg999() {
+		assertEquals(RESULT_NEG_999, this.converter.toWideReadableForm(NUMBER_NEG_999));
 	}
 
 	@Test
-	public void testConvert0()
-	{
-		assertEquals( RESULT_0, this.converter.toWideReadableForm( NUMBER_0 ) );
+	public void testConvert0() {
+		assertEquals(RESULT_0, this.converter.toWideReadableForm(NUMBER_0));
 	}
 
 	@Test
-	public void testConvert999()
-	{
-		assertEquals( RESULT_999, this.converter.toWideReadableForm( NUMBER_999 ) );
+	public void testConvert999() {
+		assertEquals(RESULT_999, this.converter.toWideReadableForm(NUMBER_999));
 	}
 
 	@Test
-	public void testConvert9999()
-	{
-		assertEquals( RESULT_9999, this.converter.toWideReadableForm( NUMBER_9999 ) );
+	public void testConvert9999() {
+		assertEquals(RESULT_9999, this.converter.toWideReadableForm(NUMBER_9999));
 	}
 
 	@Test
-	public void testConvert10000()
-	{
-		assertEquals( RESULT_10000, this.converter.toWideReadableForm( NUMBER_10000 ) );
+	public void testConvert10000() {
+		assertEquals(RESULT_10000, this.converter.toWideReadableForm(NUMBER_10000));
 	}
 
 	@Test
-	public void testConvert10500()
-	{
-		assertEquals( RESULT_10500, this.converter.toWideReadableForm( NUMBER_10500 ) );
+	public void testConvert10500() {
+		assertEquals(RESULT_10500, this.converter.toWideReadableForm(NUMBER_10500));
 	}
 
 	@Test
-	public void testConvert155555()
-	{
-		assertEquals( RESULT_155555, this.converter.toWideReadableForm( NUMBER_155555 ) );
+	public void testConvert155555() {
+		assertEquals(RESULT_155555, this.converter.toWideReadableForm(NUMBER_155555));
 	}
 
 	@Test
-	public void testConvert9999999()
-	{
-		assertEquals( RESULT_9999999, this.converter.toWideReadableForm( NUMBER_9999999 ) );
+	public void testConvert9999999() {
+		assertEquals(RESULT_9999999, this.converter.toWideReadableForm(NUMBER_9999999));
 	}
 
 	@Test
-	public void testConvert10000000()
-	{
-		assertEquals( RESULT_10000000, this.converter.toWideReadableForm( NUMBER_10000000 ) );
+	public void testConvert10000000() {
+		assertEquals(RESULT_10000000, this.converter.toWideReadableForm(NUMBER_10000000));
 	}
 
 	@Test
-	public void testConvert155555555()
-	{
-		assertEquals( RESULT_155555555, this.converter.toWideReadableForm( NUMBER_155555555 ) );
+	public void testConvert155555555() {
+		assertEquals(RESULT_155555555, this.converter.toWideReadableForm(NUMBER_155555555));
 	}
 }

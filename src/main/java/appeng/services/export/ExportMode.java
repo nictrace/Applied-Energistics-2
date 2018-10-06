@@ -18,18 +18,16 @@
 
 package appeng.services.export;
 
-
 /**
  * Defines the different modes which need to be distinguished upon exporting.
- *
+ * <p>
  * using a different mode will result in a different export outcome.
  *
  * @author thatsIch
  * @version rv3 - 23.09.2015
  * @since rv3 - 23.09.2015
  */
-enum ExportMode
-{
+enum ExportMode {
 	/**
 	 * Will provide general users with information required for recipe making
 	 */

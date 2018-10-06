@@ -18,37 +18,28 @@
 
 package appeng.util.item;
 
+import appeng.api.storage.data.IAEItemStack;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import appeng.api.storage.data.IAEItemStack;
-
-
-public class MeaningfulItemIterator<T extends IAEItemStack> implements Iterator<T>
-{
+public class MeaningfulItemIterator<T extends IAEItemStack> implements Iterator<T> {
 
 	private final Iterator<T> parent;
 	private T next;
 
-	public MeaningfulItemIterator( final Iterator<T> iterator )
-	{
+	public MeaningfulItemIterator(final Iterator<T> iterator) {
 		this.parent = iterator;
 	}
 
 	@Override
-	public boolean hasNext()
-	{
-		while( this.parent.hasNext() )
-		{
+	public boolean hasNext() {
+		while (this.parent.hasNext()) {
 			this.next = this.parent.next();
 
-			if( this.next.isMeaningful() )
-			{
+			if (this.next.isMeaningful()) {
 				return true;
-			}
-			else
-			{
+			} else {
 				this.parent.remove(); // self cleaning :3
 			}
 		}
@@ -58,10 +49,8 @@ public class MeaningfulItemIterator<T extends IAEItemStack> implements Iterator<
 	}
 
 	@Override
-	public T next()
-	{
-		if( this.next == null )
-		{
+	public T next() {
+		if (this.next == null) {
 			throw new NoSuchElementException();
 		}
 
@@ -69,8 +58,7 @@ public class MeaningfulItemIterator<T extends IAEItemStack> implements Iterator<
 	}
 
 	@Override
-	public void remove()
-	{
+	public void remove() {
 		this.parent.remove();
 	}
 }

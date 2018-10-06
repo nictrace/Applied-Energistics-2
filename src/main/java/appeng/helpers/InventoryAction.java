@@ -18,9 +18,7 @@
 
 package appeng.helpers;
 
-
-public enum InventoryAction
-{
+public enum InventoryAction {
 	// standard vanilla mechanics.
 	PICKUP_OR_SET_DOWN, SPLIT_OR_PLACE_SINGLE, CREATIVE_DUPLICATE, SHIFT_CLICK,
 

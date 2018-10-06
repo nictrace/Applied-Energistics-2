@@ -18,21 +18,19 @@
 
 package appeng.client.gui.widgets;
 
-
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
-
 
 /**
  * A modified version of the Minecraft text field.
  * You can initialize it over the full element span.
  * The mouse click area is increased to the full element
  * subtracted with the defined padding.
- *
+ * <p>
  * The rendering does pay attention to the size of the '_' caret.
  */
-public class MEGuiTextField extends GuiTextField
-{
+public class MEGuiTextField extends GuiTextField {
+
 	private static final int PADDING = 2;
 
 	private final int _xPos;
@@ -45,14 +43,13 @@ public class MEGuiTextField extends GuiTextField
 	 * Pays attention to the '_' caret.
 	 *
 	 * @param fontRenderer renderer for the strings
-	 * @param xPos absolute left position
-	 * @param yPos absolute top position
-	 * @param width absolute width
-	 * @param height absolute height
+	 * @param xPos         absolute left position
+	 * @param yPos         absolute top position
+	 * @param width        absolute width
+	 * @param height       absolute height
 	 */
-	public MEGuiTextField( final FontRenderer fontRenderer, final int xPos, final int yPos, final int width, final int height )
-	{
-		super( fontRenderer, xPos + PADDING, yPos + PADDING, width - 2 * PADDING - fontRenderer.getCharWidth( '_' ), height - 2 * PADDING );
+	public MEGuiTextField(final FontRenderer fontRenderer, final int xPos, final int yPos, final int width, final int height) {
+		super(fontRenderer, xPos + PADDING, yPos + PADDING, width - 2 * PADDING - fontRenderer.getCharWidth('_'), height - 2 * PADDING);
 
 		this._xPos = xPos;
 		this._yPos = yPos;
@@ -61,13 +58,12 @@ public class MEGuiTextField extends GuiTextField
 	}
 
 	@Override
-	public void mouseClicked( final int xPos, final int yPos, final int button )
-	{
-		super.mouseClicked( xPos, yPos, button );
+	public void mouseClicked(final int xPos, final int yPos, final int button) {
+		super.mouseClicked(xPos, yPos, button);
 
-		final boolean requiresFocus = this.isMouseIn( xPos, yPos );
+		final boolean requiresFocus = this.isMouseIn(xPos, yPos);
 
-		this.setFocused( requiresFocus );
+		this.setFocused(requiresFocus);
 	}
 
 	/**
@@ -75,11 +71,9 @@ public class MEGuiTextField extends GuiTextField
 	 *
 	 * @param xCoord current x coord of the mouse
 	 * @param yCoord current y coord of the mouse
-	 *
 	 * @return true if mouse position is within the text field area
 	 */
-	public boolean isMouseIn( final int xCoord, final int yCoord )
-	{
+	public boolean isMouseIn(final int xCoord, final int yCoord) {
 		final boolean withinXRange = this._xPos <= xCoord && xCoord < this._xPos + this._width;
 		final boolean withinYRange = this._yPos <= yCoord && yCoord < this._yPos + this._height;
 

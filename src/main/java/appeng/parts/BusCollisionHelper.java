@@ -18,7 +18,6 @@
 
 package appeng.parts;
 
-
 import java.util.List;
 
 import net.minecraft.entity.Entity;
@@ -27,9 +26,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import appeng.api.parts.IPartCollisionHelper;
 
-
-public class BusCollisionHelper implements IPartCollisionHelper
-{
+public class BusCollisionHelper implements IPartCollisionHelper {
 
 	private final List<AxisAlignedBB> boxes;
 
@@ -40,8 +37,7 @@ public class BusCollisionHelper implements IPartCollisionHelper
 	private final Entity entity;
 	private final boolean isVisual;
 
-	public BusCollisionHelper( final List<AxisAlignedBB> boxes, final ForgeDirection x, final ForgeDirection y, final ForgeDirection z, final Entity e, final boolean visual )
-	{
+	public BusCollisionHelper(final List<AxisAlignedBB> boxes, final ForgeDirection x, final ForgeDirection y, final ForgeDirection z, final Entity e, final boolean visual) {
 		this.boxes = boxes;
 		this.x = x;
 		this.y = y;
@@ -50,14 +46,12 @@ public class BusCollisionHelper implements IPartCollisionHelper
 		this.isVisual = visual;
 	}
 
-	public BusCollisionHelper( final List<AxisAlignedBB> boxes, final ForgeDirection s, final Entity e, final boolean visual )
-	{
+	public BusCollisionHelper(final List<AxisAlignedBB> boxes, final ForgeDirection s, final Entity e, final boolean visual) {
 		this.boxes = boxes;
 		this.entity = e;
 		this.isVisual = visual;
 
-		switch( s )
-		{
+		switch (s) {
 			case DOWN:
 				this.x = ForgeDirection.EAST;
 				this.y = ForgeDirection.NORTH;
@@ -100,14 +94,12 @@ public class BusCollisionHelper implements IPartCollisionHelper
 	/**
 	 * pretty much useless...
 	 */
-	public Entity getEntity()
-	{
+	public Entity getEntity() {
 		return this.entity;
 	}
 
 	@Override
-	public void addBox( double minX, double minY, double minZ, double maxX, double maxY, double maxZ )
-	{
+	public void addBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
 		minX /= 16.0;
 		minY /= 16.0;
 		minZ /= 16.0;
@@ -123,55 +115,48 @@ public class BusCollisionHelper implements IPartCollisionHelper
 		double bY = maxX * this.x.offsetY + maxY * this.y.offsetY + maxZ * this.z.offsetY;
 		double bZ = maxX * this.x.offsetZ + maxY * this.y.offsetZ + maxZ * this.z.offsetZ;
 
-		if( this.x.offsetX + this.y.offsetX + this.z.offsetX < 0 )
-		{
+		if (this.x.offsetX + this.y.offsetX + this.z.offsetX < 0) {
 			aX += 1;
 			bX += 1;
 		}
 
-		if( this.x.offsetY + this.y.offsetY + this.z.offsetY < 0 )
-		{
+		if (this.x.offsetY + this.y.offsetY + this.z.offsetY < 0) {
 			aY += 1;
 			bY += 1;
 		}
 
-		if( this.x.offsetZ + this.y.offsetZ + this.z.offsetZ < 0 )
-		{
+		if (this.x.offsetZ + this.y.offsetZ + this.z.offsetZ < 0) {
 			aZ += 1;
 			bZ += 1;
 		}
 
-		minX = Math.min( aX, bX );
-		minY = Math.min( aY, bY );
-		minZ = Math.min( aZ, bZ );
-		maxX = Math.max( aX, bX );
-		maxY = Math.max( aY, bY );
-		maxZ = Math.max( aZ, bZ );
+		minX = Math.min(aX, bX);
+		minY = Math.min(aY, bY);
+		minZ = Math.min(aZ, bZ);
+		maxX = Math.max(aX, bX);
+		maxY = Math.max(aY, bY);
+		maxZ = Math.max(aZ, bZ);
 
-		this.boxes.add( AxisAlignedBB.getBoundingBox( minX, minY, minZ, maxX, maxY, maxZ ) );
+		this.boxes.add(AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
 	}
 
 	@Override
-	public ForgeDirection getWorldX()
-	{
+	public ForgeDirection getWorldX() {
 		return this.x;
 	}
 
 	@Override
-	public ForgeDirection getWorldY()
-	{
+	public ForgeDirection getWorldY() {
 		return this.y;
 	}
 
 	@Override
-	public ForgeDirection getWorldZ()
-	{
+	public ForgeDirection getWorldZ() {
 		return this.z;
 	}
 
 	@Override
-	public boolean isBBCollision()
-	{
+	public boolean isBBCollision() {
 		return !this.isVisual;
 	}
 }

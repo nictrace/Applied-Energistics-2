@@ -18,13 +18,12 @@
 
 package appeng.core.worlddata;
 
-
 /**
  * @author thatsIch
  * @version rv3 - 30.05.2015
  * @since rv3 30.05.2015
  */
-public interface IOnWorldStoppable
-{
+public interface IOnWorldStoppable {
+
 	void onWorldStop();
 }

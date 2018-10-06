@@ -18,72 +18,59 @@
 
 package appeng.client.render.effects;
 
-
-import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.world.World;
-
 import appeng.api.storage.data.IAEItemStack;
 import appeng.client.EffectType;
 import appeng.core.CommonHelper;
 import appeng.entity.EntityFloatingItem;
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.world.World;
 
-
-public class AssemblerFX extends EntityFX
-{
+public class AssemblerFX extends EntityFX {
 
 	private final EntityFloatingItem fi;
 	private final float speed;
 	private float time = 0;
 
-	public AssemblerFX( final World w, final double x, final double y, final double z, final double r, final double g, final double b, final float speed, final IAEItemStack is )
-	{
-		super( w, x, y, z, r, g, b );
+	public AssemblerFX(final World w, final double x, final double y, final double z, final double r, final double g, final double b, final float speed, final IAEItemStack is) {
+		super(w, x, y, z, r, g, b);
 		this.motionX = 0;
 		this.motionY = 0;
 		this.motionZ = 0;
 		this.speed = speed;
-		this.fi = new EntityFloatingItem( this, w, x, y, z, is.getItemStack() );
-		w.spawnEntityInWorld( this.fi );
-		this.particleMaxAge = (int) Math.ceil( Math.max( 1, 100.0f / speed ) ) + 2;
+		this.fi = new EntityFloatingItem(this, w, x, y, z, is.getItemStack());
+		w.spawnEntityInWorld(this.fi);
+		this.particleMaxAge = (int) Math.ceil(Math.max(1, 100.0f / speed)) + 2;
 		this.noClip = true;
 	}
 
 	@Override
-	public int getBrightnessForRender( final float par1 )
-	{
+	public int getBrightnessForRender(final float par1) {
 		final int j1 = 13;
 		return j1 << 20 | j1 << 4;
 	}
 
 	@Override
-	public void onUpdate()
-	{
+	public void onUpdate() {
 		super.onUpdate();
 
-		if( this.isDead )
-		{
+		if (this.isDead) {
 			this.fi.setDead();
-		}
-		else
-		{
+		} else {
 			final float lifeSpan = (float) this.particleAge / (float) this.particleMaxAge;
-			this.fi.setProgress( lifeSpan );
+			this.fi.setProgress(lifeSpan);
 		}
 	}
 
 	@Override
-	public void renderParticle( final Tessellator tess, final float l, final float rX, final float rY, final float rZ, final float rYZ, final float rXY )
-	{
+	public void renderParticle(final Tessellator tess, final float l, final float rX, final float rY, final float rZ, final float rYZ, final float rXY) {
 		this.time += l;
 
-		if( this.time > 4.0 )
-		{
+		if (this.time > 4.0) {
 			this.time -= 4.0;
 			// if ( CommonHelper.proxy.shouldAddParticles( r ) )
-			for( int x = 0; x < (int) Math.ceil( this.speed / 5 ); x++ )
-			{
-				CommonHelper.proxy.spawnEffect( EffectType.Crafting, this.worldObj, this.posX, this.posY, this.posZ, null );
+			for (int x = 0; x < (int) Math.ceil(this.speed / 5); x++) {
+				CommonHelper.proxy.spawnEffect(EffectType.Crafting, this.worldObj, this.posX, this.posY, this.posZ, null);
 			}
 		}
 	}

@@ -18,11 +18,9 @@
 
 package appeng.core.api;
 
-
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 
+public interface IIMCProcessor {
 
-public interface IIMCProcessor
-{
-	void process( IMCMessage m );
+	void process(IMCMessage m);
 }

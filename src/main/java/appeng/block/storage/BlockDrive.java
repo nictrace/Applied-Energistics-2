@@ -18,56 +18,45 @@
 
 package appeng.block.storage;
 
-
-import java.util.EnumSet;
-
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import appeng.block.AEBaseTileBlock;
 import appeng.client.render.blocks.RenderDrive;
 import appeng.core.features.AEFeature;
 import appeng.core.sync.GuiBridge;
 import appeng.tile.storage.TileDrive;
 import appeng.util.Platform;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.EnumSet;
 
-public class BlockDrive extends AEBaseTileBlock
-{
+public class BlockDrive extends AEBaseTileBlock {
 
-	public BlockDrive()
-	{
-		super( Material.iron );
-		this.setTileEntity( TileDrive.class );
-		this.setFeature( EnumSet.of( AEFeature.StorageCells, AEFeature.MEDrive ) );
+	public BlockDrive() {
+		super(Material.iron);
+		this.setTileEntity(TileDrive.class);
+		this.setFeature(EnumSet.of(AEFeature.StorageCells, AEFeature.MEDrive));
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	protected RenderDrive getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	protected RenderDrive getRenderer() {
 		return new RenderDrive();
 	}
 
 	@Override
-	public boolean onActivated( final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		if( p.isSneaking() )
-		{
+	public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ) {
+		if (p.isSneaking()) {
 			return false;
 		}
 
-		final TileDrive tg = this.getTileEntity( w, x, y, z );
-		if( tg != null )
-		{
-			if( Platform.isServer() )
-			{
-				Platform.openGUI( p, tg, ForgeDirection.getOrientation( side ), GuiBridge.GUI_DRIVE );
+		final TileDrive tg = this.getTileEntity(w, x, y, z);
+		if (tg != null) {
+			if (Platform.isServer()) {
+				Platform.openGUI(p, tg, ForgeDirection.getOrientation(side), GuiBridge.GUI_DRIVE);
 			}
 			return true;
 		}

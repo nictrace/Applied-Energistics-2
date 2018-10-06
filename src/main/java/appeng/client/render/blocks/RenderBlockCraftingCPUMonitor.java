@@ -18,19 +18,6 @@
 
 package appeng.client.render.blocks;
 
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.storage.data.IAEItemStack;
 import appeng.block.crafting.BlockCraftingMonitor;
 import appeng.client.ClientHelper;
@@ -39,7 +26,16 @@ import appeng.tile.crafting.TileCraftingMonitorTile;
 import appeng.util.IWideReadableNumberConverter;
 import appeng.util.Platform;
 import appeng.util.ReadableNumberConverter;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 /**
  * @author AlgorithmX2
@@ -47,42 +43,33 @@ import appeng.util.ReadableNumberConverter;
  * @version rv2
  * @since rv1
  */
-public class RenderBlockCraftingCPUMonitor extends RenderBlockCraftingCPU<BlockCraftingMonitor, TileCraftingMonitorTile>
-{
+public class RenderBlockCraftingCPUMonitor extends RenderBlockCraftingCPU<BlockCraftingMonitor, TileCraftingMonitorTile> {
+
 	private static final IWideReadableNumberConverter NUMBER_CONVERTER = ReadableNumberConverter.INSTANCE;
 
-	public RenderBlockCraftingCPUMonitor()
-	{
-		super( true, 20 );
+	public RenderBlockCraftingCPUMonitor() {
+		super(true, 20);
 	}
 
 	@Override
-	public void renderTile( final BlockCraftingMonitor block, final TileCraftingMonitorTile tile, final Tessellator tess, final double x, final double y, final double z, final float f, final RenderBlocks renderer )
-	{
-		if( tile != null )
-		{
+	public void renderTile(final BlockCraftingMonitor block, final TileCraftingMonitorTile tile, final Tessellator tess, final double x, final double y, final double z, final float f, final RenderBlocks renderer) {
+		if (tile != null) {
 			final IAEItemStack ais = tile.getJobProgress();
 
-			if( tile.getDisplayList() == null )
-			{
-				tile.setUpdateList( true );
-				tile.setDisplayList( GLAllocation.generateDisplayLists( 1 ) );
-			}
-			else
-			{
+			if (tile.getDisplayList() == null) {
+				tile.setUpdateList(true);
+				tile.setDisplayList(GLAllocation.generateDisplayLists(1));
+			} else {
 				GL11.glPushMatrix();
-				GL11.glTranslated( x + 0.5, y + 0.5, z + 0.5 );
+				GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
 
-				if( tile.isUpdateList() )
-				{
-					tile.setUpdateList( false );
-					GL11.glNewList( tile.getDisplayList(), GL11.GL_COMPILE_AND_EXECUTE );
-					this.tesrRenderScreen( tess, tile, ais );
+				if (tile.isUpdateList()) {
+					tile.setUpdateList(false);
+					GL11.glNewList(tile.getDisplayList(), GL11.GL_COMPILE_AND_EXECUTE);
+					this.tesrRenderScreen(tess, tile, ais);
 					GL11.glEndList();
-				}
-				else
-				{
-					GL11.glCallList( tile.getDisplayList() );
+				} else {
+					GL11.glCallList(tile.getDisplayList());
 				}
 
 				GL11.glPopMatrix();
@@ -90,61 +77,57 @@ public class RenderBlockCraftingCPUMonitor extends RenderBlockCraftingCPU<BlockC
 		}
 	}
 
-	private void tesrRenderScreen( final Tessellator tess, final TileCraftingMonitorTile cmt, final IAEItemStack ais )
-	{
+	private void tesrRenderScreen(final Tessellator tess, final TileCraftingMonitorTile cmt, final IAEItemStack ais) {
 		final ForgeDirection side = cmt.getForward();
 
 		ForgeDirection walrus = side.offsetY != 0 ? ForgeDirection.SOUTH : ForgeDirection.UP;
 		int spin = 0;
 		int max = 5;
 
-		while( walrus != cmt.getUp() && max > 0 )
-		{
+		while (walrus != cmt.getUp() && max > 0) {
 			max--;
 			spin++;
-			walrus = Platform.rotateAround( walrus, side );
+			walrus = Platform.rotateAround(walrus, side);
 		}
 		max--;
 
-		GL11.glTranslated( side.offsetX * 0.69, side.offsetY * 0.69, side.offsetZ * 0.69 );
+		GL11.glTranslated(side.offsetX * 0.69, side.offsetY * 0.69, side.offsetZ * 0.69);
 
 		final float scale = 0.7f;
-		GL11.glScalef( scale, scale, scale );
+		GL11.glScalef(scale, scale, scale);
 
-		switch( side )
-		{
+		switch (side) {
 			case UP:
-				GL11.glScalef( 1.0f, -1.0f, 1.0f );
-				GL11.glRotatef( 90.0f, 1.0f, 0.0f, 0.0f );
-				GL11.glRotatef( spin * 90.0F, 0, 0, 1 );
+				GL11.glScalef(1.0f, -1.0f, 1.0f);
+				GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+				GL11.glRotatef(spin * 90.0F, 0, 0, 1);
 				break;
 			case DOWN:
-				GL11.glScalef( 1.0f, -1.0f, 1.0f );
-				GL11.glRotatef( -90.0f, 1.0f, 0.0f, 0.0f );
-				GL11.glRotatef( spin * -90.0F, 0, 0, 1 );
+				GL11.glScalef(1.0f, -1.0f, 1.0f);
+				GL11.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+				GL11.glRotatef(spin * -90.0F, 0, 0, 1);
 				break;
 			case EAST:
-				GL11.glScalef( -1.0f, -1.0f, -1.0f );
-				GL11.glRotatef( -90.0f, 0.0f, 1.0f, 0.0f );
+				GL11.glScalef(-1.0f, -1.0f, -1.0f);
+				GL11.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
 				break;
 			case WEST:
-				GL11.glScalef( -1.0f, -1.0f, -1.0f );
-				GL11.glRotatef( 90.0f, 0.0f, 1.0f, 0.0f );
+				GL11.glScalef(-1.0f, -1.0f, -1.0f);
+				GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
 				break;
 			case NORTH:
-				GL11.glScalef( -1.0f, -1.0f, -1.0f );
+				GL11.glScalef(-1.0f, -1.0f, -1.0f);
 				break;
 			case SOUTH:
-				GL11.glScalef( -1.0f, -1.0f, -1.0f );
-				GL11.glRotatef( 180.0f, 0.0f, 1.0f, 0.0f );
+				GL11.glScalef(-1.0f, -1.0f, -1.0f);
+				GL11.glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
 				break;
 
 			default:
 				break;
 		}
 
-		try
-		{
+		try {
 			final ItemStack sis = ais.getItemStack();
 			sis.stackSize = 1;
 
@@ -152,37 +135,33 @@ public class RenderBlockCraftingCPUMonitor extends RenderBlockCraftingCPU<BlockC
 			final int var11 = br % 65536;
 			final int var12 = br / 65536;
 
-			OpenGlHelper.setLightmapTextureCoords( OpenGlHelper.lightmapTexUnit, var11 * 0.8F, var12 * 0.8F );
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, var11 * 0.8F, var12 * 0.8F);
 
-			GL11.glColor4f( 1.0F, 1.0F, 1.0F, 1.0F );
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-			GL11.glDisable( GL11.GL_LIGHTING );
-			GL11.glDisable( GL12.GL_RESCALE_NORMAL );
+			GL11.glDisable(GL11.GL_LIGHTING);
+			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			// RenderHelper.enableGUIStandardItemLighting();
-			tess.setColorOpaque_F( 1.0f, 1.0f, 1.0f );
+			tess.setColorOpaque_F(1.0f, 1.0f, 1.0f);
 
-			ClientHelper.proxy.doRenderItem( sis, cmt.getWorldObj() );
-		}
-		catch( final Exception e )
-		{
-			AELog.debug( e );
-		}
-		finally
-		{
-			GL11.glEnable( GL12.GL_RESCALE_NORMAL );
-			GL11.glEnable( GL11.GL_LIGHTING );
+			ClientHelper.proxy.doRenderItem(sis, cmt.getWorldObj());
+		} catch (final Exception e) {
+			AELog.debug(e);
+		} finally {
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+			GL11.glEnable(GL11.GL_LIGHTING);
 		}
 
-		GL11.glTranslatef( 0.0f, 0.14f, -0.24f );
-		GL11.glScalef( 1.0f / 62.0f, 1.0f / 62.0f, 1.0f / 62.0f );
+		GL11.glTranslatef(0.0f, 0.14f, -0.24f);
+		GL11.glScalef(1.0f / 62.0f, 1.0f / 62.0f, 1.0f / 62.0f);
 
 		final long stackSize = ais.getStackSize();
-		final String renderedStackSize = NUMBER_CONVERTER.toWideReadableForm( stackSize );
+		final String renderedStackSize = NUMBER_CONVERTER.toWideReadableForm(stackSize);
 
 		final FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-		final int width = fr.getStringWidth( renderedStackSize );
+		final int width = fr.getStringWidth(renderedStackSize);
 
-		GL11.glTranslatef( -0.5f * width, 0.0f, -1.0f );
-		fr.drawString( renderedStackSize, 0, 0, 0 );
+		GL11.glTranslatef(-0.5f * width, 0.0f, -1.0f);
+		fr.drawString(renderedStackSize, 0, 0, 0);
 	}
 }

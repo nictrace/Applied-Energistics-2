@@ -23,12 +23,10 @@
 
 package appeng.api.networking;
 
-
 /**
  * Various flags to determine network node behavior.
  */
-public enum GridFlags
-{
+public enum GridFlags {
 	/**
 	 * import/export buses, terminals, and other devices that use network features, will use this setting.
 	 */

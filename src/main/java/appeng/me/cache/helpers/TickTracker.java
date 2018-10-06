@@ -18,21 +18,17 @@
 
 package appeng.me.cache.helpers;
 
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.crash.CrashReportCategory;
-
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.util.DimensionalCoord;
 import appeng.me.cache.TickManagerCache;
 import appeng.parts.AEBasePart;
+import net.minecraft.crash.CrashReportCategory;
 
+import javax.annotation.Nonnull;
 
-public class TickTracker implements Comparable<TickTracker>
-{
+public class TickTracker implements Comparable<TickTracker> {
 
 	private final TickingRequest request;
 	private final IGridTickable gt;
@@ -44,98 +40,82 @@ public class TickTracker implements Comparable<TickTracker>
 	private long lastTick;
 	private int currentRate;
 
-	public TickTracker( final TickingRequest req, final IGridNode node, final IGridTickable gt, final long currentTick, final TickManagerCache tickManagerCache )
-	{
+	public TickTracker(final TickingRequest req, final IGridNode node, final IGridTickable gt, final long currentTick, final TickManagerCache tickManagerCache) {
 		this.request = req;
 		this.gt = gt;
 		this.node = node;
-		this.setCurrentRate( ( req.minTickRate + req.maxTickRate ) / 2 );
-		this.setLastTick( currentTick );
+		this.setCurrentRate((req.minTickRate + req.maxTickRate) / 2);
+		this.setLastTick(currentTick);
 		this.host = tickManagerCache;
 	}
 
-	public long getAvgNanos()
-	{
-		return( this.LastFiveTicksTime / 5 );
+	public long getAvgNanos() {
+		return (this.LastFiveTicksTime / 5);
 	}
 
-	public void setRate( final int rate )
-	{
-		this.setCurrentRate( rate );
+	public void setRate(final int rate) {
+		this.setCurrentRate(rate);
 
-		if( this.getCurrentRate() < this.getRequest().minTickRate )
-		{
-			this.setCurrentRate( this.getRequest().minTickRate );
+		if (this.getCurrentRate() < this.getRequest().minTickRate) {
+			this.setCurrentRate(this.getRequest().minTickRate);
 		}
 
-		if( this.getCurrentRate() > this.getRequest().maxTickRate )
-		{
-			this.setCurrentRate( this.getRequest().maxTickRate );
+		if (this.getCurrentRate() > this.getRequest().maxTickRate) {
+			this.setCurrentRate(this.getRequest().maxTickRate);
 		}
 	}
 
 	@Override
-	public int compareTo( @Nonnull final TickTracker t )
-	{
-		final int nextTick = (int) ( ( this.getLastTick() - this.host.getCurrentTick() ) + this.getCurrentRate() );
-		final int ts_nextTick = (int) ( ( t.getLastTick() - this.host.getCurrentTick() ) + t.getCurrentRate() );
+	public int compareTo(@Nonnull final TickTracker t) {
+		final int nextTick = (int) ((this.getLastTick() - this.host.getCurrentTick()) + this.getCurrentRate());
+		final int ts_nextTick = (int) ((t.getLastTick() - this.host.getCurrentTick()) + t.getCurrentRate());
 		return nextTick - ts_nextTick;
 	}
 
-	public void addEntityCrashInfo( final CrashReportCategory crashreportcategory )
-	{
-		if( this.getGridTickable() instanceof AEBasePart )
-		{
+	public void addEntityCrashInfo(final CrashReportCategory crashreportcategory) {
+		if (this.getGridTickable() instanceof AEBasePart) {
 			final AEBasePart part = (AEBasePart) this.getGridTickable();
-			part.addEntityCrashInfo( crashreportcategory );
+			part.addEntityCrashInfo(crashreportcategory);
 		}
 
-		crashreportcategory.addCrashSection( "CurrentTickRate", this.getCurrentRate() );
-		crashreportcategory.addCrashSection( "MinTickRate", this.getRequest().minTickRate );
-		crashreportcategory.addCrashSection( "MaxTickRate", this.getRequest().maxTickRate );
-		crashreportcategory.addCrashSection( "MachineType", this.getGridTickable().getClass().getName() );
-		crashreportcategory.addCrashSection( "GridBlockType", this.getNode().getGridBlock().getClass().getName() );
-		crashreportcategory.addCrashSection( "ConnectedSides", this.getNode().getConnectedSides() );
+		crashreportcategory.addCrashSection("CurrentTickRate", this.getCurrentRate());
+		crashreportcategory.addCrashSection("MinTickRate", this.getRequest().minTickRate);
+		crashreportcategory.addCrashSection("MaxTickRate", this.getRequest().maxTickRate);
+		crashreportcategory.addCrashSection("MachineType", this.getGridTickable().getClass().getName());
+		crashreportcategory.addCrashSection("GridBlockType", this.getNode().getGridBlock().getClass().getName());
+		crashreportcategory.addCrashSection("ConnectedSides", this.getNode().getConnectedSides());
 
 		final DimensionalCoord dc = this.getNode().getGridBlock().getLocation();
-		if( dc != null )
-		{
-			crashreportcategory.addCrashSection( "Location", dc );
+		if (dc != null) {
+			crashreportcategory.addCrashSection("Location", dc);
 		}
 	}
 
-	public int getCurrentRate()
-	{
+	public int getCurrentRate() {
 		return this.currentRate;
 	}
 
-	public void setCurrentRate( final int currentRate )
-	{
+	public void setCurrentRate(final int currentRate) {
 		this.currentRate = currentRate;
 	}
 
-	public long getLastTick()
-	{
+	public long getLastTick() {
 		return this.lastTick;
 	}
 
-	public void setLastTick( final long lastTick )
-	{
+	public void setLastTick(final long lastTick) {
 		this.lastTick = lastTick;
 	}
 
-	public IGridNode getNode()
-	{
+	public IGridNode getNode() {
 		return this.node;
 	}
 
-	public IGridTickable getGridTickable()
-	{
+	public IGridTickable getGridTickable() {
 		return this.gt;
 	}
 
-	public TickingRequest getRequest()
-	{
+	public TickingRequest getRequest() {
 		return this.request;
 	}
 }

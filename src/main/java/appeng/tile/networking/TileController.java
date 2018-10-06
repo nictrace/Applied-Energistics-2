@@ -18,13 +18,6 @@
 
 package appeng.tile.networking;
 
-
-import java.util.EnumSet;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.events.MENetworkControllerChange;
@@ -38,41 +31,41 @@ import appeng.me.GridAccessException;
 import appeng.tile.grid.AENetworkPowerTile;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.InvOperation;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.EnumSet;
 
-public class TileController extends AENetworkPowerTile
-{
-	private static final IInventory NULL_INVENTORY = new AppEngInternalInventory( null, 0 );
+public class TileController extends AENetworkPowerTile {
+
+	private static final IInventory NULL_INVENTORY = new AppEngInternalInventory(null, 0);
 	private static final int[] ACCESSIBLE_SLOTS_BY_SIDE = {};
 
 	private boolean isValid = false;
 
-	public TileController()
-	{
-		this.setInternalMaxPower( 8000 );
-		this.setInternalPublicPowerStorage( true );
-		this.getProxy().setIdlePowerUsage( 3 );
-		this.getProxy().setFlags( GridFlags.CANNOT_CARRY, GridFlags.DENSE_CAPACITY );
+	public TileController() {
+		this.setInternalMaxPower(8000);
+		this.setInternalPublicPowerStorage(true);
+		this.getProxy().setIdlePowerUsage(3);
+		this.getProxy().setFlags(GridFlags.CANNOT_CARRY, GridFlags.DENSE_CAPACITY);
 	}
 
 	@Override
-	public AECableType getCableConnectionType( final ForgeDirection dir )
-	{
+	public AECableType getCableConnectionType(final ForgeDirection dir) {
 		return AECableType.DENSE;
 	}
 
 	@Override
-	public void onReady()
-	{
-		this.onNeighborChange( true );
+	public void onReady() {
+		this.onNeighborChange(true);
 		super.onReady();
 	}
 
-	public void onNeighborChange( final boolean force )
-	{
-		final boolean xx = this.checkController( this.xCoord - 1, this.yCoord, this.zCoord ) && this.checkController( this.xCoord + 1, this.yCoord, this.zCoord );
-		final boolean yy = this.checkController( this.xCoord, this.yCoord - 1, this.zCoord ) && this.checkController( this.xCoord, this.yCoord + 1, this.zCoord );
-		final boolean zz = this.checkController( this.xCoord, this.yCoord, this.zCoord - 1 ) && this.checkController( this.xCoord, this.yCoord, this.zCoord + 1 );
+	public void onNeighborChange(final boolean force) {
+		final boolean xx = this.checkController(this.xCoord - 1, this.yCoord, this.zCoord) && this.checkController(this.xCoord + 1, this.yCoord, this.zCoord);
+		final boolean yy = this.checkController(this.xCoord, this.yCoord - 1, this.zCoord) && this.checkController(this.xCoord, this.yCoord + 1, this.zCoord);
+		final boolean zz = this.checkController(this.xCoord, this.yCoord, this.zCoord - 1) && this.checkController(this.xCoord, this.yCoord, this.zCoord + 1);
 
 		// int meta = world.getBlockMetadata( xCoord, yCoord, zCoord );
 		// boolean hasPower = meta > 0;
@@ -80,17 +73,13 @@ public class TileController extends AENetworkPowerTile
 
 		final boolean oldValid = this.isValid;
 
-		this.isValid = ( xx && !yy && !zz ) || ( !xx && yy && !zz ) || ( !xx && !yy && zz ) || ( ( xx ? 1 : 0 ) + ( yy ? 1 : 0 ) + ( zz ? 1 : 0 ) <= 1 );
+		this.isValid = (xx && !yy && !zz) || (!xx && yy && !zz) || (!xx && !yy && zz) || ((xx ? 1 : 0) + (yy ? 1 : 0) + (zz ? 1 : 0) <= 1);
 
-		if( oldValid != this.isValid || force )
-		{
-			if( this.isValid )
-			{
-				this.getProxy().setValidSides( EnumSet.allOf( ForgeDirection.class ) );
-			}
-			else
-			{
-				this.getProxy().setValidSides( EnumSet.noneOf( ForgeDirection.class ) );
+		if (oldValid != this.isValid || force) {
+			if (this.isValid) {
+				this.getProxy().setValidSides(EnumSet.allOf(ForgeDirection.class));
+			} else {
+				this.getProxy().setValidSides(EnumSet.noneOf(ForgeDirection.class));
 			}
 
 			this.updateMeta();
@@ -98,111 +87,85 @@ public class TileController extends AENetworkPowerTile
 
 	}
 
-	private void updateMeta()
-	{
-		if( !this.getProxy().isReady() )
-		{
+	private void updateMeta() {
+		if (!this.getProxy().isReady()) {
 			return;
 		}
 
 		int meta = 0;
 
-		try
-		{
-			if( this.getProxy().getEnergy().isNetworkPowered() )
-			{
+		try {
+			if (this.getProxy().getEnergy().isNetworkPowered()) {
 				meta = 1;
 
-				if( this.getProxy().getPath().getControllerState() == ControllerState.CONTROLLER_CONFLICT )
-				{
+				if (this.getProxy().getPath().getControllerState() == ControllerState.CONTROLLER_CONFLICT) {
 					meta = 2;
 				}
 			}
-		}
-		catch( final GridAccessException e )
-		{
+		} catch (final GridAccessException e) {
 			meta = 0;
 		}
 
-		if( this.checkController( this.xCoord, this.yCoord, this.zCoord ) && this.worldObj.getBlockMetadata( this.xCoord, this.yCoord, this.zCoord ) != meta )
-		{
-			this.worldObj.setBlockMetadataWithNotify( this.xCoord, this.yCoord, this.zCoord, meta, 2 );
+		if (this.checkController(this.xCoord, this.yCoord, this.zCoord) && this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord) != meta) {
+			this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, meta, 2);
 		}
 	}
 
 	@Override
-	protected double getFunnelPowerDemand( final double maxReceived )
-	{
-		try
-		{
-			return this.getProxy().getEnergy().getEnergyDemand( 8000 );
-		}
-		catch( final GridAccessException e )
-		{
+	protected double getFunnelPowerDemand(final double maxReceived) {
+		try {
+			return this.getProxy().getEnergy().getEnergyDemand(8000);
+		} catch (final GridAccessException e) {
 			// no grid? use local...
-			return super.getFunnelPowerDemand( maxReceived );
+			return super.getFunnelPowerDemand(maxReceived);
 		}
 	}
 
 	@Override
-	protected double funnelPowerIntoStorage( final double power, final Actionable mode )
-	{
-		try
-		{
-			final double ret = this.getProxy().getEnergy().injectPower( power, mode );
-			if( mode == Actionable.SIMULATE )
-			{
+	protected double funnelPowerIntoStorage(final double power, final Actionable mode) {
+		try {
+			final double ret = this.getProxy().getEnergy().injectPower(power, mode);
+			if (mode == Actionable.SIMULATE) {
 				return ret;
 			}
 			return 0;
-		}
-		catch( final GridAccessException e )
-		{
+		} catch (final GridAccessException e) {
 			// no grid? use local...
-			return super.funnelPowerIntoStorage( power, mode );
+			return super.funnelPowerIntoStorage(power, mode);
 		}
 	}
 
 	@Override
-	protected void PowerEvent( final PowerEventType x )
-	{
-		try
-		{
-			this.getProxy().getGrid().postEvent( new MENetworkPowerStorage( this, x ) );
-		}
-		catch( final GridAccessException e )
-		{
+	protected void PowerEvent(final PowerEventType x) {
+		try {
+			this.getProxy().getGrid().postEvent(new MENetworkPowerStorage(this, x));
+		} catch (final GridAccessException e) {
 			// not ready!
 		}
 	}
 
 	@MENetworkEventSubscribe
-	public void onControllerChange( final MENetworkControllerChange status )
-	{
+	public void onControllerChange(final MENetworkControllerChange status) {
 		this.updateMeta();
 	}
 
 	@MENetworkEventSubscribe
-	public void onPowerChange( final MENetworkPowerStatusChange status )
-	{
+	public void onPowerChange(final MENetworkPowerStatusChange status) {
 		this.updateMeta();
 	}
 
 	@Override
-	public IInventory getInternalInventory()
-	{
+	public IInventory getInternalInventory() {
 		return NULL_INVENTORY;
 	}
 
 	@Override
-	public void onChangeInventory( final IInventory inv, final int slot, final InvOperation mc, final ItemStack removed, final ItemStack added )
-	{
+	public void onChangeInventory(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removed, final ItemStack added) {
 
 	}
 
 	@Override
-	public int[] getAccessibleSlotsBySide( final ForgeDirection side )
-	{
+	public int[] getAccessibleSlotsBySide(final ForgeDirection side) {
 		return ACCESSIBLE_SLOTS_BY_SIDE;
 	}
 
@@ -211,11 +174,9 @@ public class TileController extends AENetworkPowerTile
 	 *
 	 * @return true if there is a loaded controller
 	 */
-	private boolean checkController( final int x, final int y, final int z )
-	{
-		if( this.worldObj.getChunkProvider().chunkExists( this.xCoord >> 4, this.zCoord >> 4 ) )
-		{
-			return this.worldObj.getTileEntity( x, y, z ) instanceof TileController;
+	private boolean checkController(final int x, final int y, final int z) {
+		if (this.worldObj.getChunkProvider().chunkExists(this.xCoord >> 4, this.zCoord >> 4)) {
+			return this.worldObj.getTileEntity(x, y, z) instanceof TileController;
 		}
 		return false;
 	}

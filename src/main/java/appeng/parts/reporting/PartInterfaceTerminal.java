@@ -18,40 +18,32 @@
 
 package appeng.parts.reporting;
 
-
+import appeng.client.texture.CableBusTextures;
+import appeng.core.sync.GuiBridge;
+import appeng.util.Platform;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 
-import appeng.client.texture.CableBusTextures;
-import appeng.core.sync.GuiBridge;
-import appeng.util.Platform;
+public class PartInterfaceTerminal extends AbstractPartDisplay {
 
-
-public class PartInterfaceTerminal extends AbstractPartDisplay
-{
 	private static final CableBusTextures FRONT_BRIGHT_ICON = CableBusTextures.PartInterfaceTerm_Bright;
 	private static final CableBusTextures FRONT_DARK_ICON = CableBusTextures.PartInterfaceTerm_Dark;
 	private static final CableBusTextures FRONT_COLORED_ICON = CableBusTextures.PartInterfaceTerm_Colored;
 
-	public PartInterfaceTerminal( final ItemStack is )
-	{
-		super( is );
+	public PartInterfaceTerminal(final ItemStack is) {
+		super(is);
 	}
 
 	@Override
-	public boolean onPartActivate( final EntityPlayer player, final Vec3 pos )
-	{
-		if( !super.onPartActivate( player, pos ) )
-		{
-			if( !player.isSneaking() )
-			{
-				if( Platform.isClient() )
-				{
+	public boolean onPartActivate(final EntityPlayer player, final Vec3 pos) {
+		if (!super.onPartActivate(player, pos)) {
+			if (!player.isSneaking()) {
+				if (Platform.isClient()) {
 					return true;
 				}
 
-				Platform.openGUI( player, this.getHost().getTile(), this.getSide(), GuiBridge.GUI_INTERFACE_TERMINAL );
+				Platform.openGUI(player, this.getHost().getTile(), this.getSide(), GuiBridge.GUI_INTERFACE_TERMINAL);
 
 				return true;
 			}
@@ -61,20 +53,17 @@ public class PartInterfaceTerminal extends AbstractPartDisplay
 	}
 
 	@Override
-	public CableBusTextures getFrontBright()
-	{
+	public CableBusTextures getFrontBright() {
 		return FRONT_BRIGHT_ICON;
 	}
 
 	@Override
-	public CableBusTextures getFrontColored()
-	{
+	public CableBusTextures getFrontColored() {
 		return FRONT_COLORED_ICON;
 	}
 
 	@Override
-	public CableBusTextures getFrontDark()
-	{
+	public CableBusTextures getFrontDark() {
 		return FRONT_DARK_ICON;
 	}
 }

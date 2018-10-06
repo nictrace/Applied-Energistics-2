@@ -18,30 +18,23 @@
 
 package appeng.block.networking;
 
-
-import java.util.EnumSet;
-
-import net.minecraft.util.IIcon;
-
 import appeng.client.texture.ExtraBlockTextures;
 import appeng.core.features.AEFeature;
 import appeng.tile.networking.TileDenseEnergyCell;
+import net.minecraft.util.IIcon;
 
+import java.util.EnumSet;
 
-public class BlockDenseEnergyCell extends BlockEnergyCell
-{
+public class BlockDenseEnergyCell extends BlockEnergyCell {
 
-	public BlockDenseEnergyCell()
-	{
-		this.setTileEntity( TileDenseEnergyCell.class );
-		this.setFeature( EnumSet.of( AEFeature.DenseEnergyCells ) );
+	public BlockDenseEnergyCell() {
+		this.setTileEntity(TileDenseEnergyCell.class);
+		this.setFeature(EnumSet.of(AEFeature.DenseEnergyCells));
 	}
 
 	@Override
-	public IIcon getIcon( final int direction, final int metadata )
-	{
-		switch( metadata )
-		{
+	public IIcon getIcon(final int direction, final int metadata) {
+		switch (metadata) {
 			case 0:
 				return ExtraBlockTextures.MEDenseEnergyCell0.getIcon();
 			case 1:
@@ -59,12 +52,11 @@ public class BlockDenseEnergyCell extends BlockEnergyCell
 			case 7:
 				return ExtraBlockTextures.MEDenseEnergyCell7.getIcon();
 		}
-		return super.getIcon( direction, metadata );
+		return super.getIcon(direction, metadata);
 	}
 
 	@Override
-	public double getMaxPower()
-	{
+	public double getMaxPower() {
 		return 200000.0 * 8.0;
 	}
 }

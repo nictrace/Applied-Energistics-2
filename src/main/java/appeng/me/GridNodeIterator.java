@@ -18,37 +18,32 @@
 
 package appeng.me;
 
+import appeng.api.networking.IGridHost;
+import appeng.api.networking.IGridNode;
 
 import java.util.Iterator;
 import java.util.Map;
 
-import appeng.api.networking.IGridHost;
-import appeng.api.networking.IGridNode;
-
-
 /**
  * Nested iterator for {@link appeng.me.MachineSet}
- *
+ * <p>
  * Traverses first over the {@link appeng.me.MachineSet} and then over every containing
  * {@link appeng.api.networking.IGridNode}
  */
-public class GridNodeIterator implements Iterator<IGridNode>
-{
+public class GridNodeIterator implements Iterator<IGridNode> {
+
 	private final Iterator<MachineSet> outerIterator;
 	private Iterator<IGridNode> innerIterator;
 
-	public GridNodeIterator( final Map<Class<? extends IGridHost>, MachineSet> machines )
-	{
+	public GridNodeIterator(final Map<Class<? extends IGridHost>, MachineSet> machines) {
 		this.outerIterator = machines.values().iterator();
 		this.innerHasNext();
 	}
 
-	private boolean innerHasNext()
-	{
+	private boolean innerHasNext() {
 		final boolean hasNext = this.outerIterator.hasNext();
 
-		if( hasNext )
-		{
+		if (hasNext) {
 			final MachineSet nextElem = this.outerIterator.next();
 			this.innerIterator = nextElem.iterator();
 		}
@@ -57,30 +52,23 @@ public class GridNodeIterator implements Iterator<IGridNode>
 	}
 
 	@Override
-	public boolean hasNext()
-	{
-		while( true )
-		{
-			if( this.innerIterator.hasNext() )
-			{
+	public boolean hasNext() {
+		while (true) {
+			if (this.innerIterator.hasNext()) {
 				return true;
-			}
-			else if( !this.innerHasNext() )
-			{
+			} else if (!this.innerHasNext()) {
 				return false;
 			}
 		}
 	}
 
 	@Override
-	public IGridNode next()
-	{
+	public IGridNode next() {
 		return this.innerIterator.next();
 	}
 
 	@Override
-	public void remove()
-	{
+	public void remove() {
 		this.innerIterator.remove();
 	}
 }

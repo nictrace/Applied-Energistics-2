@@ -18,13 +18,12 @@
 
 package appeng.recipes;
 
-
 /**
  * @author thatsIch
  * @version rv3 - 22.08.2015
  * @since rv3 22.08.2015
  */
-public interface CustomRecipeConfig
-{
+public interface CustomRecipeConfig {
+
 	boolean isEnabled();
 }

@@ -18,27 +18,22 @@
 
 package appeng.items.contents;
 
-
-import net.minecraft.item.ItemStack;
-
 import appeng.parts.automation.StackUpgradeInventory;
 import appeng.util.Platform;
+import net.minecraft.item.ItemStack;
 
+public final class CellUpgrades extends StackUpgradeInventory {
 
-public final class CellUpgrades extends StackUpgradeInventory
-{
 	private final ItemStack is;
 
-	public CellUpgrades( final ItemStack is, final int upgrades )
-	{
-		super( is, null, upgrades );
+	public CellUpgrades(final ItemStack is, final int upgrades) {
+		super(is, null, upgrades);
 		this.is = is;
-		this.readFromNBT( Platform.openNbtData( is ), "upgrades" );
+		this.readFromNBT(Platform.openNbtData(is), "upgrades");
 	}
 
 	@Override
-	public void markDirty()
-	{
-		this.writeToNBT( Platform.openNbtData( this.is ), "upgrades" );
+	public void markDirty() {
+		this.writeToNBT(Platform.openNbtData(this.is), "upgrades");
 	}
 }

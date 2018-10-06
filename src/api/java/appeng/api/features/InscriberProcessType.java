@@ -1,8 +1,6 @@
 package appeng.api.features;
 
-
-public enum InscriberProcessType
-{
+public enum InscriberProcessType {
 	/**
 	 * uses the optionals as catalyst
 	 */

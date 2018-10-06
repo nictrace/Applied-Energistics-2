@@ -18,16 +18,12 @@
 
 package appeng.services.export;
 
-
-import java.util.List;
-import javax.annotation.Nonnull;
-
 import com.google.common.base.Preconditions;
-
+import cpw.mods.fml.common.ModContainer;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import cpw.mods.fml.common.ModContainer;
-
+import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Checks the cached digest against the current mods including their versions.
@@ -37,8 +33,8 @@ import cpw.mods.fml.common.ModContainer;
  * @version rv3 - 01.09.2015
  * @since rv3 - 01.09.2015
  */
-final class ModListChecker implements Checker<List<ModContainer>>
-{
+final class ModListChecker implements Checker<List<ModContainer>> {
+
 	private final String configHashValue;
 
 	@Nonnull
@@ -47,10 +43,9 @@ final class ModListChecker implements Checker<List<ModContainer>>
 	/**
 	 * @param config uses the config to retrieve the old hash of the mod list
 	 */
-	ModListChecker( @Nonnull final ExportConfig config )
-	{
-		this.config = Preconditions.checkNotNull( config );
-		this.configHashValue = Preconditions.checkNotNull( config.getCache() );
+	ModListChecker(@Nonnull final ExportConfig config) {
+		this.config = Preconditions.checkNotNull(config);
+		this.configHashValue = Preconditions.checkNotNull(config.getCache());
 	}
 
 	/**
@@ -58,33 +53,27 @@ final class ModListChecker implements Checker<List<ModContainer>>
 	 * the csv once again, if no change was detected.
 	 *
 	 * @param modContainers all mods and their versions to check if a difference exists between the current instance and the previous instance
-	 *
 	 * @return CheckType.EQUAL if no change was detected
 	 */
 	@Nonnull
 	@Override
-	public CheckType isEqual( @Nonnull final List<ModContainer> modContainers )
-	{
-		Preconditions.checkNotNull( modContainers );
+	public CheckType isEqual(@Nonnull final List<ModContainer> modContainers) {
+		Preconditions.checkNotNull(modContainers);
 
 		final StringBuilder builder = new StringBuilder();
 
-		for( final ModContainer container : modContainers )
-		{
-			builder.append( container.getModId() );
-			builder.append( container.getVersion() );
+		for (final ModContainer container : modContainers) {
+			builder.append(container.getModId());
+			builder.append(container.getVersion());
 		}
 
 		final String allModsAndVersions = builder.toString();
-		final String hex = DigestUtils.md5Hex( allModsAndVersions );
+		final String hex = DigestUtils.md5Hex(allModsAndVersions);
 
-		if( hex.equals( this.configHashValue ) )
-		{
+		if (hex.equals(this.configHashValue)) {
 			return CheckType.EQUAL;
-		}
-		else
-		{
-			this.config.setCache( hex );
+		} else {
+			this.config.setCache(hex);
 
 			return CheckType.UNEQUAL;
 		}

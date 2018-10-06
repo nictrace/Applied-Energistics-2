@@ -18,11 +18,13 @@
 
 package appeng.block.misc;
 
-
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-
+import appeng.block.AEBaseTileBlock;
+import appeng.client.render.blocks.RenderBlockSkyCompass;
+import appeng.core.features.AEFeature;
+import appeng.helpers.ICustomCollision;
+import appeng.tile.misc.TileSkyCompass;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -33,89 +35,69 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 
-import appeng.block.AEBaseTileBlock;
-import appeng.client.render.blocks.RenderBlockSkyCompass;
-import appeng.core.features.AEFeature;
-import appeng.helpers.ICustomCollision;
-import appeng.tile.misc.TileSkyCompass;
+public class BlockSkyCompass extends AEBaseTileBlock implements ICustomCollision {
 
-
-public class BlockSkyCompass extends AEBaseTileBlock implements ICustomCollision
-{
-
-	public BlockSkyCompass()
-	{
-		super( Material.iron );
-		this.setTileEntity( TileSkyCompass.class );
+	public BlockSkyCompass() {
+		super(Material.iron);
+		this.setTileEntity(TileSkyCompass.class);
 		this.isOpaque = this.isFullSize = false;
 		this.lightOpacity = 0;
-		this.setFeature( EnumSet.of( AEFeature.MeteoriteCompass ) );
+		this.setFeature(EnumSet.of(AEFeature.MeteoriteCompass));
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	protected RenderBlockSkyCompass getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	protected RenderBlockSkyCompass getRenderer() {
 		return new RenderBlockSkyCompass();
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public IIcon getIcon( final int direction, final int metadata )
-	{
-		return Blocks.iron_block.getIcon( direction, metadata );
+	@SideOnly(Side.CLIENT)
+	public IIcon getIcon(final int direction, final int metadata) {
+		return Blocks.iron_block.getIcon(direction, metadata);
 	}
 
 	@Override
-	public void registerBlockIcons( final IIconRegister iconRegistry )
-	{
+	public void registerBlockIcons(final IIconRegister iconRegistry) {
 		// :P
 	}
 
 	@Override
-	public boolean isValidOrientation( final World w, final int x, final int y, final int z, final ForgeDirection forward, final ForgeDirection up )
-	{
-		final TileSkyCompass sc = this.getTileEntity( w, x, y, z );
-		if( sc != null )
-		{
+	public boolean isValidOrientation(final World w, final int x, final int y, final int z, final ForgeDirection forward, final ForgeDirection up) {
+		final TileSkyCompass sc = this.getTileEntity(w, x, y, z);
+		if (sc != null) {
 			return false;
 		}
-		return this.canPlaceAt( w, x, y, z, forward.getOpposite() );
+		return this.canPlaceAt(w, x, y, z, forward.getOpposite());
 	}
 
-	private boolean canPlaceAt( final World w, final int x, final int y, final int z, final ForgeDirection dir )
-	{
-		return w.isSideSolid( x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.getOpposite(), false );
+	private boolean canPlaceAt(final World w, final int x, final int y, final int z, final ForgeDirection dir) {
+		return w.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.getOpposite(), false);
 	}
 
 	@Override
-	public void onNeighborBlockChange( final World w, final int x, final int y, final int z, final Block id )
-	{
-		final TileSkyCompass sc = this.getTileEntity( w, x, y, z );
+	public void onNeighborBlockChange(final World w, final int x, final int y, final int z, final Block id) {
+		final TileSkyCompass sc = this.getTileEntity(w, x, y, z);
 		final ForgeDirection up = sc.getForward();
-		if( !this.canPlaceAt( w, x, y, z, up.getOpposite() ) )
-		{
-			this.dropTorch( w, x, y, z );
+		if (!this.canPlaceAt(w, x, y, z, up.getOpposite())) {
+			this.dropTorch(w, x, y, z);
 		}
 	}
 
-	private void dropTorch( final World w, final int x, final int y, final int z )
-	{
-		w.func_147480_a( x, y, z, true );
+	private void dropTorch(final World w, final int x, final int y, final int z) {
+		w.func_147480_a(x, y, z, true);
 		// w.destroyBlock( x, y, z, true );
-		w.markBlockForUpdate( x, y, z );
+		w.markBlockForUpdate(x, y, z);
 	}
 
 	@Override
-	public boolean canPlaceBlockAt( final World w, final int x, final int y, final int z )
-	{
-		for( final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS )
-		{
-			if( this.canPlaceAt( w, x, y, z, dir ) )
-			{
+	public boolean canPlaceBlockAt(final World w, final int x, final int y, final int z) {
+		for (final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			if (this.canPlaceAt(w, x, y, z, dir)) {
 				return true;
 			}
 		}
@@ -123,11 +105,9 @@ public class BlockSkyCompass extends AEBaseTileBlock implements ICustomCollision
 	}
 
 	@Override
-	public Iterable<AxisAlignedBB> getSelectedBoundingBoxesFromPool( final World w, final int x, final int y, final int z, final Entity e, final boolean isVisual )
-	{
-		final TileSkyCompass tile = this.getTileEntity( w, x, y, z );
-		if( tile != null )
-		{
+	public Iterable<AxisAlignedBB> getSelectedBoundingBoxesFromPool(final World w, final int x, final int y, final int z, final Entity e, final boolean isVisual) {
+		final TileSkyCompass tile = this.getTileEntity(w, x, y, z);
+		if (tile != null) {
 			final ForgeDirection forward = tile.getForward();
 
 			double minX = 0;
@@ -137,8 +117,7 @@ public class BlockSkyCompass extends AEBaseTileBlock implements ICustomCollision
 			double maxY = 1;
 			double maxZ = 1;
 
-			switch( forward )
-			{
+			switch (forward) {
 				case DOWN:
 					minZ = minX = 5.0 / 16.0;
 					maxZ = maxX = 11.0 / 16.0;
@@ -179,14 +158,13 @@ public class BlockSkyCompass extends AEBaseTileBlock implements ICustomCollision
 					break;
 			}
 
-			return Collections.singletonList( AxisAlignedBB.getBoundingBox( minX, minY, minZ, maxX, maxY, maxZ ) );
+			return Collections.singletonList(AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
 		}
-		return Collections.singletonList( AxisAlignedBB.getBoundingBox( 0.0, 0, 0.0, 1.0, 1.0, 1.0 ) );
+		return Collections.singletonList(AxisAlignedBB.getBoundingBox(0.0, 0, 0.0, 1.0, 1.0, 1.0));
 	}
 
 	@Override
-	public void addCollidingBlockToList( final World w, final int x, final int y, final int z, final AxisAlignedBB bb, final List out, final Entity e )
-	{
+	public void addCollidingBlockToList(final World w, final int x, final int y, final int z, final AxisAlignedBB bb, final List out, final Entity e) {
 
 	}
 }

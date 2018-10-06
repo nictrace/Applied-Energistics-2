@@ -18,7 +18,6 @@
 
 package appeng.integration.modules.BCHelpers;
 
-
 import appeng.api.parts.*;
 import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
@@ -33,139 +32,116 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Set;
 
-
-public class AECableSchematicTile extends AEGenericSchematicTile implements IPartHost
-{
+public class AECableSchematicTile extends AEGenericSchematicTile implements IPartHost {
 
 	@Override
-	public void rotateLeft( final IBuilderContext context )
-	{
-		final CableBusContainer cbc = new CableBusContainer( this );
-		cbc.readFromNBT( this.tileNBT );
+	public void rotateLeft(final IBuilderContext context) {
+		final CableBusContainer cbc = new CableBusContainer(this);
+		cbc.readFromNBT(this.tileNBT);
 
 		cbc.rotateLeft();
 
 		this.tileNBT = new NBTTagCompound();
-		cbc.writeToNBT( this.tileNBT );
+		cbc.writeToNBT(this.tileNBT);
 	}
 
 	@Override
-	public IFacadeContainer getFacadeContainer()
-	{
+	public IFacadeContainer getFacadeContainer() {
 		return null;
 	}
 
 	@Override
-	public boolean canAddPart( final ItemStack part, final ForgeDirection side )
-	{
+	public boolean canAddPart(final ItemStack part, final ForgeDirection side) {
 		return false;
 	}
 
 	@Override
-	public ForgeDirection addPart( final ItemStack is, final ForgeDirection side, final EntityPlayer owner )
-	{
+	public ForgeDirection addPart(final ItemStack is, final ForgeDirection side, final EntityPlayer owner) {
 		return null;
 	}
 
 	@Override
-	public IPart getPart( final ForgeDirection side )
-	{
+	public IPart getPart(final ForgeDirection side) {
 		return null;
 	}
 
 	@Override
-	public void removePart( final ForgeDirection side, final boolean suppressUpdate )
-	{
+	public void removePart(final ForgeDirection side, final boolean suppressUpdate) {
 
 	}
 
 	@Override
-	public void markForUpdate()
-	{
+	public void markForUpdate() {
 
 	}
 
 	@Override
-	public DimensionalCoord getLocation()
-	{
+	public DimensionalCoord getLocation() {
 		return null;
 	}
 
 	@Override
-	public TileEntity getTile()
-	{
+	public TileEntity getTile() {
 		return null;
 	}
 
 	@Override
-	public AEColor getColor()
-	{
+	public AEColor getColor() {
 		return null;
 	}
 
 	@Override
-	public void clearContainer()
-	{
+	public void clearContainer() {
 
 	}
 
 	@Override
-	public boolean isBlocked( final ForgeDirection side )
-	{
+	public boolean isBlocked(final ForgeDirection side) {
 		return false;
 	}
 
 	@Override
-	public SelectedPart selectPart( final Vec3 pos )
-	{
+	public SelectedPart selectPart(final Vec3 pos) {
 		return null;
 	}
 
 	@Override
-	public void markForSave()
-	{
+	public void markForSave() {
 
 	}
 
 	@Override
-	public void partChanged()
-	{
+	public void partChanged() {
 
 	}
 
 	@Override
-	public boolean hasRedstone( final ForgeDirection side )
-	{
+	public boolean hasRedstone(final ForgeDirection side) {
 		return false;
 	}
 
 	@Override
-	public boolean isEmpty()
-	{
+	public boolean isEmpty() {
 		return false;
 	}
 
 	@Override
-	public Set<LayerFlags> getLayerFlags()
-	{
+	public Set<LayerFlags> getLayerFlags() {
 		return null;
 	}
 
 	@Override
-	public void cleanup()
-	{
+	public void cleanup() {
 
 	}
 
 	@Override
-	public void notifyNeighbors()
-	{
+	public void notifyNeighbors() {
 
 	}
 
 	@Override
-	public boolean isInWorld()
-	{
+	public boolean isInWorld() {
 		return false;
 	}
 }

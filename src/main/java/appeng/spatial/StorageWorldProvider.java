@@ -18,7 +18,6 @@
 
 package appeng.spatial;
 
-
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
@@ -36,126 +35,105 @@ import appeng.client.render.SpatialSkyRender;
 import appeng.core.AppEng;
 import appeng.core.Registration;
 
+public class StorageWorldProvider extends WorldProvider {
 
-public class StorageWorldProvider extends WorldProvider
-{
-
-	public StorageWorldProvider()
-	{
+	public StorageWorldProvider() {
 		this.hasNoSky = true;
 	}
 
 	@Override
-	protected void registerWorldChunkManager()
-	{
+	protected void registerWorldChunkManager() {
 		final AppEng ae2internal = AppEng.instance();
 		final Registration ae2registration = ae2internal.getRegistration();
 		final BiomeGenBase storageBiome = ae2registration.getStorageBiome();
 
-		super.worldChunkMgr = new WorldChunkManagerHell( storageBiome, 0.0F );
+		super.worldChunkMgr = new WorldChunkManagerHell(storageBiome, 0.0F);
 	}
 
 	@Override
-	public IChunkProvider createChunkGenerator()
-	{
-		return new StorageChunkProvider( this.worldObj, 0 );
+	public IChunkProvider createChunkGenerator() {
+		return new StorageChunkProvider(this.worldObj, 0);
 	}
 
 	@Override
-	public float calculateCelestialAngle( final long par1, final float par3 )
-	{
+	public float calculateCelestialAngle(final long par1, final float par3) {
 		return 0;
 	}
 
 	@Override
-	public boolean isSurfaceWorld()
-	{
+	public boolean isSurfaceWorld() {
 		return false;
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public float[] calcSunriseSunsetColors( final float celestialAngle, final float partialTicks )
-	{
+	@SideOnly(Side.CLIENT)
+	public float[] calcSunriseSunsetColors(final float celestialAngle, final float partialTicks) {
 		return null;
 	}
 
 	@Override
-	public Vec3 getFogColor( final float par1, final float par2 )
-	{
-		return Vec3.createVectorHelper( 0.07, 0.07, 0.07 );
+	public Vec3 getFogColor(final float par1, final float par2) {
+		return Vec3.createVectorHelper(0.07, 0.07, 0.07);
 	}
 
 	@Override
-	public boolean canRespawnHere()
-	{
+	public boolean canRespawnHere() {
 		return false;
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public boolean isSkyColored()
-	{
+	@SideOnly(Side.CLIENT)
+	public boolean isSkyColored() {
 		return true;
 	}
 
 	@Override
-	public boolean doesXZShowFog( final int par1, final int par2 )
-	{
+	public boolean doesXZShowFog(final int par1, final int par2) {
 		return false;
 	}
 
 	@Override
-	public String getDimensionName()
-	{
+	public String getDimensionName() {
 		return "Storage Cell";
 	}
 
 	@Override
-	public IRenderHandler getSkyRenderer()
-	{
+	public IRenderHandler getSkyRenderer() {
 		return SpatialSkyRender.getInstance();
 	}
 
 	@Override
-	public boolean isDaytime()
-	{
+	public boolean isDaytime() {
 		return false;
 	}
 
 	@Override
-	public Vec3 getSkyColor( final Entity cameraEntity, final float partialTicks )
-	{
-		return Vec3.createVectorHelper( 0.07, 0.07, 0.07 );
+	public Vec3 getSkyColor(final Entity cameraEntity, final float partialTicks) {
+		return Vec3.createVectorHelper(0.07, 0.07, 0.07);
 	}
 
 	@Override
-	public float getStarBrightness( final float par1 )
-	{
+	public float getStarBrightness(final float par1) {
 		return 0;
 	}
 
 	@Override
-	public boolean canSnowAt( final int x, final int y, final int z, final boolean checkLight )
-	{
+	public boolean canSnowAt(final int x, final int y, final int z, final boolean checkLight) {
 		return false;
 	}
 
 	@Override
-	public ChunkCoordinates getSpawnPoint()
-	{
-		return new ChunkCoordinates( 0, 0, 0 );
+	public ChunkCoordinates getSpawnPoint() {
+		return new ChunkCoordinates(0, 0, 0);
 	}
 
 	@Override
-	public boolean isBlockHighHumidity( final int x, final int y, final int z )
-	{
+	public boolean isBlockHighHumidity(final int x, final int y, final int z) {
 		return false;
 	}
 
 	@Override
-	public boolean canDoLightning( final Chunk chunk )
-	{
+	public boolean canDoLightning(final Chunk chunk) {
 		return false;
 	}
 }

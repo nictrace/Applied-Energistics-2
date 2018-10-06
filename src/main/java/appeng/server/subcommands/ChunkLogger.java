@@ -18,85 +18,65 @@
 
 package appeng.server.subcommands;
 
-
+import appeng.core.AEConfig;
+import appeng.core.AELog;
+import appeng.core.features.AEFeature;
+import appeng.server.ISubCommand;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkEvent;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-
-import appeng.core.AEConfig;
-import appeng.core.AELog;
-import appeng.core.features.AEFeature;
-import appeng.server.ISubCommand;
-
-
-public class ChunkLogger implements ISubCommand
-{
+public class ChunkLogger implements ISubCommand {
 
 	private boolean enabled = false;
 
 	@SubscribeEvent
-	public void onChunkLoadEvent( final ChunkEvent.Load event )
-	{
-		if( !event.world.isRemote )
-		{
-			AELog.info( "Chunk Loaded:   " + event.getChunk().xPosition + ", " + event.getChunk().zPosition );
+	public void onChunkLoadEvent(final ChunkEvent.Load event) {
+		if (!event.world.isRemote) {
+			AELog.info("Chunk Loaded:   " + event.getChunk().xPosition + ", " + event.getChunk().zPosition);
 			this.displayStack();
 		}
 	}
 
-	private void displayStack()
-	{
-		if( AEConfig.instance.isFeatureEnabled( AEFeature.ChunkLoggerTrace ) )
-		{
+	private void displayStack() {
+		if (AEConfig.instance.isFeatureEnabled(AEFeature.ChunkLoggerTrace)) {
 			boolean output = false;
-			for( final StackTraceElement e : Thread.currentThread().getStackTrace() )
-			{
-				if( output )
-				{
-					AELog.info( "		" + e.getClassName() + '.' + e.getMethodName() + " (" + e.getLineNumber() + ')' );
-				}
-				else
-				{
-					output = e.getClassName().contains( "EventBus" ) && e.getMethodName().contains( "post" );
+			for (final StackTraceElement e : Thread.currentThread().getStackTrace()) {
+				if (output) {
+					AELog.info("		" + e.getClassName() + '.' + e.getMethodName() + " (" + e.getLineNumber() + ')');
+				} else {
+					output = e.getClassName().contains("EventBus") && e.getMethodName().contains("post");
 				}
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public void onChunkUnloadEvent( final ChunkEvent.Unload unload )
-	{
-		if( !unload.world.isRemote )
-		{
-			AELog.info( "Chunk Unloaded: " + unload.getChunk().xPosition + ", " + unload.getChunk().zPosition );
+	public void onChunkUnloadEvent(final ChunkEvent.Unload unload) {
+		if (!unload.world.isRemote) {
+			AELog.info("Chunk Unloaded: " + unload.getChunk().xPosition + ", " + unload.getChunk().zPosition);
 			this.displayStack();
 		}
 	}
 
 	@Override
-	public String getHelp( final MinecraftServer srv )
-	{
+	public String getHelp(final MinecraftServer srv) {
 		return "commands.ae2.ChunkLogger";
 	}
 
 	@Override
-	public void call( final MinecraftServer srv, final String[] data, final ICommandSender sender )
-	{
+	public void call(final MinecraftServer srv, final String[] data, final ICommandSender sender) {
 		this.enabled = !this.enabled;
 
-		if( this.enabled )
-		{
-			MinecraftForge.EVENT_BUS.register( this );
-			sender.addChatMessage( new ChatComponentTranslation( "commands.ae2.ChunkLoggerOn" ) );
-		}
-		else
-		{
-			MinecraftForge.EVENT_BUS.unregister( this );
-			sender.addChatMessage( new ChatComponentTranslation( "commands.ae2.ChunkLoggerOff" ) );
+		if (this.enabled) {
+			MinecraftForge.EVENT_BUS.register(this);
+			sender.addChatMessage(new ChatComponentTranslation("commands.ae2.ChunkLoggerOn"));
+		} else {
+			MinecraftForge.EVENT_BUS.unregister(this);
+			sender.addChatMessage(new ChatComponentTranslation("commands.ae2.ChunkLoggerOff"));
 		}
 	}
 }

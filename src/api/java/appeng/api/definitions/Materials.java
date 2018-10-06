@@ -23,16 +23,14 @@
 
 package appeng.api.definitions;
 
-
 import appeng.api.util.AEItemDefinition;
-
 
 /**
  * @deprecated use {@link IMaterials}
  */
 @Deprecated
-public class Materials
-{
+public class Materials {
+
 	public AEItemDefinition materialCell2SpatialPart;
 
 	public AEItemDefinition materialCell16SpatialPart;

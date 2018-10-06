@@ -18,19 +18,16 @@
 
 package appeng.me.pathfinding;
 
-
-import java.util.EnumSet;
-
 import appeng.api.networking.GridFlags;
 import appeng.api.util.IReadOnlyCollection;
 
+import java.util.EnumSet;
 
-public interface IPathItem
-{
+public interface IPathItem {
 
 	IPathItem getControllerRoute();
 
-	void setControllerRoute( IPathItem fast, boolean zeroOut );
+	void setControllerRoute(IPathItem fast, boolean zeroOut);
 
 	/**
 	 * used to determine if the finder can continue.
@@ -45,7 +42,7 @@ public interface IPathItem
 	/**
 	 * add one to the channel count, this is mostly for cables.
 	 */
-	void incrementChannelCount( int usedChannels );
+	void incrementChannelCount(int usedChannels);
 
 	/**
 	 * get the grid flags for this IPathItem.

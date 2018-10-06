@@ -29,44 +29,32 @@
 
 package appeng.core.api.imc;
 
+import appeng.api.AEApi;
+import appeng.api.config.TunnelType;
+import appeng.core.api.IIMCProcessor;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
+import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.Locale;
 
-import net.minecraft.item.ItemStack;
-
-import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
-
-import appeng.api.AEApi;
-import appeng.api.config.TunnelType;
-import appeng.core.api.IIMCProcessor;
-
-
-public class IMCP2PAttunement implements IIMCProcessor
-{
+public class IMCP2PAttunement implements IIMCProcessor {
 
 	@Override
-	public void process( final IMCMessage m )
-	{
-		final String key = m.key.substring( "add-p2p-attunement-".length() ).replace( '-', '_' ).toUpperCase( Locale.ENGLISH );
+	public void process(final IMCMessage m) {
+		final String key = m.key.substring("add-p2p-attunement-".length()).replace('-', '_').toUpperCase(Locale.ENGLISH);
 
-		final TunnelType type = TunnelType.valueOf( key );
+		final TunnelType type = TunnelType.valueOf(key);
 
-		if( type != null )
-		{
+		if (type != null) {
 			final ItemStack is = m.getItemStackValue();
-			if( is != null )
-			{
-				AEApi.instance().registries().p2pTunnel().addNewAttunement( is, type );
+			if (is != null) {
+				AEApi.instance().registries().p2pTunnel().addNewAttunement(is, type);
+			} else {
+				throw new IllegalStateException("invalid item in message " + m);
 			}
-			else
-			{
-				throw new IllegalStateException( "invalid item in message " + m );
-			}
-		}
-		else
-		{
-			throw new IllegalStateException( "invalid type in message " + m + " is not contained in " + Arrays.toString( TunnelType.values() ) );
+		} else {
+			throw new IllegalStateException("invalid type in message " + m + " is not contained in " + Arrays.toString(TunnelType.values()));
 		}
 	}
 }

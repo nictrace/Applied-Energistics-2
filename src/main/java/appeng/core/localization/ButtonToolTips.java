@@ -18,12 +18,9 @@
 
 package appeng.core.localization;
 
-
 import net.minecraft.util.StatCollector;
 
-
-public enum ButtonToolTips
-{
+public enum ButtonToolTips {
 	PowerUnits, IOMode, CondenserOutput, RedstoneMode, MatchingFuzzy,
 
 	MatchingMode, TransferDirection, SortOrder, SortBy, View,
@@ -67,23 +64,19 @@ public enum ButtonToolTips
 
 	private final String root;
 
-	ButtonToolTips()
-	{
+	ButtonToolTips() {
 		this.root = "gui.tooltips.appliedenergistics2";
 	}
 
-	ButtonToolTips( final String r )
-	{
+	ButtonToolTips(final String r) {
 		this.root = r;
 	}
 
-	public String getLocal()
-	{
-		return StatCollector.translateToLocal( this.getUnlocalized() );
+	public String getLocal() {
+		return StatCollector.translateToLocal(this.getUnlocalized());
 	}
 
-	public String getUnlocalized()
-	{
+	public String getUnlocalized() {
 		return this.root + '.' + this.toString();
 	}
 

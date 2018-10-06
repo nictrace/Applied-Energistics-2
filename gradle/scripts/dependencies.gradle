@@ -1,4 +1,3 @@
-
 /*
  * This file is part of Applied Energistics 2.
  * Copyright (c) 2013 - 2014, AlgorithmX2, All rights reserved.
@@ -120,7 +119,7 @@ dependencies {
     compile "li.cil.oc:OpenComputers:MC${minecraft_version}-${opencomputers_version}:api"
     compile "net.industrial-craft:industrialcraft-2:${ic2_version}-experimental:api"
 //    compile "net.mcft.copy.betterstorage:BetterStorage:${minecraft_version}-${betterstorage_version}:api"
-	compile files("lib/BetterStorage-1.7.10-0.13.1.126.jar");
+    compile files("lib/BetterStorage-1.7.10-0.13.1.126.jar");
 
     // self compiled APIs
     compile "appeng:Waila:${waila_version}_${minecraft_version}:api"

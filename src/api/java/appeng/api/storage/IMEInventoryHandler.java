@@ -23,10 +23,8 @@
 
 package appeng.api.storage;
 
-
 import appeng.api.config.AccessRestriction;
 import appeng.api.storage.data.IAEStack;
-
 
 /**
  * Thin logic layer that can be swapped with different IMEInventory implementations, used to handle features related to
@@ -34,8 +32,7 @@ import appeng.api.storage.data.IAEStack;
  *
  * @param <StackType>
  */
-public interface IMEInventoryHandler<StackType extends IAEStack> extends IMEInventory<StackType>
-{
+public interface IMEInventoryHandler<StackType extends IAEStack> extends IMEInventory<StackType> {
 
 	/**
 	 * determine if items can be injected/extracted.
@@ -49,19 +46,17 @@ public interface IMEInventoryHandler<StackType extends IAEStack> extends IMEInve
 	 * inventory prior to any non-prioritized inventories.
 	 *
 	 * @param input - item that might be added
-	 *
 	 * @return if its prioritized
 	 */
-	boolean isPrioritized( StackType input );
+	boolean isPrioritized(StackType input);
 
 	/**
 	 * determine if an item can be accepted and stored.
 	 *
 	 * @param input - item that might be added
-	 *
 	 * @return if the item can be added
 	 */
-	boolean canAccept( StackType input );
+	boolean canAccept(StackType input);
 
 	/**
 	 * determine what the priority of the inventory is.
@@ -85,8 +80,7 @@ public interface IMEInventoryHandler<StackType extends IAEStack> extends IMEInve
 	 * ignored, this allows you to do that.
 	 *
 	 * @param i - pass number ( 1 or 2 )
-	 *
 	 * @return true, if this inventory is valid for this pass.
 	 */
-	boolean validForPass( int i );
+	boolean validForPass(int i);
 }

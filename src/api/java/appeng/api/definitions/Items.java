@@ -23,17 +23,15 @@
 
 package appeng.api.definitions;
 
-
 import appeng.api.util.AEColoredItemDefinition;
 import appeng.api.util.AEItemDefinition;
-
 
 /**
  * @deprecated use {@link IItems}
  */
 @Deprecated
-public class Items
-{
+public class Items {
+
 	public AEItemDefinition itemCertusQuartzAxe;
 
 	public AEItemDefinition itemCertusQuartzHoe;

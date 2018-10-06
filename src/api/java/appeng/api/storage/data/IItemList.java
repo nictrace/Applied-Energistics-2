@@ -23,19 +23,16 @@
 
 package appeng.api.storage.data;
 
-
 import java.util.Iterator;
-
 
 /**
  * Represents a list of items in AE.
- *
+ * <p>
  * Don't Implement.
- *
+ * <p>
  * Construct with Util.createItemList()
  */
-public interface IItemList<StackType extends IAEStack> extends IItemContainer<StackType>, Iterable<StackType>
-{
+public interface IItemList<StackType extends IAEStack> extends IItemContainer<StackType>, Iterable<StackType> {
 
 	/**
 	 * add a stack to the list stackSize is used to add to stackSize, this will merge the stack with an item already in
@@ -43,14 +40,14 @@ public interface IItemList<StackType extends IAEStack> extends IItemContainer<St
 	 *
 	 * @param option stacktype option
 	 */
-	void addStorage( StackType option ); // adds a stack as stored
+	void addStorage(StackType option); // adds a stack as stored
 
 	/**
 	 * add a stack to the list as craftable, this will merge the stack with an item already in the list if found.
 	 *
 	 * @param option stacktype option
 	 */
-	void addCrafting( StackType option );
+	void addCrafting(StackType option);
 
 	/**
 	 * add a stack to the list, stack size is used to add to requestable, this will merge the stack with an item already
@@ -58,7 +55,7 @@ public interface IItemList<StackType extends IAEStack> extends IItemContainer<St
 	 *
 	 * @param option stacktype option
 	 */
-	void addRequestable( StackType option ); // adds a stack as requestable
+	void addRequestable(StackType option); // adds a stack as requestable
 
 	/**
 	 * @return the first item in the list

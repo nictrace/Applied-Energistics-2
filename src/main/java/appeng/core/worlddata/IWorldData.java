@@ -18,17 +18,15 @@
 
 package appeng.core.worlddata;
 
-
 import javax.annotation.Nonnull;
-
 
 /**
  * @author thatsIch
  * @version rv3 - 02.11.2015
  * @since rv3 30.05.2015
  */
-public interface IWorldData
-{
+public interface IWorldData {
+
 	void onServerStopping();
 
 	void onServerStoppped();

@@ -23,17 +23,14 @@
 
 package appeng.api.networking.security;
 
-
-import java.util.EnumSet;
-
 import appeng.api.config.SecurityPermissions;
 
+import java.util.EnumSet;
 
 /**
  * Used by vanilla Security Terminal to post biometric data into the security cache.
  */
-public interface ISecurityRegistry
-{
+public interface ISecurityRegistry {
 
 	/**
 	 * Submit Permissions into the register.
@@ -41,5 +38,5 @@ public interface ISecurityRegistry
 	 * @param playerID    player id
 	 * @param permissions permissions of player
 	 */
-	void addPlayer( int playerID, EnumSet<SecurityPermissions> permissions );
+	void addPlayer(int playerID, EnumSet<SecurityPermissions> permissions);
 }

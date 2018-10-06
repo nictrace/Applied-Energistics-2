@@ -23,9 +23,7 @@
 
 package appeng.api.networking.energy;
 
-
-public interface IEnergyWatcherHost
-{
+public interface IEnergyWatcherHost {
 
 	/**
 	 * provides the IEnergyWatcher for this host, for the current network, is called when the hot changes networks. You
@@ -33,12 +31,12 @@ public interface IEnergyWatcherHost
 	 *
 	 * @param newWatcher new watcher
 	 */
-	void updateWatcher( IEnergyWatcher newWatcher );
+	void updateWatcher(IEnergyWatcher newWatcher);
 
 	/**
 	 * Called when a threshold is crossed.
 	 *
 	 * @param energyGrid grid
 	 */
-	void onThresholdPass( IEnergyGrid energyGrid );
+	void onThresholdPass(IEnergyGrid energyGrid);
 }

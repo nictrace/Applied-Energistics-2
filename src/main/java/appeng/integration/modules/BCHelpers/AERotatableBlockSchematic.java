@@ -18,24 +18,17 @@
 
 package appeng.integration.modules.BCHelpers;
 
-
-import net.minecraftforge.common.util.ForgeDirection;
-
+import appeng.util.Platform;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import net.minecraftforge.common.util.ForgeDirection;
 
-import appeng.util.Platform;
-
-
-public class AERotatableBlockSchematic extends SchematicBlock
-{
+public class AERotatableBlockSchematic extends SchematicBlock {
 
 	@Override
-	public void rotateLeft( final IBuilderContext context )
-	{
-		if( this.meta < 6 )
-		{
-			final ForgeDirection d = Platform.rotateAround( ForgeDirection.values()[this.meta], ForgeDirection.DOWN );
+	public void rotateLeft(final IBuilderContext context) {
+		if (this.meta < 6) {
+			final ForgeDirection d = Platform.rotateAround(ForgeDirection.values()[this.meta], ForgeDirection.DOWN);
 			this.meta = d.ordinal();
 		}
 	}

@@ -23,8 +23,6 @@
 
 package appeng.api.config;
 
-
-public enum ViewItems
-{
+public enum ViewItems {
 	ALL, STORED, CRAFTABLE
 }

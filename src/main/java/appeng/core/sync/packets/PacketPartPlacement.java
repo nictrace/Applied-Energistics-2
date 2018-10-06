@@ -18,21 +18,16 @@
 
 package appeng.core.sync.packets;
 
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-
 import appeng.core.CommonHelper;
 import appeng.core.sync.AppEngPacket;
 import appeng.core.sync.network.INetworkInfo;
 import appeng.parts.PartPlacement;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 
-
-public class PacketPartPlacement extends AppEngPacket
-{
+public class PacketPartPlacement extends AppEngPacket {
 
 	private int x;
 	private int y;
@@ -41,8 +36,7 @@ public class PacketPartPlacement extends AppEngPacket
 	private float eyeHeight;
 
 	// automatic.
-	public PacketPartPlacement( final ByteBuf stream )
-	{
+	public PacketPartPlacement(final ByteBuf stream) {
 		this.x = stream.readInt();
 		this.y = stream.readInt();
 		this.z = stream.readInt();
@@ -51,27 +45,25 @@ public class PacketPartPlacement extends AppEngPacket
 	}
 
 	// api
-	public PacketPartPlacement( final int x, final int y, final int z, final int face, final float eyeHeight )
-	{
+	public PacketPartPlacement(final int x, final int y, final int z, final int face, final float eyeHeight) {
 		final ByteBuf data = Unpooled.buffer();
 
-		data.writeInt( this.getPacketID() );
-		data.writeInt( x );
-		data.writeInt( y );
-		data.writeInt( z );
-		data.writeByte( face );
-		data.writeFloat( eyeHeight );
+		data.writeInt(this.getPacketID());
+		data.writeInt(x);
+		data.writeInt(y);
+		data.writeInt(z);
+		data.writeByte(face);
+		data.writeFloat(eyeHeight);
 
-		this.configureWrite( data );
+		this.configureWrite(data);
 	}
 
 	@Override
-	public void serverPacketData( final INetworkInfo manager, final AppEngPacket packet, final EntityPlayer player )
-	{
+	public void serverPacketData(final INetworkInfo manager, final AppEngPacket packet, final EntityPlayer player) {
 		final EntityPlayerMP sender = (EntityPlayerMP) player;
-		CommonHelper.proxy.updateRenderMode( sender );
-		PartPlacement.setEyeHeight( this.eyeHeight );
-		PartPlacement.place( sender.getHeldItem(), this.x, this.y, this.z, this.face, sender, sender.worldObj, PartPlacement.PlaceType.INTERACT_FIRST_PASS, 0 );
-		CommonHelper.proxy.updateRenderMode( null );
+		CommonHelper.proxy.updateRenderMode(sender);
+		PartPlacement.setEyeHeight(this.eyeHeight);
+		PartPlacement.place(sender.getHeldItem(), this.x, this.y, this.z, this.face, sender, sender.worldObj, PartPlacement.PlaceType.INTERACT_FIRST_PASS, 0);
+		CommonHelper.proxy.updateRenderMode(null);
 	}
 }

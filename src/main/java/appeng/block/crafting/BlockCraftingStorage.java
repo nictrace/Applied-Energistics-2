@@ -18,43 +18,35 @@
 
 package appeng.block.crafting;
 
-
-import java.util.List;
-
+import appeng.client.texture.ExtraBlockTextures;
+import appeng.tile.crafting.TileCraftingStorageTile;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 
-import appeng.client.texture.ExtraBlockTextures;
-import appeng.tile.crafting.TileCraftingStorageTile;
+public class BlockCraftingStorage extends BlockCraftingUnit {
 
-
-public class BlockCraftingStorage extends BlockCraftingUnit
-{
-	public BlockCraftingStorage()
-	{
-		this.setTileEntity( TileCraftingStorageTile.class );
+	public BlockCraftingStorage() {
+		this.setTileEntity(TileCraftingStorageTile.class);
 	}
 
 	@Override
-	public Class<ItemCraftingStorage> getItemBlockClass()
-	{
+	public Class<ItemCraftingStorage> getItemBlockClass() {
 		return ItemCraftingStorage.class;
 	}
 
 	@Override
-	public IIcon getIcon( final int direction, final int metadata )
-	{
-		switch( metadata & ( ~4 ) )
-		{
+	public IIcon getIcon(final int direction, final int metadata) {
+		switch (metadata & (~4)) {
 			default:
 
 			case 0:
-				return super.getIcon( 0, 0 );
+				return super.getIcon(0, 0);
 			case 1:
 				return ExtraBlockTextures.BlockCraftingStorage4k.getIcon();
 			case 2:
@@ -74,33 +66,28 @@ public class BlockCraftingStorage extends BlockCraftingUnit
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public void getCheckedSubBlocks( final Item item, final CreativeTabs tabs, final List<ItemStack> itemStacks )
-	{
-		itemStacks.add( new ItemStack( this, 1, 0 ) );
-		itemStacks.add( new ItemStack( this, 1, 1 ) );
-		itemStacks.add( new ItemStack( this, 1, 2 ) );
-		itemStacks.add( new ItemStack( this, 1, 3 ) );
+	@SideOnly(Side.CLIENT)
+	public void getCheckedSubBlocks(final Item item, final CreativeTabs tabs, final List<ItemStack> itemStacks) {
+		itemStacks.add(new ItemStack(this, 1, 0));
+		itemStacks.add(new ItemStack(this, 1, 1));
+		itemStacks.add(new ItemStack(this, 1, 2));
+		itemStacks.add(new ItemStack(this, 1, 3));
 	}
 
 	@Override
-	public String getUnlocalizedName( final ItemStack is )
-	{
-		if( is.getItemDamage() == 1 )
-		{
+	public String getUnlocalizedName(final ItemStack is) {
+		if (is.getItemDamage() == 1) {
 			return "tile.appliedenergistics2.BlockCraftingStorage4k";
 		}
 
-		if( is.getItemDamage() == 2 )
-		{
+		if (is.getItemDamage() == 2) {
 			return "tile.appliedenergistics2.BlockCraftingStorage16k";
 		}
 
-		if( is.getItemDamage() == 3 )
-		{
+		if (is.getItemDamage() == 3) {
 			return "tile.appliedenergistics2.BlockCraftingStorage64k";
 		}
 
-		return this.getItemUnlocalizedName( is );
+		return this.getItemUnlocalizedName(is);
 	}
 }

@@ -18,55 +18,45 @@
 
 package appeng.items.storage;
 
-
-import java.util.EnumSet;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-
 import appeng.api.config.FuzzyMode;
 import appeng.api.storage.ICellWorkbenchItem;
 import appeng.core.features.AEFeature;
 import appeng.items.AEBaseItem;
 import appeng.items.contents.CellConfig;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
+import java.util.EnumSet;
 
-public class ItemCreativeStorageCell extends AEBaseItem implements ICellWorkbenchItem
-{
+public class ItemCreativeStorageCell extends AEBaseItem implements ICellWorkbenchItem {
 
-	public ItemCreativeStorageCell()
-	{
-		this.setFeature( EnumSet.of( AEFeature.StorageCells, AEFeature.Creative ) );
-		this.setMaxStackSize( 1 );
+	public ItemCreativeStorageCell() {
+		this.setFeature(EnumSet.of(AEFeature.StorageCells, AEFeature.Creative));
+		this.setMaxStackSize(1);
 	}
 
 	@Override
-	public boolean isEditable( final ItemStack is )
-	{
+	public boolean isEditable(final ItemStack is) {
 		return true;
 	}
 
 	@Override
-	public IInventory getUpgradesInventory( final ItemStack is )
-	{
+	public IInventory getUpgradesInventory(final ItemStack is) {
 		return null;
 	}
 
 	@Override
-	public IInventory getConfigInventory( final ItemStack is )
-	{
-		return new CellConfig( is );
+	public IInventory getConfigInventory(final ItemStack is) {
+		return new CellConfig(is);
 	}
 
 	@Override
-	public FuzzyMode getFuzzyMode( final ItemStack is )
-	{
+	public FuzzyMode getFuzzyMode(final ItemStack is) {
 		return FuzzyMode.IGNORE_ALL;
 	}
 
 	@Override
-	public void setFuzzyMode( final ItemStack is, final FuzzyMode fzMode )
-	{
+	public void setFuzzyMode(final ItemStack is, final FuzzyMode fzMode) {
 
 	}
 }

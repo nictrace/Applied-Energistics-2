@@ -18,12 +18,6 @@
 
 package appeng.parts.automation;
 
-
-import java.util.List;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-
 import appeng.api.config.RedstoneMode;
 import appeng.api.config.Upgrades;
 import appeng.api.util.IConfigManager;
@@ -32,66 +26,58 @@ import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
+import java.util.List;
 
-public abstract class PartUpgradeable extends PartBasicState implements IAEAppEngInventory, IConfigManagerHost
-{
+public abstract class PartUpgradeable extends PartBasicState implements IAEAppEngInventory, IConfigManagerHost {
+
 	private final IConfigManager manager;
 	private final UpgradeInventory upgrades;
 
-	public PartUpgradeable( final ItemStack is )
-	{
-		super( is );
-		this.upgrades = new StackUpgradeInventory( this.getItemStack(), this, this.getUpgradeSlots() );
-		this.upgrades.setMaxStackSize( 1 );
-		this.manager = new ConfigManager( this );
+	public PartUpgradeable(final ItemStack is) {
+		super(is);
+		this.upgrades = new StackUpgradeInventory(this.getItemStack(), this, this.getUpgradeSlots());
+		this.upgrades.setMaxStackSize(1);
+		this.manager = new ConfigManager(this);
 	}
 
-	protected int getUpgradeSlots()
-	{
+	protected int getUpgradeSlots() {
 		return 4;
 	}
 
 	@Override
-	public void updateSetting( final IConfigManager manager, final Enum settingName, final Enum newValue )
-	{
+	public void updateSetting(final IConfigManager manager, final Enum settingName, final Enum newValue) {
 
 	}
 
 	@Override
-	public void onChangeInventory( final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack )
-	{
-		if( inv == this.upgrades )
-		{
+	public void onChangeInventory(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack) {
+		if (inv == this.upgrades) {
 			this.upgradesChanged();
 		}
 	}
 
-	public void upgradesChanged()
-	{
+	public void upgradesChanged() {
 
 	}
 
-	protected boolean isSleeping()
-	{
-		if( this.getInstalledUpgrades( Upgrades.REDSTONE ) > 0 )
-		{
-			switch( this.getRSMode() )
-			{
+	protected boolean isSleeping() {
+		if (this.getInstalledUpgrades(Upgrades.REDSTONE) > 0) {
+			switch (this.getRSMode()) {
 				case IGNORE:
 					return false;
 
 				case HIGH_SIGNAL:
-					if( this.getHost().hasRedstone( this.getSide() ) )
-					{
+					if (this.getHost().hasRedstone(this.getSide())) {
 						return false;
 					}
 
 					break;
 
 				case LOW_SIGNAL:
-					if( !this.getHost().hasRedstone( this.getSide() ) )
-					{
+					if (!this.getHost().hasRedstone(this.getSide())) {
 						return false;
 					}
 
@@ -109,64 +95,53 @@ public abstract class PartUpgradeable extends PartBasicState implements IAEAppEn
 	}
 
 	@Override
-	public int getInstalledUpgrades( final Upgrades u )
-	{
-		return this.upgrades.getInstalledUpgrades( u );
+	public int getInstalledUpgrades(final Upgrades u) {
+		return this.upgrades.getInstalledUpgrades(u);
 	}
 
 	@Override
-	public boolean canConnectRedstone()
-	{
-		return this.upgrades.getMaxInstalled( Upgrades.REDSTONE ) > 0;
+	public boolean canConnectRedstone() {
+		return this.upgrades.getMaxInstalled(Upgrades.REDSTONE) > 0;
 	}
 
 	@Override
-	public void readFromNBT( final net.minecraft.nbt.NBTTagCompound extra )
-	{
-		super.readFromNBT( extra );
-		this.manager.readFromNBT( extra );
-		this.upgrades.readFromNBT( extra, "upgrades" );
+	public void readFromNBT(final net.minecraft.nbt.NBTTagCompound extra) {
+		super.readFromNBT(extra);
+		this.manager.readFromNBT(extra);
+		this.upgrades.readFromNBT(extra, "upgrades");
 	}
 
 	@Override
-	public void writeToNBT( final net.minecraft.nbt.NBTTagCompound extra )
-	{
-		super.writeToNBT( extra );
-		this.manager.writeToNBT( extra );
-		this.upgrades.writeToNBT( extra, "upgrades" );
+	public void writeToNBT(final net.minecraft.nbt.NBTTagCompound extra) {
+		super.writeToNBT(extra);
+		this.manager.writeToNBT(extra);
+		this.upgrades.writeToNBT(extra, "upgrades");
 	}
 
 	@Override
-	public void getDrops( final List<ItemStack> drops, final boolean wrenched )
-	{
-		for( final ItemStack is : this.upgrades )
-		{
-			if( is != null )
-			{
-				drops.add( is );
+	public void getDrops(final List<ItemStack> drops, final boolean wrenched) {
+		for (final ItemStack is : this.upgrades) {
+			if (is != null) {
+				drops.add(is);
 			}
 		}
 	}
 
 	@Override
-	public IConfigManager getConfigManager()
-	{
+	public IConfigManager getConfigManager() {
 		return this.manager;
 	}
 
 	@Override
-	public IInventory getInventoryByName( final String name )
-	{
-		if( name.equals( "upgrades" ) )
-		{
+	public IInventory getInventoryByName(final String name) {
+		if (name.equals("upgrades")) {
 			return this.upgrades;
 		}
 
 		return null;
 	}
 
-	public RedstoneMode getRSMode()
-	{
+	public RedstoneMode getRSMode() {
 		return null;
 	}
 }

@@ -18,15 +18,16 @@
 
 package appeng.items.tools.powered;
 
-
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import appeng.api.util.DimensionalCoord;
+import appeng.block.misc.BlockTinyTNT;
+import appeng.core.AEConfig;
+import appeng.core.features.AEFeature;
+import appeng.hooks.DispenserBlockTool;
+import appeng.hooks.IBlockTool;
+import appeng.items.tools.powered.powersink.AEBasePoweredItem;
+import appeng.util.InWorldToolOperationResult;
+import appeng.util.Platform;
 import com.google.common.base.Optional;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockTNT;
@@ -44,81 +45,65 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
-import appeng.api.util.DimensionalCoord;
-import appeng.block.misc.BlockTinyTNT;
-import appeng.core.AEConfig;
-import appeng.core.features.AEFeature;
-import appeng.hooks.DispenserBlockTool;
-import appeng.hooks.IBlockTool;
-import appeng.items.tools.powered.powersink.AEBasePoweredItem;
-import appeng.util.InWorldToolOperationResult;
-import appeng.util.Platform;
+import java.util.*;
 
+public class ToolEntropyManipulator extends AEBasePoweredItem implements IBlockTool {
 
-public class ToolEntropyManipulator extends AEBasePoweredItem implements IBlockTool
-{
 	private final Map<InWorldToolOperationIngredient, InWorldToolOperationResult> heatUp;
 	private final Map<InWorldToolOperationIngredient, InWorldToolOperationResult> coolDown;
 
-	public ToolEntropyManipulator()
-	{
-		super( AEConfig.instance.entropyManipulatorBattery, Optional.<String>absent() );
+	public ToolEntropyManipulator() {
+		super(AEConfig.instance.entropyManipulatorBattery, Optional.<String>absent());
 
-		this.setFeature( EnumSet.of( AEFeature.EntropyManipulator, AEFeature.PoweredTools ) );
+		this.setFeature(EnumSet.of(AEFeature.EntropyManipulator, AEFeature.PoweredTools));
 
 		this.heatUp = new HashMap<InWorldToolOperationIngredient, InWorldToolOperationResult>();
 		this.coolDown = new HashMap<InWorldToolOperationIngredient, InWorldToolOperationResult>();
 
-		this.coolDown.put( new InWorldToolOperationIngredient( Blocks.stone, 0 ), new InWorldToolOperationResult( new ItemStack( Blocks.cobblestone ) ) );
-		this.coolDown.put( new InWorldToolOperationIngredient( Blocks.stonebrick, 0 ), new InWorldToolOperationResult( new ItemStack( Blocks.stonebrick, 1, 2 ) ) );
-		this.coolDown.put( new InWorldToolOperationIngredient( Blocks.lava, OreDictionary.WILDCARD_VALUE ), new InWorldToolOperationResult( new ItemStack( Blocks.obsidian ) ) );
-		this.coolDown.put( new InWorldToolOperationIngredient( Blocks.flowing_lava, OreDictionary.WILDCARD_VALUE ), new InWorldToolOperationResult( new ItemStack( Blocks.obsidian ) ) );
-		this.coolDown.put( new InWorldToolOperationIngredient( Blocks.grass, OreDictionary.WILDCARD_VALUE ), new InWorldToolOperationResult( new ItemStack( Blocks.dirt ) ) );
+		this.coolDown.put(new InWorldToolOperationIngredient(Blocks.stone, 0), new InWorldToolOperationResult(new ItemStack(Blocks.cobblestone)));
+		this.coolDown.put(new InWorldToolOperationIngredient(Blocks.stonebrick, 0), new InWorldToolOperationResult(new ItemStack(Blocks.stonebrick, 1, 2)));
+		this.coolDown.put(new InWorldToolOperationIngredient(Blocks.lava, OreDictionary.WILDCARD_VALUE), new InWorldToolOperationResult(new ItemStack(Blocks.obsidian)));
+		this.coolDown.put(new InWorldToolOperationIngredient(Blocks.flowing_lava, OreDictionary.WILDCARD_VALUE), new InWorldToolOperationResult(new ItemStack(Blocks.obsidian)));
+		this.coolDown.put(new InWorldToolOperationIngredient(Blocks.grass, OreDictionary.WILDCARD_VALUE), new InWorldToolOperationResult(new ItemStack(Blocks.dirt)));
 
 		final List<ItemStack> snowBalls = new ArrayList<ItemStack>();
-		snowBalls.add( new ItemStack( Items.snowball ) );
-		this.coolDown.put( new InWorldToolOperationIngredient( Blocks.flowing_water, OreDictionary.WILDCARD_VALUE ), new InWorldToolOperationResult( null, snowBalls ) );
-		this.coolDown.put( new InWorldToolOperationIngredient( Blocks.water, OreDictionary.WILDCARD_VALUE ), new InWorldToolOperationResult( new ItemStack( Blocks.ice ) ) );
+		snowBalls.add(new ItemStack(Items.snowball));
+		this.coolDown.put(new InWorldToolOperationIngredient(Blocks.flowing_water, OreDictionary.WILDCARD_VALUE), new InWorldToolOperationResult(null, snowBalls));
+		this.coolDown.put(new InWorldToolOperationIngredient(Blocks.water, OreDictionary.WILDCARD_VALUE), new InWorldToolOperationResult(new ItemStack(Blocks.ice)));
 
-		this.heatUp.put( new InWorldToolOperationIngredient( Blocks.ice, 0 ), new InWorldToolOperationResult( new ItemStack( Blocks.water ) ) );
-		this.heatUp.put( new InWorldToolOperationIngredient( Blocks.flowing_water, OreDictionary.WILDCARD_VALUE ), new InWorldToolOperationResult() );
-		this.heatUp.put( new InWorldToolOperationIngredient( Blocks.water, OreDictionary.WILDCARD_VALUE ), new InWorldToolOperationResult() );
-		this.heatUp.put( new InWorldToolOperationIngredient( Blocks.snow, OreDictionary.WILDCARD_VALUE ), new InWorldToolOperationResult( new ItemStack( Blocks.flowing_water ) ) );
+		this.heatUp.put(new InWorldToolOperationIngredient(Blocks.ice, 0), new InWorldToolOperationResult(new ItemStack(Blocks.water)));
+		this.heatUp.put(new InWorldToolOperationIngredient(Blocks.flowing_water, OreDictionary.WILDCARD_VALUE), new InWorldToolOperationResult());
+		this.heatUp.put(new InWorldToolOperationIngredient(Blocks.water, OreDictionary.WILDCARD_VALUE), new InWorldToolOperationResult());
+		this.heatUp.put(new InWorldToolOperationIngredient(Blocks.snow, OreDictionary.WILDCARD_VALUE), new InWorldToolOperationResult(new ItemStack(Blocks.flowing_water)));
 	}
 
 	@Override
-	public void postInit()
-	{
+	public void postInit() {
 		super.postInit();
-		BlockDispenser.dispenseBehaviorRegistry.putObject( this, new DispenserBlockTool() );
+		BlockDispenser.dispenseBehaviorRegistry.putObject(this, new DispenserBlockTool());
 	}
 
-	private static class InWorldToolOperationIngredient
-	{
+	private static class InWorldToolOperationIngredient {
+
 		private final Block blockID;
 		private final int metadata;
 
-		public InWorldToolOperationIngredient( final Block blockID, final int metadata )
-		{
+		public InWorldToolOperationIngredient(final Block blockID, final int metadata) {
 			this.blockID = blockID;
 			this.metadata = metadata;
 		}
 
 		@Override
-		public int hashCode()
-		{
+		public int hashCode() {
 			return this.blockID.hashCode() ^ this.metadata;
 		}
 
 		@Override
-		public boolean equals( final Object obj )
-		{
-			if( obj == null )
-			{
+		public boolean equals(final Object obj) {
+			if (obj == null) {
 				return false;
 			}
-			if( this.getClass() != obj.getClass() )
-			{
+			if (this.getClass() != obj.getClass()) {
 				return false;
 			}
 			final InWorldToolOperationIngredient other = (InWorldToolOperationIngredient) obj;
@@ -126,112 +111,87 @@ public class ToolEntropyManipulator extends AEBasePoweredItem implements IBlockT
 		}
 	}
 
-	private void heat( final Block blockID, final int metadata, final World w, final int x, final int y, final int z )
-	{
-		InWorldToolOperationResult r = this.heatUp.get( new InWorldToolOperationIngredient( blockID, metadata ) );
+	private void heat(final Block blockID, final int metadata, final World w, final int x, final int y, final int z) {
+		InWorldToolOperationResult r = this.heatUp.get(new InWorldToolOperationIngredient(blockID, metadata));
 
-		if( r == null )
-		{
-			r = this.heatUp.get( new InWorldToolOperationIngredient( blockID, OreDictionary.WILDCARD_VALUE ) );
+		if (r == null) {
+			r = this.heatUp.get(new InWorldToolOperationIngredient(blockID, OreDictionary.WILDCARD_VALUE));
 		}
 
-		if( r.getBlockItem() != null )
-		{
-			w.setBlock( x, y, z, Block.getBlockFromItem( r.getBlockItem().getItem() ), r.getBlockItem().getItemDamage(), 3 );
-		}
-		else
-		{
-			w.setBlock( x, y, z, Platform.AIR_BLOCK, 0, 3 );
+		if (r.getBlockItem() != null) {
+			w.setBlock(x, y, z, Block.getBlockFromItem(r.getBlockItem().getItem()), r.getBlockItem().getItemDamage(), 3);
+		} else {
+			w.setBlock(x, y, z, Platform.AIR_BLOCK, 0, 3);
 		}
 
-		if( r.getDrops() != null )
-		{
-			Platform.spawnDrops( w, x, y, z, r.getDrops() );
+		if (r.getDrops() != null) {
+			Platform.spawnDrops(w, x, y, z, r.getDrops());
 		}
 	}
 
-	private boolean canHeat( final Block blockID, final int metadata )
-	{
-		InWorldToolOperationResult r = this.heatUp.get( new InWorldToolOperationIngredient( blockID, metadata ) );
+	private boolean canHeat(final Block blockID, final int metadata) {
+		InWorldToolOperationResult r = this.heatUp.get(new InWorldToolOperationIngredient(blockID, metadata));
 
-		if( r == null )
-		{
-			r = this.heatUp.get( new InWorldToolOperationIngredient( blockID, OreDictionary.WILDCARD_VALUE ) );
+		if (r == null) {
+			r = this.heatUp.get(new InWorldToolOperationIngredient(blockID, OreDictionary.WILDCARD_VALUE));
 		}
 
 		return r != null;
 	}
 
-	private void cool( final Block blockID, final int metadata, final World w, final int x, final int y, final int z )
-	{
-		InWorldToolOperationResult r = this.coolDown.get( new InWorldToolOperationIngredient( blockID, metadata ) );
+	private void cool(final Block blockID, final int metadata, final World w, final int x, final int y, final int z) {
+		InWorldToolOperationResult r = this.coolDown.get(new InWorldToolOperationIngredient(blockID, metadata));
 
-		if( r == null )
-		{
-			r = this.coolDown.get( new InWorldToolOperationIngredient( blockID, OreDictionary.WILDCARD_VALUE ) );
+		if (r == null) {
+			r = this.coolDown.get(new InWorldToolOperationIngredient(blockID, OreDictionary.WILDCARD_VALUE));
 		}
 
-		if( r.getBlockItem() != null )
-		{
-			w.setBlock( x, y, z, Block.getBlockFromItem( r.getBlockItem().getItem() ), r.getBlockItem().getItemDamage(), 3 );
-		}
-		else
-		{
-			w.setBlock( x, y, z, Platform.AIR_BLOCK, 0, 3 );
+		if (r.getBlockItem() != null) {
+			w.setBlock(x, y, z, Block.getBlockFromItem(r.getBlockItem().getItem()), r.getBlockItem().getItemDamage(), 3);
+		} else {
+			w.setBlock(x, y, z, Platform.AIR_BLOCK, 0, 3);
 		}
 
-		if( r.getDrops() != null )
-		{
-			Platform.spawnDrops( w, x, y, z, r.getDrops() );
+		if (r.getDrops() != null) {
+			Platform.spawnDrops(w, x, y, z, r.getDrops());
 		}
 	}
 
-	private boolean canCool( final Block blockID, final int metadata )
-	{
-		InWorldToolOperationResult r = this.coolDown.get( new InWorldToolOperationIngredient( blockID, metadata ) );
+	private boolean canCool(final Block blockID, final int metadata) {
+		InWorldToolOperationResult r = this.coolDown.get(new InWorldToolOperationIngredient(blockID, metadata));
 
-		if( r == null )
-		{
-			r = this.coolDown.get( new InWorldToolOperationIngredient( blockID, OreDictionary.WILDCARD_VALUE ) );
+		if (r == null) {
+			r = this.coolDown.get(new InWorldToolOperationIngredient(blockID, OreDictionary.WILDCARD_VALUE));
 		}
 
 		return r != null;
 	}
 
 	@Override
-	public boolean hitEntity( final ItemStack item, final EntityLivingBase target, final EntityLivingBase hitter )
-	{
-		if( this.getAECurrentPower( item ) > 1600 )
-		{
-			this.extractAEPower( item, 1600 );
-			target.setFire( 8 );
+	public boolean hitEntity(final ItemStack item, final EntityLivingBase target, final EntityLivingBase hitter) {
+		if (this.getAECurrentPower(item) > 1600) {
+			this.extractAEPower(item, 1600);
+			target.setFire(8);
 		}
 
 		return false;
 	}
 
 	@Override
-	public ItemStack onItemRightClick( final ItemStack item, final World w, final EntityPlayer p )
-	{
-		final MovingObjectPosition target = this.getMovingObjectPositionFromPlayer( w, p, true );
+	public ItemStack onItemRightClick(final ItemStack item, final World w, final EntityPlayer p) {
+		final MovingObjectPosition target = this.getMovingObjectPositionFromPlayer(w, p, true);
 
-		if( target == null )
-		{
+		if (target == null) {
 			return item;
-		}
-		else
-		{
-			if( target.typeOfHit == MovingObjectType.BLOCK )
-			{
+		} else {
+			if (target.typeOfHit == MovingObjectType.BLOCK) {
 				final int x = target.blockX;
 				final int y = target.blockY;
 				final int z = target.blockZ;
 
-				if( w.getBlock( x, y, z ).getMaterial() == Material.lava || w.getBlock( x, y, z ).getMaterial() == Material.water )
-				{
-					if( Platform.hasPermissions( new DimensionalCoord( w, x, y, z ), p ) )
-					{
-						this.onItemUse( item, p, w, x, y, z, 0, 0.0F, 0.0F, 0.0F );
+				if (w.getBlock(x, y, z).getMaterial() == Material.lava || w.getBlock(x, y, z).getMaterial() == Material.water) {
+					if (Platform.hasPermissions(new DimensionalCoord(w, x, y, z), p)) {
+						this.onItemUse(item, p, w, x, y, z, 0, 0.0F, 0.0F, 0.0F);
 					}
 				}
 			}
@@ -241,117 +201,92 @@ public class ToolEntropyManipulator extends AEBasePoweredItem implements IBlockT
 	}
 
 	@Override
-	public boolean onItemUse( final ItemStack item, final EntityPlayer p, final World w, int x, int y, int z, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		if( this.getAECurrentPower( item ) > 1600 )
-		{
-			if( !p.canPlayerEdit( x, y, z, side, item ) )
-			{
+	public boolean onItemUse(final ItemStack item, final EntityPlayer p, final World w, int x, int y, int z, final int side, final float hitX, final float hitY, final float hitZ) {
+		if (this.getAECurrentPower(item) > 1600) {
+			if (!p.canPlayerEdit(x, y, z, side, item)) {
 				return false;
 			}
 
-			final Block blockID = w.getBlock( x, y, z );
-			final int metadata = w.getBlockMetadata( x, y, z );
+			final Block blockID = w.getBlock(x, y, z);
+			final int metadata = w.getBlockMetadata(x, y, z);
 
-			if( p.isSneaking() )
-			{
-				if( this.canCool( blockID, metadata ) )
-				{
-					this.extractAEPower( item, 1600 );
-					this.cool( blockID, metadata, w, x, y, z );
+			if (p.isSneaking()) {
+				if (this.canCool(blockID, metadata)) {
+					this.extractAEPower(item, 1600);
+					this.cool(blockID, metadata, w, x, y, z);
 					return true;
 				}
-			}
-			else
-			{
-				if( blockID instanceof BlockTNT )
-				{
-					w.setBlock( x, y, z, Platform.AIR_BLOCK, 0, 3 );
-					( (BlockTNT) blockID ).func_150114_a( w, x, y, z, 1, p );
+			} else {
+				if (blockID instanceof BlockTNT) {
+					w.setBlock(x, y, z, Platform.AIR_BLOCK, 0, 3);
+					((BlockTNT) blockID).func_150114_a(w, x, y, z, 1, p);
 					return true;
 				}
 
-				if( blockID instanceof BlockTinyTNT )
-				{
-					w.setBlock( x, y, z, Platform.AIR_BLOCK, 0, 3 );
-					( (BlockTinyTNT) blockID ).startFuse( w, x, y, z, p );
+				if (blockID instanceof BlockTinyTNT) {
+					w.setBlock(x, y, z, Platform.AIR_BLOCK, 0, 3);
+					((BlockTinyTNT) blockID).startFuse(w, x, y, z, p);
 					return true;
 				}
 
-				if( this.canHeat( blockID, metadata ) )
-				{
-					this.extractAEPower( item, 1600 );
-					this.heat( blockID, metadata, w, x, y, z );
+				if (this.canHeat(blockID, metadata)) {
+					this.extractAEPower(item, 1600);
+					this.heat(blockID, metadata, w, x, y, z);
 					return true;
 				}
 
-				final ItemStack[] stack = Platform.getBlockDrops( w, x, y, z );
+				final ItemStack[] stack = Platform.getBlockDrops(w, x, y, z);
 				final List<ItemStack> out = new ArrayList<ItemStack>();
 				boolean hasFurnaceable = false;
 				boolean canFurnaceable = true;
 
-				for( final ItemStack i : stack )
-				{
-					final ItemStack result = FurnaceRecipes.smelting().getSmeltingResult( i );
+				for (final ItemStack i : stack) {
+					final ItemStack result = FurnaceRecipes.smelting().getSmeltingResult(i);
 
-					if( result != null )
-					{
-						if( result.getItem() instanceof ItemBlock )
-						{
-							if( Block.getBlockFromItem( result.getItem() ) == blockID && result.getItem().getDamage( result ) == metadata )
-							{
+					if (result != null) {
+						if (result.getItem() instanceof ItemBlock) {
+							if (Block.getBlockFromItem(result.getItem()) == blockID && result.getItem().getDamage(result) == metadata) {
 								canFurnaceable = false;
 							}
 						}
 						hasFurnaceable = true;
-						out.add( result );
-					}
-					else
-					{
+						out.add(result);
+					} else {
 						canFurnaceable = false;
-						out.add( i );
+						out.add(i);
 					}
 				}
 
-				if( hasFurnaceable && canFurnaceable )
-				{
-					this.extractAEPower( item, 1600 );
-					final InWorldToolOperationResult or = InWorldToolOperationResult.getBlockOperationResult( out.toArray( new ItemStack[out.size()] ) );
-					w.playSoundEffect( x + 0.5D, y + 0.5D, z + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F );
+				if (hasFurnaceable && canFurnaceable) {
+					this.extractAEPower(item, 1600);
+					final InWorldToolOperationResult or = InWorldToolOperationResult.getBlockOperationResult(out.toArray(new ItemStack[out.size()]));
+					w.playSoundEffect(x + 0.5D, y + 0.5D, z + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
 
-					if( or.getBlockItem() == null )
-					{
-						w.setBlock( x, y, z, Platform.AIR_BLOCK, 0, 3 );
-					}
-					else
-					{
-						w.setBlock( x, y, z, Block.getBlockFromItem( or.getBlockItem().getItem() ), or.getBlockItem().getItemDamage(), 3 );
+					if (or.getBlockItem() == null) {
+						w.setBlock(x, y, z, Platform.AIR_BLOCK, 0, 3);
+					} else {
+						w.setBlock(x, y, z, Block.getBlockFromItem(or.getBlockItem().getItem()), or.getBlockItem().getItemDamage(), 3);
 					}
 
-					if( or.getDrops() != null )
-					{
-						Platform.spawnDrops( w, x, y, z, or.getDrops() );
+					if (or.getDrops() != null) {
+						Platform.spawnDrops(w, x, y, z, or.getDrops());
 					}
 
 					return true;
-				}
-				else
-				{
-					final ForgeDirection dir = ForgeDirection.getOrientation( side );
+				} else {
+					final ForgeDirection dir = ForgeDirection.getOrientation(side);
 					x += dir.offsetX;
 					y += dir.offsetY;
 					z += dir.offsetZ;
 
-					if( !p.canPlayerEdit( x, y, z, side, item ) )
-					{
+					if (!p.canPlayerEdit(x, y, z, side, item)) {
 						return false;
 					}
 
-					if( w.isAirBlock( x, y, z ) )
-					{
-						this.extractAEPower( item, 1600 );
-						w.playSoundEffect( x + 0.5D, y + 0.5D, z + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F );
-						w.setBlock( x, y, z, Blocks.fire );
+					if (w.isAirBlock(x, y, z)) {
+						this.extractAEPower(item, 1600);
+						w.playSoundEffect(x + 0.5D, y + 0.5D, z + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
+						w.setBlock(x, y, z, Blocks.fire);
 					}
 
 					return true;

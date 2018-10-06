@@ -18,7 +18,6 @@
 
 package appeng.recipes;
 
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,9 +31,7 @@ import appeng.api.exceptions.RegistrationError;
 import appeng.api.recipes.IIngredient;
 import appeng.api.recipes.ResolverResultSet;
 
-
-public class IngredientSet implements IIngredient
-{
+public class IngredientSet implements IIngredient {
 
 	private final int qty;
 	private final String name;
@@ -42,12 +39,11 @@ public class IngredientSet implements IIngredient
 	private final boolean isInside = false;
 	private ItemStack[] baked;
 
-	public IngredientSet( final ResolverResultSet rr, final int qty )
-	{
-		Preconditions.checkNotNull( rr );
-		Preconditions.checkNotNull( rr.name );
-		Preconditions.checkNotNull( rr.results );
-		Preconditions.checkState( qty > 0 );
+	public IngredientSet(final ResolverResultSet rr, final int qty) {
+		Preconditions.checkNotNull(rr);
+		Preconditions.checkNotNull(rr.name);
+		Preconditions.checkNotNull(rr.results);
+		Preconditions.checkState(qty > 0);
 
 		this.name = rr.name;
 		this.items = rr.results;
@@ -55,73 +51,61 @@ public class IngredientSet implements IIngredient
 	}
 
 	@Override
-	public ItemStack getItemStack() throws RegistrationError, MissingIngredientError
-	{
-		throw new RegistrationError( "Cannot pass group of items to a recipe which desires a single recipe item." );
+	public ItemStack getItemStack() throws RegistrationError, MissingIngredientError {
+		throw new RegistrationError("Cannot pass group of items to a recipe which desires a single recipe item.");
 	}
 
 	@Override
-	public ItemStack[] getItemStackSet() throws RegistrationError, MissingIngredientError
-	{
-		if( this.baked != null )
-		{
+	public ItemStack[] getItemStackSet() throws RegistrationError, MissingIngredientError {
+		if (this.baked != null) {
 			return this.baked;
 		}
 
-		if( this.isInside )
-		{
+		if (this.isInside) {
 			return new ItemStack[0];
 		}
 
 		final List<ItemStack> out = new LinkedList<ItemStack>();
-		out.addAll( this.items );
+		out.addAll(this.items);
 
-		if( out.isEmpty() )
-		{
-			throw new MissingIngredientError( this.toString() + " - group could not be resolved to any items." );
+		if (out.isEmpty()) {
+			throw new MissingIngredientError(this.toString() + " - group could not be resolved to any items.");
 		}
 
-		for( final ItemStack is : out )
-		{
+		for (final ItemStack is : out) {
 			is.stackSize = this.qty;
 		}
 
-		return out.toArray( new ItemStack[out.size()] );
+		return out.toArray(new ItemStack[out.size()]);
 	}
 
 	@Override
-	public boolean isAir()
-	{
+	public boolean isAir() {
 		return false;
 	}
 
 	@Override
-	public String getNameSpace()
-	{
+	public String getNameSpace() {
 		return "";
 	}
 
 	@Override
-	public String getItemName()
-	{
+	public String getItemName() {
 		return this.name;
 	}
 
 	@Override
-	public int getDamageValue()
-	{
+	public int getDamageValue() {
 		return OreDictionary.WILDCARD_VALUE;
 	}
 
 	@Override
-	public int getQty()
-	{
+	public int getQty() {
 		return this.qty;
 	}
 
 	@Override
-	public void bake() throws RegistrationError, MissingIngredientError
-	{
+	public void bake() throws RegistrationError, MissingIngredientError {
 		this.baked = null;
 		this.baked = this.getItemStackSet();
 	}

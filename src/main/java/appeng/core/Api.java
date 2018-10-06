@@ -18,9 +18,6 @@
 
 package appeng.core;
 
-
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.IAppEngApi;
 import appeng.api.definitions.Blocks;
 import appeng.api.definitions.Items;
@@ -38,10 +35,10 @@ import appeng.core.features.registries.RegistryContainer;
 import appeng.me.GridConnection;
 import appeng.me.GridNode;
 import appeng.util.Platform;
+import net.minecraftforge.common.util.ForgeDirection;
 
+public final class Api implements IAppEngApi {
 
-public final class Api implements IAppEngApi
-{
 	public static final Api INSTANCE = new Api();
 
 	private final ApiPart partHelper;
@@ -55,8 +52,7 @@ public final class Api implements IAppEngApi
 	private final Parts parts;
 	private final ApiDefinitions definitions;
 
-	private Api()
-	{
+	private Api() {
 		this.parts = new Parts();
 		this.blocks = new Blocks();
 		this.items = new Items();
@@ -64,71 +60,60 @@ public final class Api implements IAppEngApi
 		this.storageHelper = new ApiStorage();
 		this.registryContainer = new RegistryContainer();
 		this.partHelper = new ApiPart();
-		this.definitions = new ApiDefinitions( this.partHelper );
+		this.definitions = new ApiDefinitions(this.partHelper);
 	}
 
 	@Override
-	public IRegistryContainer registries()
-	{
+	public IRegistryContainer registries() {
 		return this.registryContainer;
 	}
 
 	@Override
-	public IStorageHelper storage()
-	{
+	public IStorageHelper storage() {
 		return this.storageHelper;
 	}
 
 	@Override
-	public ApiPart partHelper()
-	{
+	public ApiPart partHelper() {
 		return this.partHelper;
 	}
 
 	@Override
-	public Items items()
-	{
+	public Items items() {
 		return this.items;
 	}
 
 	@Override
-	public Materials materials()
-	{
+	public Materials materials() {
 		return this.materials;
 	}
 
 	@Override
-	public Blocks blocks()
-	{
+	public Blocks blocks() {
 		return this.blocks;
 	}
 
 	@Override
-	public Parts parts()
-	{
+	public Parts parts() {
 		return this.parts;
 	}
 
 	@Override
-	public ApiDefinitions definitions()
-	{
+	public ApiDefinitions definitions() {
 		return this.definitions;
 	}
 
 	@Override
-	public IGridNode createGridNode( final IGridBlock blk )
-	{
-		if( Platform.isClient() )
-		{
-			throw new IllegalStateException( "Grid features for " + blk + " are server side only." );
+	public IGridNode createGridNode(final IGridBlock blk) {
+		if (Platform.isClient()) {
+			throw new IllegalStateException("Grid features for " + blk + " are server side only.");
 		}
 
-		return new GridNode( blk );
+		return new GridNode(blk);
 	}
 
 	@Override
-	public IGridConnection createGridConnection( final IGridNode a, final IGridNode b ) throws FailedConnection
-	{
-		return new GridConnection( a, b, ForgeDirection.UNKNOWN );
+	public IGridConnection createGridConnection(final IGridNode a, final IGridNode b) throws FailedConnection {
+		return new GridConnection(a, b, ForgeDirection.UNKNOWN);
 	}
 }

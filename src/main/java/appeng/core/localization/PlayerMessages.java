@@ -18,27 +18,23 @@
 
 package appeng.core.localization;
 
-
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 
-
-public enum PlayerMessages
-{
+public enum PlayerMessages {
 	ChestCannotReadStorageCell, InvalidMachine, LoadedSettings, SavedSettings, MachineNotPowered,
 
 	isNowLocked, isNowUnlocked,
 	AmmoDepleted,
 	CommunicationError, OutOfRange, DeviceNotPowered, DeviceNotWirelessTerminal, DeviceNotLinked, StationCanNotBeLocated,
-	SettingCleared, ;
+	SettingCleared,
+	;
 
-	public IChatComponent get()
-	{
-		return new ChatComponentTranslation( this.getName() );
+	public IChatComponent get() {
+		return new ChatComponentTranslation(this.getName());
 	}
 
-	String getName()
-	{
+	String getName() {
 		return "chat.appliedenergistics2." + this.toString();
 	}
 

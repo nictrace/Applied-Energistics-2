@@ -23,12 +23,9 @@
 
 package appeng.api.networking.crafting;
 
-
 import net.minecraft.nbt.NBTTagCompound;
 
-
-public interface ICraftingLink
-{
+public interface ICraftingLink {
 
 	/**
 	 * @return true if the job was canceled.
@@ -55,7 +52,7 @@ public interface ICraftingLink
 	 *
 	 * @param tag to be written data
 	 */
-	void writeToNBT( NBTTagCompound tag );
+	void writeToNBT(NBTTagCompound tag);
 
 	/**
 	 * @return the crafting ID for this link.

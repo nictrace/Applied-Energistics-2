@@ -18,97 +18,79 @@
 
 package appeng.tile.inventory;
 
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+public class AppEngNullInventory implements IInventory {
 
-public class AppEngNullInventory implements IInventory
-{
-
-	public AppEngNullInventory()
-	{
+	public AppEngNullInventory() {
 	}
 
-	public void writeToNBT( final NBTTagCompound target )
-	{
+	public void writeToNBT(final NBTTagCompound target) {
 	}
 
 	@Override
-	public int getSizeInventory()
-	{
+	public int getSizeInventory() {
 		return 0;
 	}
 
 	@Override
-	public ItemStack getStackInSlot( final int var1 )
-	{
+	public ItemStack getStackInSlot(final int var1) {
 		return null;
 	}
 
 	@Override
-	public ItemStack decrStackSize( final int slot, final int qty )
-	{
+	public ItemStack decrStackSize(final int slot, final int qty) {
 		return null;
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing( final int var1 )
-	{
+	public ItemStack getStackInSlotOnClosing(final int var1) {
 		return null;
 	}
 
 	@Override
-	public void setInventorySlotContents( final int slot, final ItemStack newItemStack )
-	{
+	public void setInventorySlotContents(final int slot, final ItemStack newItemStack) {
 
 	}
 
 	@Override
-	public String getInventoryName()
-	{
+	public String getInventoryName() {
 		return "appeng-internal";
 	}
 
 	@Override
-	public boolean hasCustomInventoryName()
-	{
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 
 	@Override
-	public int getInventoryStackLimit()
-	{
+	public int getInventoryStackLimit() {
 		return 0;
 	}
 
 	@Override
-	public void markDirty()
-	{
+	public void markDirty() {
 
 	}
 
 	@Override
-	public boolean isUseableByPlayer( final EntityPlayer var1 )
-	{
+	public boolean isUseableByPlayer(final EntityPlayer var1) {
 		return false;
 	}
 
 	@Override
-	public void openInventory()
-	{
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeInventory()
-	{
+	public void closeInventory() {
 	}
 
 	@Override
-	public boolean isItemValidForSlot( final int i, final ItemStack itemstack )
-	{
+	public boolean isItemValidForSlot(final int i, final ItemStack itemstack) {
 		return false;
 	}
 }

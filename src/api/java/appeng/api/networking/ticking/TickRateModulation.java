@@ -23,9 +23,7 @@
 
 package appeng.api.networking.ticking;
 
-
-public enum TickRateModulation
-{
+public enum TickRateModulation {
 	/**
 	 * same as idle, but also puts the node to sleep.
 	 */

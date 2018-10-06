@@ -18,15 +18,11 @@
 
 package appeng.util.inv;
 
-
-import net.minecraft.item.ItemStack;
-
 import appeng.api.storage.data.IAEItemStack;
 import appeng.util.item.AEItemStack;
+import net.minecraft.item.ItemStack;
 
-
-public class ItemSlot
-{
+public class ItemSlot {
 
 	private int slot;
 	private boolean isExtractable;
@@ -34,45 +30,37 @@ public class ItemSlot
 	private IAEItemStack aeItemStack;
 	private ItemStack itemStack;
 
-	public ItemStack getItemStack()
-	{
-		return this.itemStack == null ? ( this.aeItemStack == null ? null : ( this.itemStack = this.aeItemStack.getItemStack() ) ) : this.itemStack;
+	public ItemStack getItemStack() {
+		return this.itemStack == null ? (this.aeItemStack == null ? null : (this.itemStack = this.aeItemStack.getItemStack())) : this.itemStack;
 	}
 
-	public void setItemStack( final ItemStack is )
-	{
+	public void setItemStack(final ItemStack is) {
 		this.aeItemStack = null;
 		this.itemStack = is;
 	}
 
-	public IAEItemStack getAEItemStack()
-	{
-		return this.aeItemStack == null ? ( this.itemStack == null ? null : ( this.aeItemStack = AEItemStack.create( this.itemStack ) ) ) : this.aeItemStack;
+	public IAEItemStack getAEItemStack() {
+		return this.aeItemStack == null ? (this.itemStack == null ? null : (this.aeItemStack = AEItemStack.create(this.itemStack))) : this.aeItemStack;
 	}
 
-	void setAEItemStack( final IAEItemStack is )
-	{
+	void setAEItemStack(final IAEItemStack is) {
 		this.aeItemStack = is;
 		this.itemStack = null;
 	}
 
-	public boolean isExtractable()
-	{
+	public boolean isExtractable() {
 		return this.isExtractable;
 	}
 
-	void setExtractable( final boolean isExtractable )
-	{
+	void setExtractable(final boolean isExtractable) {
 		this.isExtractable = isExtractable;
 	}
 
-	public int getSlot()
-	{
+	public int getSlot() {
 		return this.slot;
 	}
 
-	public void setSlot( final int slot )
-	{
+	public void setSlot(final int slot) {
 		this.slot = slot;
 	}
 }

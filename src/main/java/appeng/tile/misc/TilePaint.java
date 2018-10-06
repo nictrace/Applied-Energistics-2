@@ -18,17 +18,15 @@
 
 package appeng.tile.misc;
 
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
+import appeng.api.util.AEColor;
+import appeng.helpers.Splotch;
+import appeng.items.misc.ItemPaintBall;
+import appeng.tile.AEBaseTile;
+import appeng.tile.TileEvent;
+import appeng.tile.events.TileEventType;
 import com.google.common.collect.ImmutableList;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -37,80 +35,64 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import appeng.api.util.AEColor;
-import appeng.helpers.Splotch;
-import appeng.items.misc.ItemPaintBall;
-import appeng.tile.AEBaseTile;
-import appeng.tile.TileEvent;
-import appeng.tile.events.TileEventType;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
-
-public class TilePaint extends AEBaseTile
-{
+public class TilePaint extends AEBaseTile {
 
 	private static final int LIGHT_PER_DOT = 12;
 
 	private int isLit = 0;
 	private List<Splotch> dots = null;
 
-	@TileEvent( TileEventType.WORLD_NBT_WRITE )
-	public void writeToNBT_TilePaint( final NBTTagCompound data )
-	{
+	@TileEvent(TileEventType.WORLD_NBT_WRITE)
+	public void writeToNBT_TilePaint(final NBTTagCompound data) {
 		final ByteBuf myDat = Unpooled.buffer();
-		this.writeBuffer( myDat );
-		if( myDat.hasArray() )
-		{
-			data.setByteArray( "dots", myDat.array() );
+		this.writeBuffer(myDat);
+		if (myDat.hasArray()) {
+			data.setByteArray("dots", myDat.array());
 		}
 	}
 
-	private void writeBuffer( final ByteBuf out )
-	{
-		if( this.dots == null )
-		{
-			out.writeByte( 0 );
+	private void writeBuffer(final ByteBuf out) {
+		if (this.dots == null) {
+			out.writeByte(0);
 			return;
 		}
 
-		out.writeByte( this.dots.size() );
+		out.writeByte(this.dots.size());
 
-		for( final Splotch s : this.dots )
-		{
-			s.writeToStream( out );
+		for (final Splotch s : this.dots) {
+			s.writeToStream(out);
 		}
 	}
 
-	@TileEvent( TileEventType.WORLD_NBT_READ )
-	public void readFromNBT_TilePaint( final NBTTagCompound data )
-	{
-		if( data.hasKey( "dots" ) )
-		{
-			this.readBuffer( Unpooled.copiedBuffer( data.getByteArray( "dots" ) ) );
+	@TileEvent(TileEventType.WORLD_NBT_READ)
+	public void readFromNBT_TilePaint(final NBTTagCompound data) {
+		if (data.hasKey("dots")) {
+			this.readBuffer(Unpooled.copiedBuffer(data.getByteArray("dots")));
 		}
 	}
 
-	private void readBuffer( final ByteBuf in )
-	{
+	private void readBuffer(final ByteBuf in) {
 		final byte howMany = in.readByte();
 
-		if( howMany == 0 )
-		{
+		if (howMany == 0) {
 			this.isLit = 0;
 			this.dots = null;
 			return;
 		}
 
-		this.dots = new ArrayList( howMany );
-		for( int x = 0; x < howMany; x++ )
-		{
-			this.dots.add( new Splotch( in ) );
+		this.dots = new ArrayList(howMany);
+		for (int x = 0; x < howMany; x++) {
+			this.dots.add(new Splotch(in));
 		}
 
 		this.isLit = 0;
-		for( final Splotch s : this.dots )
-		{
-			if( s.isLumen() )
-			{
+		for (final Splotch s : this.dots) {
+			if (s.isLumen()) {
 				this.isLit += LIGHT_PER_DOT;
 			}
 		}
@@ -118,64 +100,51 @@ public class TilePaint extends AEBaseTile
 		this.maxLit();
 	}
 
-	private void maxLit()
-	{
-		if( this.isLit > 14 )
-		{
+	private void maxLit() {
+		if (this.isLit > 14) {
 			this.isLit = 14;
 		}
 
-		if( this.worldObj != null )
-		{
-			this.worldObj.updateLightByType( EnumSkyBlock.Block, this.xCoord, this.yCoord, this.zCoord );
+		if (this.worldObj != null) {
+			this.worldObj.updateLightByType(EnumSkyBlock.Block, this.xCoord, this.yCoord, this.zCoord);
 		}
 	}
 
-	@TileEvent( TileEventType.NETWORK_WRITE )
-	public void writeToStream_TilePaint( final ByteBuf data )
-	{
-		this.writeBuffer( data );
+	@TileEvent(TileEventType.NETWORK_WRITE)
+	public void writeToStream_TilePaint(final ByteBuf data) {
+		this.writeBuffer(data);
 	}
 
-	@TileEvent( TileEventType.NETWORK_READ )
-	public boolean readFromStream_TilePaint( final ByteBuf data )
-	{
-		this.readBuffer( data );
+	@TileEvent(TileEventType.NETWORK_READ)
+	public boolean readFromStream_TilePaint(final ByteBuf data) {
+		this.readBuffer(data);
 		return true;
 	}
 
-	public void onNeighborBlockChange()
-	{
-		if( this.dots == null )
-		{
+	public void onNeighborBlockChange() {
+		if (this.dots == null) {
 			return;
 		}
 
-		for( final ForgeDirection side : ForgeDirection.VALID_DIRECTIONS )
-		{
-			if( !this.isSideValid( side ) )
-			{
-				this.removeSide( side );
+		for (final ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (!this.isSideValid(side)) {
+				this.removeSide(side);
 			}
 		}
 
 		this.updateData();
 	}
 
-	public boolean isSideValid( final ForgeDirection side )
-	{
-		final Block blk = this.worldObj.getBlock( this.xCoord + side.offsetX, this.yCoord + side.offsetY, this.zCoord + side.offsetZ );
-		return blk.isSideSolid( this.worldObj, this.xCoord + side.offsetX, this.yCoord + side.offsetY, this.zCoord + side.offsetZ, side.getOpposite() );
+	public boolean isSideValid(final ForgeDirection side) {
+		final Block blk = this.worldObj.getBlock(this.xCoord + side.offsetX, this.yCoord + side.offsetY, this.zCoord + side.offsetZ);
+		return blk.isSideSolid(this.worldObj, this.xCoord + side.offsetX, this.yCoord + side.offsetY, this.zCoord + side.offsetZ, side.getOpposite());
 	}
 
-	private void removeSide( final ForgeDirection side )
-	{
+	private void removeSide(final ForgeDirection side) {
 		final Iterator<Splotch> i = this.dots.iterator();
-		while( i.hasNext() )
-		{
+		while (i.hasNext()) {
 			final Splotch s = i.next();
-			if( s.getSide() == side )
-			{
+			if (s.getSide() == side) {
 				i.remove();
 			}
 		}
@@ -184,70 +153,57 @@ public class TilePaint extends AEBaseTile
 		this.markDirty();
 	}
 
-	private void updateData()
-	{
+	private void updateData() {
 		this.isLit = 0;
-		for( final Splotch s : this.dots )
-		{
-			if( s.isLumen() )
-			{
+		for (final Splotch s : this.dots) {
+			if (s.isLumen()) {
 				this.isLit += LIGHT_PER_DOT;
 			}
 		}
 
 		this.maxLit();
 
-		if( this.dots.isEmpty() )
-		{
+		if (this.dots.isEmpty()) {
 			this.dots = null;
 		}
 
-		if( this.dots == null )
-		{
-			this.worldObj.setBlock( this.xCoord, this.yCoord, this.zCoord, Blocks.air );
+		if (this.dots == null) {
+			this.worldObj.setBlock(this.xCoord, this.yCoord, this.zCoord, Blocks.air);
 		}
 	}
 
-	public void cleanSide( final ForgeDirection side )
-	{
-		if( this.dots == null )
-		{
+	public void cleanSide(final ForgeDirection side) {
+		if (this.dots == null) {
 			return;
 		}
 
-		this.removeSide( side );
+		this.removeSide(side);
 
 		this.updateData();
 	}
 
-	public int getLightLevel()
-	{
+	public int getLightLevel() {
 		return this.isLit;
 	}
 
-	public void addBlot( final ItemStack type, final ForgeDirection side, final Vec3 hitVec )
-	{
-		final Block blk = this.worldObj.getBlock( this.xCoord + side.offsetX, this.yCoord + side.offsetY, this.zCoord + side.offsetZ );
-		if( blk.isSideSolid( this.worldObj, this.xCoord + side.offsetX, this.yCoord + side.offsetY, this.zCoord + side.offsetZ, side.getOpposite() ) )
-		{
+	public void addBlot(final ItemStack type, final ForgeDirection side, final Vec3 hitVec) {
+		final Block blk = this.worldObj.getBlock(this.xCoord + side.offsetX, this.yCoord + side.offsetY, this.zCoord + side.offsetZ);
+		if (blk.isSideSolid(this.worldObj, this.xCoord + side.offsetX, this.yCoord + side.offsetY, this.zCoord + side.offsetZ, side.getOpposite())) {
 			final ItemPaintBall ipb = (ItemPaintBall) type.getItem();
 
-			final AEColor col = ipb.getColor( type );
-			final boolean lit = ipb.isLumen( type );
+			final AEColor col = ipb.getColor(type);
+			final boolean lit = ipb.isLumen(type);
 
-			if( this.dots == null )
-			{
+			if (this.dots == null) {
 				this.dots = new ArrayList<Splotch>();
 			}
 
-			if( this.dots.size() > 20 )
-			{
-				this.dots.remove( 0 );
+			if (this.dots.size() > 20) {
+				this.dots.remove(0);
 			}
 
-			this.dots.add( new Splotch( col, lit, side, hitVec ) );
-			if( lit )
-			{
+			this.dots.add(new Splotch(col, lit, side, hitVec));
+			if (lit) {
 				this.isLit += LIGHT_PER_DOT;
 			}
 
@@ -257,10 +213,8 @@ public class TilePaint extends AEBaseTile
 		}
 	}
 
-	public Collection<Splotch> getDots()
-	{
-		if( this.dots == null )
-		{
+	public Collection<Splotch> getDots() {
+		if (this.dots == null) {
 			return ImmutableList.of();
 		}
 

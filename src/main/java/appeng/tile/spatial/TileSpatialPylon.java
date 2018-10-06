@@ -18,13 +18,6 @@
 
 package appeng.tile.spatial;
 
-
-import java.util.EnumSet;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.events.MENetworkChannelsChanged;
 import appeng.api.networking.events.MENetworkEventSubscribe;
@@ -38,10 +31,12 @@ import appeng.me.helpers.AENetworkProxyMultiblock;
 import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
 import appeng.tile.grid.AENetworkTile;
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.EnumSet;
 
-public class TileSpatialPylon extends AENetworkTile implements IAEMultiBlock
-{
+public class TileSpatialPylon extends AENetworkTile implements IAEMultiBlock {
 
 	public static final int DISPLAY_END_MIN = 0x01;
 	public static final int DISPLAY_END_MAX = 0x02;
@@ -55,102 +50,83 @@ public class TileSpatialPylon extends AENetworkTile implements IAEMultiBlock
 	public static final int DISPLAY_POWERED_ENABLED = 0x20;
 	public static final int NET_STATUS = 0x10 + 0x20;
 
-	private final SpatialPylonCalculator calc = new SpatialPylonCalculator( this );
+	private final SpatialPylonCalculator calc = new SpatialPylonCalculator(this);
 	private int displayBits = 0;
 	private SpatialPylonCluster cluster;
 	private boolean didHaveLight = false;
 
-	public TileSpatialPylon()
-	{
-		this.getProxy().setFlags( GridFlags.REQUIRE_CHANNEL, GridFlags.MULTIBLOCK );
-		this.getProxy().setIdlePowerUsage( 0.5 );
-		this.getProxy().setValidSides( EnumSet.noneOf( ForgeDirection.class ) );
+	public TileSpatialPylon() {
+		this.getProxy().setFlags(GridFlags.REQUIRE_CHANNEL, GridFlags.MULTIBLOCK);
+		this.getProxy().setIdlePowerUsage(0.5);
+		this.getProxy().setValidSides(EnumSet.noneOf(ForgeDirection.class));
 	}
 
 	@Override
-	protected AENetworkProxy createProxy()
-	{
-		return new AENetworkProxyMultiblock( this, "proxy", this.getItemFromTile( this ), true );
+	protected AENetworkProxy createProxy() {
+		return new AENetworkProxyMultiblock(this, "proxy", this.getItemFromTile(this), true);
 	}
 
 	@Override
-	public void onChunkUnload()
-	{
-		this.disconnect( false );
+	public void onChunkUnload() {
+		this.disconnect(false);
 		super.onChunkUnload();
 	}
 
 	@Override
-	public void onReady()
-	{
+	public void onReady() {
 		super.onReady();
 		this.onNeighborBlockChange();
 	}
 
 	@Override
-	public void invalidate()
-	{
-		this.disconnect( false );
+	public void invalidate() {
+		this.disconnect(false);
 		super.invalidate();
 	}
 
-	public void onNeighborBlockChange()
-	{
-		this.calc.calculateMultiblock( this.worldObj, this.getLocation() );
+	public void onNeighborBlockChange() {
+		this.calc.calculateMultiblock(this.worldObj, this.getLocation());
 	}
 
 	@Override
-	public void disconnect( final boolean b )
-	{
-		if( this.cluster != null )
-		{
+	public void disconnect(final boolean b) {
+		if (this.cluster != null) {
 			this.cluster.destroy();
-			this.updateStatus( null );
+			this.updateStatus(null);
 		}
 	}
 
 	@Override
-	public SpatialPylonCluster getCluster()
-	{
+	public SpatialPylonCluster getCluster() {
 		return this.cluster;
 	}
 
 	@Override
-	public boolean isValid()
-	{
+	public boolean isValid() {
 		return true;
 	}
 
-	public void updateStatus( final SpatialPylonCluster c )
-	{
+	public void updateStatus(final SpatialPylonCluster c) {
 		this.cluster = c;
-		this.getProxy().setValidSides( c == null ? EnumSet.noneOf( ForgeDirection.class ) : EnumSet.allOf( ForgeDirection.class ) );
+		this.getProxy().setValidSides(c == null ? EnumSet.noneOf(ForgeDirection.class) : EnumSet.allOf(ForgeDirection.class));
 		this.recalculateDisplay();
 	}
 
-	public void recalculateDisplay()
-	{
+	public void recalculateDisplay() {
 		final int oldBits = this.displayBits;
 
 		this.displayBits = 0;
 
-		if( this.cluster != null )
-		{
-			if( this.cluster.getMin().equals( this.getLocation() ) )
-			{
+		if (this.cluster != null) {
+			if (this.cluster.getMin().equals(this.getLocation())) {
 				this.displayBits = DISPLAY_END_MIN;
-			}
-			else if( this.cluster.getMax().equals( this.getLocation() ) )
-			{
+			} else if (this.cluster.getMax().equals(this.getLocation())) {
 				this.displayBits = DISPLAY_END_MAX;
-			}
-			else
-			{
+			} else {
 				this.displayBits = DISPLAY_MIDDLE;
 			}
 
-			switch( this.cluster.getCurrentAxis() )
-			{
+			switch (this.cluster.getCurrentAxis()) {
 				case X:
 					this.displayBits |= DISPLAY_X;
 					break;
@@ -165,86 +141,70 @@ public class TileSpatialPylon extends AENetworkTile implements IAEMultiBlock
 					break;
 			}
 
-			try
-			{
-				if( this.getProxy().getEnergy().isNetworkPowered() )
-				{
+			try {
+				if (this.getProxy().getEnergy().isNetworkPowered()) {
 					this.displayBits |= DISPLAY_POWERED_ENABLED;
 				}
 
-				if( this.cluster.isValid() && this.getProxy().isActive() )
-				{
+				if (this.cluster.isValid() && this.getProxy().isActive()) {
 					this.displayBits |= DISPLAY_ENABLED;
 				}
-			}
-			catch( final GridAccessException e )
-			{
+			} catch (final GridAccessException e) {
 				// nothing?
 			}
 		}
 
-		if( oldBits != this.displayBits )
-		{
+		if (oldBits != this.displayBits) {
 			this.markForUpdate();
 		}
 	}
 
 	@Override
-	public void markForUpdate()
-	{
+	public void markForUpdate() {
 		super.markForUpdate();
 		final boolean hasLight = this.getLightValue() > 0;
-		if( hasLight != this.didHaveLight )
-		{
+		if (hasLight != this.didHaveLight) {
 			this.didHaveLight = hasLight;
-			this.worldObj.func_147451_t( this.xCoord, this.yCoord, this.zCoord );
+			this.worldObj.func_147451_t(this.xCoord, this.yCoord, this.zCoord);
 			// worldObj.updateAllLightTypes( xCoord, yCoord, zCoord );
 		}
 	}
 
 	@Override
-	public boolean canBeRotated()
-	{
+	public boolean canBeRotated() {
 		return false;
 	}
 
-	public int getLightValue()
-	{
-		if( ( this.displayBits & DISPLAY_POWERED_ENABLED ) == DISPLAY_POWERED_ENABLED )
-		{
+	public int getLightValue() {
+		if ((this.displayBits & DISPLAY_POWERED_ENABLED) == DISPLAY_POWERED_ENABLED) {
 			return 8;
 		}
 		return 0;
 	}
 
-	@TileEvent( TileEventType.NETWORK_READ )
-	public boolean readFromStream_TileSpatialPylon( final ByteBuf data )
-	{
+	@TileEvent(TileEventType.NETWORK_READ)
+	public boolean readFromStream_TileSpatialPylon(final ByteBuf data) {
 		final int old = this.displayBits;
 		this.displayBits = data.readByte();
 		return old != this.displayBits;
 	}
 
-	@TileEvent( TileEventType.NETWORK_WRITE )
-	public void writeToStream_TileSpatialPylon( final ByteBuf data )
-	{
-		data.writeByte( this.displayBits );
+	@TileEvent(TileEventType.NETWORK_WRITE)
+	public void writeToStream_TileSpatialPylon(final ByteBuf data) {
+		data.writeByte(this.displayBits);
 	}
 
 	@MENetworkEventSubscribe
-	public void powerRender( final MENetworkPowerStatusChange c )
-	{
+	public void powerRender(final MENetworkPowerStatusChange c) {
 		this.recalculateDisplay();
 	}
 
 	@MENetworkEventSubscribe
-	public void activeRender( final MENetworkChannelsChanged c )
-	{
+	public void activeRender(final MENetworkChannelsChanged c) {
 		this.recalculateDisplay();
 	}
 
-	public int getDisplayBits()
-	{
+	public int getDisplayBits() {
 		return this.displayBits;
 	}
 }

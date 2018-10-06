@@ -18,7 +18,6 @@
 
 package appeng.block.qnb;
 
-
 import appeng.block.AEBaseTileBlock;
 import appeng.client.render.blocks.RenderQNB;
 import appeng.core.features.AEFeature;
@@ -32,47 +31,39 @@ import net.minecraft.world.World;
 
 import java.util.EnumSet;
 
+public abstract class BlockQuantumBase extends AEBaseTileBlock implements ICustomCollision {
 
-public abstract class BlockQuantumBase extends AEBaseTileBlock implements ICustomCollision
-{
-
-	public BlockQuantumBase( final Material mat )
-	{
-		super( mat );
-		this.setTileEntity( TileQuantumBridge.class );
+	public BlockQuantumBase(final Material mat) {
+		super(mat);
+		this.setTileEntity(TileQuantumBridge.class);
 		final float shave = 2.0f / 16.0f;
-		this.setBlockBounds( shave, shave, shave, 1.0f - shave, 1.0f - shave, 1.0f - shave );
-		this.setLightOpacity( 0 );
+		this.setBlockBounds(shave, shave, shave, 1.0f - shave, 1.0f - shave, 1.0f - shave);
+		this.setLightOpacity(0);
 		this.isFullSize = this.isOpaque = false;
-		this.setFeature( EnumSet.of( AEFeature.QuantumNetworkBridge ) );
+		this.setFeature(EnumSet.of(AEFeature.QuantumNetworkBridge));
 	}
 
 	@Override
-	public void onNeighborBlockChange( final World w, final int x, final int y, final int z, final Block pointlessNumber )
-	{
-		final TileQuantumBridge bridge = this.getTileEntity( w, x, y, z );
-		if( bridge != null )
-		{
+	public void onNeighborBlockChange(final World w, final int x, final int y, final int z, final Block pointlessNumber) {
+		final TileQuantumBridge bridge = this.getTileEntity(w, x, y, z);
+		if (bridge != null) {
 			bridge.neighborUpdate();
 		}
 	}
 
 	@Override
-	public void breakBlock( final World w, final int x, final int y, final int z, final Block a, final int b )
-	{
-		final TileQuantumBridge bridge = this.getTileEntity( w, x, y, z );
-		if( bridge != null )
-		{
+	public void breakBlock(final World w, final int x, final int y, final int z, final Block a, final int b) {
+		final TileQuantumBridge bridge = this.getTileEntity(w, x, y, z);
+		if (bridge != null) {
 			bridge.breakCluster();
 		}
 
-		super.breakBlock( w, x, y, z, a, b );
+		super.breakBlock(w, x, y, z, a, b);
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	protected RenderQNB getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	protected RenderQNB getRenderer() {
 		return new RenderQNB();
 	}
 

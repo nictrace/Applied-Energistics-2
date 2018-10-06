@@ -18,38 +18,30 @@
 
 package appeng.util.inv;
 
-
-import net.minecraft.item.ItemStack;
-
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEInventory;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.util.item.AEItemStack;
+import net.minecraft.item.ItemStack;
 
-
-public class IMEInventoryDestination implements IInventoryDestination
-{
+public class IMEInventoryDestination implements IInventoryDestination {
 
 	private final IMEInventory<IAEItemStack> me;
 
-	public IMEInventoryDestination( final IMEInventory<IAEItemStack> o )
-	{
+	public IMEInventoryDestination(final IMEInventory<IAEItemStack> o) {
 		this.me = o;
 	}
 
 	@Override
-	public boolean canInsert( final ItemStack stack )
-	{
+	public boolean canInsert(final ItemStack stack) {
 
-		if( stack == null )
-		{
+		if (stack == null) {
 			return false;
 		}
 
-		final IAEItemStack failed = this.me.injectItems( AEItemStack.create( stack ), Actionable.SIMULATE, null );
+		final IAEItemStack failed = this.me.injectItems(AEItemStack.create(stack), Actionable.SIMULATE, null);
 
-		if( failed == null )
-		{
+		if (failed == null) {
 			return true;
 		}
 		return failed.getStackSize() != stack.stackSize;

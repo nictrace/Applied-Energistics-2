@@ -18,18 +18,14 @@
 
 package appeng.core.sync;
 
-
-public enum GuiHostType
-{
+public enum GuiHostType {
 	ITEM_OR_WORLD, ITEM, WORLD;
 
-	public boolean isItem()
-	{
+	public boolean isItem() {
 		return this != WORLD;
 	}
 
-	boolean isTile()
-	{
+	boolean isTile() {
 		return this != ITEM;
 	}
 }

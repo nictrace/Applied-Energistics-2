@@ -18,78 +18,62 @@
 
 package appeng.core.features;
 
-
-import java.util.EnumSet;
-
-import com.google.common.base.Optional;
-
-import net.minecraft.item.Item;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-
 import appeng.api.definitions.IItemDefinition;
 import appeng.core.CreativeTab;
 import appeng.core.CreativeTabFacade;
 import appeng.items.parts.ItemFacade;
+import com.google.common.base.Optional;
+import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.item.Item;
 
+import java.util.EnumSet;
 
-public final class ItemFeatureHandler implements IFeatureHandler
-{
+public final class ItemFeatureHandler implements IFeatureHandler {
+
 	private final Item item;
 	private final FeatureNameExtractor extractor;
 	private final boolean enabled;
 	private final ItemDefinition definition;
 
-	public ItemFeatureHandler( final EnumSet<AEFeature> features, final Item item, final IAEFeature featured, final Optional<String> subName )
-	{
-		final ActivityState state = new FeaturedActiveChecker( features ).getActivityState();
+	public ItemFeatureHandler(final EnumSet<AEFeature> features, final Item item, final IAEFeature featured, final Optional<String> subName) {
+		final ActivityState state = new FeaturedActiveChecker(features).getActivityState();
 
 		this.item = item;
-		this.extractor = new FeatureNameExtractor( featured.getClass(), subName );
+		this.extractor = new FeatureNameExtractor(featured.getClass(), subName);
 		this.enabled = state == ActivityState.Enabled;
-		this.definition = new ItemDefinition( item, state );
+		this.definition = new ItemDefinition(item, state);
 	}
 
 	@Override
-	public boolean isFeatureAvailable()
-	{
+	public boolean isFeatureAvailable() {
 		return this.enabled;
 	}
 
 	@Override
-	public IItemDefinition getDefinition()
-	{
+	public IItemDefinition getDefinition() {
 		return this.definition;
 	}
 
 	@Override
-	public void register()
-	{
-		if( this.enabled )
-		{
+	public void register() {
+		if (this.enabled) {
 			String name = this.extractor.get();
-			this.item.setTextureName( "appliedenergistics2:" + name );
-			this.item.setUnlocalizedName( /* "item." */"appliedenergistics2." + name );
+			this.item.setTextureName("appliedenergistics2:" + name);
+			this.item.setUnlocalizedName( /* "item." */"appliedenergistics2." + name);
 
-			if( this.item instanceof ItemFacade )
-			{
-				this.item.setCreativeTab( CreativeTabFacade.instance );
-			}
-			else
-			{
-				this.item.setCreativeTab( CreativeTab.instance );
+			if (this.item instanceof ItemFacade) {
+				this.item.setCreativeTab(CreativeTabFacade.instance);
+			} else {
+				this.item.setCreativeTab(CreativeTab.instance);
 			}
 
-			if( name.equals( "ItemMaterial" ) )
-			{
+			if (name.equals("ItemMaterial")) {
 				name = "ItemMultiMaterial";
-			}
-			else if( name.equals( "ItemPart" ) )
-			{
+			} else if (name.equals("ItemPart")) {
 				name = "ItemMultiPart";
 			}
 
-			GameRegistry.registerItem( this.item, "item." + name );
+			GameRegistry.registerItem(this.item, "item." + name);
 		}
 	}
 }

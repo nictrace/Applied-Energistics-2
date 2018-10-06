@@ -23,18 +23,15 @@
 
 package appeng.api.networking.security;
 
+import appeng.api.config.SecurityPermissions;
 
 import java.util.EnumSet;
 import java.util.HashMap;
 
-import appeng.api.config.SecurityPermissions;
-
-
 /**
  * Implemented on Security Terminal to interface with security cache.
  */
-public interface ISecurityProvider
-{
+public interface ISecurityProvider {
 
 	/**
 	 * used to represent the security key for the network, should be based on a unique timestamp.
@@ -48,7 +45,7 @@ public interface ISecurityProvider
 	 *
 	 * @param playerPerms player permissions
 	 */
-	void readPermissions( HashMap<Integer, EnumSet<SecurityPermissions>> playerPerms );
+	void readPermissions(HashMap<Integer, EnumSet<SecurityPermissions>> playerPerms);
 
 	/**
 	 * @return is security on or off?

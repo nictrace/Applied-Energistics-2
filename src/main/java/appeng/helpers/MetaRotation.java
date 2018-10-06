@@ -18,24 +18,20 @@
 
 package appeng.helpers;
 
-
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import appeng.api.util.IOrientable;
 
-
-public class MetaRotation implements IOrientable
-{
+public class MetaRotation implements IOrientable {
 
 	private final IBlockAccess w;
 	private final int x;
 	private final int y;
 	private final int z;
 
-	public MetaRotation( final IBlockAccess world, final int x, final int y, final int z )
-	{
+	public MetaRotation(final IBlockAccess world, final int x, final int y, final int z) {
 		this.w = world;
 		this.x = x;
 		this.y = y;
@@ -43,37 +39,29 @@ public class MetaRotation implements IOrientable
 	}
 
 	@Override
-	public boolean canBeRotated()
-	{
+	public boolean canBeRotated() {
 		return true;
 	}
 
 	@Override
-	public ForgeDirection getForward()
-	{
-		if( this.getUp().offsetY == 0 )
-		{
+	public ForgeDirection getForward() {
+		if (this.getUp().offsetY == 0) {
 			return ForgeDirection.UP;
 		}
 		return ForgeDirection.SOUTH;
 	}
 
 	@Override
-	public ForgeDirection getUp()
-	{
-		return ForgeDirection.getOrientation( this.w.getBlockMetadata( this.x, this.y, this.z ) );
+	public ForgeDirection getUp() {
+		return ForgeDirection.getOrientation(this.w.getBlockMetadata(this.x, this.y, this.z));
 	}
 
 	@Override
-	public void setOrientation( final ForgeDirection forward, final ForgeDirection up )
-	{
-		if( this.w instanceof World )
-		{
-			( (World) this.w ).setBlockMetadataWithNotify( this.x, this.y, this.z, up.ordinal(), 1 + 2 );
-		}
-		else
-		{
-			throw new IllegalStateException( this.w.getClass().getName() + " received, expected World" );
+	public void setOrientation(final ForgeDirection forward, final ForgeDirection up) {
+		if (this.w instanceof World) {
+			((World) this.w).setBlockMetadataWithNotify(this.x, this.y, this.z, up.ordinal(), 1 + 2);
+		} else {
+			throw new IllegalStateException(this.w.getClass().getName() + " received, expected World");
 		}
 	}
 }

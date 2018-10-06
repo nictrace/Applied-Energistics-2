@@ -18,9 +18,7 @@
 
 package appeng.server;
 
-
-public enum AccessType
-{
+public enum AccessType {
 	/**
 	 * allows basic access to manipulate the block via gui, or other.
 	 */

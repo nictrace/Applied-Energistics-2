@@ -18,7 +18,6 @@
 
 package appeng.block.misc;
 
-
 import appeng.block.AEBaseTileBlock;
 import appeng.client.render.blocks.RendererSecurity;
 import appeng.core.features.AEFeature;
@@ -34,42 +33,34 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.EnumSet;
 
+public class BlockSecurity extends AEBaseTileBlock {
 
-public class BlockSecurity extends AEBaseTileBlock
-{
+	public BlockSecurity() {
+		super(Material.iron);
 
-	public BlockSecurity()
-	{
-		super( Material.iron );
-
-		this.setTileEntity( TileSecurity.class );
-		this.setFeature( EnumSet.of( AEFeature.Security ) );
+		this.setTileEntity(TileSecurity.class);
+		this.setFeature(EnumSet.of(AEFeature.Security));
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	protected RendererSecurity getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	protected RendererSecurity getRenderer() {
 		return new RendererSecurity();
 	}
 
 	@Override
-	public boolean onActivated( final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		if( p.isSneaking() )
-		{
+	public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ) {
+		if (p.isSneaking()) {
 			return false;
 		}
 
-		final TileSecurity tg = this.getTileEntity( w, x, y, z );
-		if( tg != null )
-		{
-			if( Platform.isClient() )
-			{
+		final TileSecurity tg = this.getTileEntity(w, x, y, z);
+		if (tg != null) {
+			if (Platform.isClient()) {
 				return true;
 			}
 
-			Platform.openGUI( p, tg, ForgeDirection.getOrientation( side ), GuiBridge.GUI_SECURITY );
+			Platform.openGUI(p, tg, ForgeDirection.getOrientation(side), GuiBridge.GUI_SECURITY);
 			return true;
 		}
 		return false;

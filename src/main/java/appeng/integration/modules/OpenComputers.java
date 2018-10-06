@@ -18,9 +18,6 @@
 
 package appeng.integration.modules;
 
-
-import li.cil.oc.api.Items;
-
 import appeng.api.AEApi;
 import appeng.api.IAppEngApi;
 import appeng.api.config.TunnelType;
@@ -31,49 +28,44 @@ import appeng.integration.IIntegrationModule;
 import appeng.integration.IntegrationHelper;
 import appeng.integration.IntegrationRegistry;
 import appeng.integration.IntegrationType;
+import li.cil.oc.api.Items;
 
+public class OpenComputers implements IIntegrationModule {
 
-
-public class OpenComputers implements IIntegrationModule
-{
 	@Reflected
 	public static OpenComputers instance;
 
 	@Reflected
-	public OpenComputers()
-	{
-		IntegrationHelper.testClassExistence( this, li.cil.oc.api.Items.class );
-		IntegrationHelper.testClassExistence( this, li.cil.oc.api.Network.class );
-		IntegrationHelper.testClassExistence( this, li.cil.oc.api.network.Environment.class );
-		IntegrationHelper.testClassExistence( this, li.cil.oc.api.network.SidedEnvironment.class );
-		IntegrationHelper.testClassExistence( this, li.cil.oc.api.network.Node.class );
-		IntegrationHelper.testClassExistence( this, li.cil.oc.api.network.Message.class );
+	public OpenComputers() {
+		IntegrationHelper.testClassExistence(this, li.cil.oc.api.Items.class);
+		IntegrationHelper.testClassExistence(this, li.cil.oc.api.Network.class);
+		IntegrationHelper.testClassExistence(this, li.cil.oc.api.network.Environment.class);
+		IntegrationHelper.testClassExistence(this, li.cil.oc.api.network.SidedEnvironment.class);
+		IntegrationHelper.testClassExistence(this, li.cil.oc.api.network.Node.class);
+		IntegrationHelper.testClassExistence(this, li.cil.oc.api.network.Message.class);
 	}
 
 	@Override
-	public void init()
-	{
+	public void init() {
 		final IAppEngApi api = AEApi.instance();
 		final IPartHelper partHelper = api.partHelper();
 
-		if( IntegrationRegistry.INSTANCE.isEnabled( IntegrationType.OpenComputers ) )
-		{
-			partHelper.registerNewLayer( "appeng.parts.layers.LayerSidedEnvironment", "li.cil.oc.api.network.SidedEnvironment" );
+		if (IntegrationRegistry.INSTANCE.isEnabled(IntegrationType.OpenComputers)) {
+			partHelper.registerNewLayer("appeng.parts.layers.LayerSidedEnvironment", "li.cil.oc.api.network.SidedEnvironment");
 		}
 	}
 
 	@Override
-	public void postInit()
-	{
+	public void postInit() {
 		final IP2PTunnelRegistry registry = AEApi.instance().registries().p2pTunnel();
 
-		registry.addNewAttunement( Items.get( "cable" ).createItemStack( 1 ), TunnelType.COMPUTER_MESSAGE );
-		registry.addNewAttunement( Items.get( "adapter" ).createItemStack( 1 ), TunnelType.COMPUTER_MESSAGE );
-		registry.addNewAttunement( Items.get( "switch" ).createItemStack( 1 ), TunnelType.COMPUTER_MESSAGE );
-		registry.addNewAttunement( Items.get( "accessPoint" ).createItemStack( 1 ), TunnelType.COMPUTER_MESSAGE );
-		registry.addNewAttunement( Items.get( "lanCard" ).createItemStack( 1 ), TunnelType.COMPUTER_MESSAGE );
-		registry.addNewAttunement( Items.get( "linkedCard" ).createItemStack( 1 ), TunnelType.COMPUTER_MESSAGE );
-		registry.addNewAttunement( Items.get( "wlanCard" ).createItemStack( 1 ), TunnelType.COMPUTER_MESSAGE );
-		registry.addNewAttunement( Items.get( "analyzer" ).createItemStack( 1 ), TunnelType.COMPUTER_MESSAGE );
+		registry.addNewAttunement(Items.get("cable").createItemStack(1), TunnelType.COMPUTER_MESSAGE);
+		registry.addNewAttunement(Items.get("adapter").createItemStack(1), TunnelType.COMPUTER_MESSAGE);
+		registry.addNewAttunement(Items.get("switch").createItemStack(1), TunnelType.COMPUTER_MESSAGE);
+		registry.addNewAttunement(Items.get("accessPoint").createItemStack(1), TunnelType.COMPUTER_MESSAGE);
+		registry.addNewAttunement(Items.get("lanCard").createItemStack(1), TunnelType.COMPUTER_MESSAGE);
+		registry.addNewAttunement(Items.get("linkedCard").createItemStack(1), TunnelType.COMPUTER_MESSAGE);
+		registry.addNewAttunement(Items.get("wlanCard").createItemStack(1), TunnelType.COMPUTER_MESSAGE);
+		registry.addNewAttunement(Items.get("analyzer").createItemStack(1), TunnelType.COMPUTER_MESSAGE);
 	}
 }

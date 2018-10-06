@@ -18,7 +18,6 @@
 
 package appeng.block.networking;
 
-
 import appeng.block.AEBaseTileBlock;
 import appeng.client.render.blocks.RenderBlockWireless;
 import appeng.core.features.AEFeature;
@@ -39,41 +38,33 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
+public class BlockWireless extends AEBaseTileBlock implements ICustomCollision {
 
-public class BlockWireless extends AEBaseTileBlock implements ICustomCollision
-{
-
-	public BlockWireless()
-	{
-		super( AEGlassMaterial.INSTANCE );
-		this.setTileEntity( TileWireless.class );
-		this.setLightOpacity( 0 );
+	public BlockWireless() {
+		super(AEGlassMaterial.INSTANCE);
+		this.setTileEntity(TileWireless.class);
+		this.setLightOpacity(0);
 		this.isFullSize = false;
 		this.isOpaque = false;
-		this.setFeature( EnumSet.of( AEFeature.Core, AEFeature.WirelessAccessTerminal ) );
+		this.setFeature(EnumSet.of(AEFeature.Core, AEFeature.WirelessAccessTerminal));
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	protected RenderBlockWireless getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	protected RenderBlockWireless getRenderer() {
 		return new RenderBlockWireless();
 	}
 
 	@Override
-	public boolean onActivated( final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		if( p.isSneaking() )
-		{
+	public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ) {
+		if (p.isSneaking()) {
 			return false;
 		}
 
-		final TileWireless tg = this.getTileEntity( w, x, y, z );
-		if( tg != null )
-		{
-			if( Platform.isServer() )
-			{
-				Platform.openGUI( p, tg, ForgeDirection.getOrientation( side ), GuiBridge.GUI_WIRELESS );
+		final TileWireless tg = this.getTileEntity(w, x, y, z);
+		if (tg != null) {
+			if (Platform.isServer()) {
+				Platform.openGUI(p, tg, ForgeDirection.getOrientation(side), GuiBridge.GUI_WIRELESS);
 			}
 			return true;
 		}
@@ -81,11 +72,9 @@ public class BlockWireless extends AEBaseTileBlock implements ICustomCollision
 	}
 
 	@Override
-	public Iterable<AxisAlignedBB> getSelectedBoundingBoxesFromPool( final World w, final int x, final int y, final int z, final Entity e, final boolean isVisual )
-	{
-		final TileWireless tile = this.getTileEntity( w, x, y, z );
-		if( tile != null )
-		{
+	public Iterable<AxisAlignedBB> getSelectedBoundingBoxesFromPool(final World w, final int x, final int y, final int z, final Entity e, final boolean isVisual) {
+		final TileWireless tile = this.getTileEntity(w, x, y, z);
+		if (tile != null) {
 			final ForgeDirection forward = tile.getForward();
 
 			double minX = 0;
@@ -95,8 +84,7 @@ public class BlockWireless extends AEBaseTileBlock implements ICustomCollision
 			double maxY = 1;
 			double maxZ = 1;
 
-			switch( forward )
-			{
+			switch (forward) {
 				case DOWN:
 					minZ = minX = 3.0 / 16.0;
 					maxZ = maxX = 13.0 / 16.0;
@@ -137,17 +125,15 @@ public class BlockWireless extends AEBaseTileBlock implements ICustomCollision
 					break;
 			}
 
-			return Collections.singletonList( AxisAlignedBB.getBoundingBox( minX, minY, minZ, maxX, maxY, maxZ ) );
+			return Collections.singletonList(AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
 		}
-		return Collections.singletonList( AxisAlignedBB.getBoundingBox( 0.0, 0, 0.0, 1.0, 1.0, 1.0 ) );
+		return Collections.singletonList(AxisAlignedBB.getBoundingBox(0.0, 0, 0.0, 1.0, 1.0, 1.0));
 	}
 
 	@Override
-	public void addCollidingBlockToList( final World w, final int x, final int y, final int z, final AxisAlignedBB bb, final List<AxisAlignedBB> out, final Entity e )
-	{
-		final TileWireless tile = this.getTileEntity( w, x, y, z );
-		if( tile != null )
-		{
+	public void addCollidingBlockToList(final World w, final int x, final int y, final int z, final AxisAlignedBB bb, final List<AxisAlignedBB> out, final Entity e) {
+		final TileWireless tile = this.getTileEntity(w, x, y, z);
+		if (tile != null) {
 			final ForgeDirection forward = tile.getForward();
 
 			double minX = 0;
@@ -157,8 +143,7 @@ public class BlockWireless extends AEBaseTileBlock implements ICustomCollision
 			double maxY = 1;
 			double maxZ = 1;
 
-			switch( forward )
-			{
+			switch (forward) {
 				case DOWN:
 					minZ = minX = 3.0 / 16.0;
 					maxZ = maxX = 13.0 / 16.0;
@@ -199,11 +184,9 @@ public class BlockWireless extends AEBaseTileBlock implements ICustomCollision
 					break;
 			}
 
-			out.add( AxisAlignedBB.getBoundingBox( minX, minY, minZ, maxX, maxY, maxZ ) );
-		}
-		else
-		{
-			out.add( AxisAlignedBB.getBoundingBox( 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ) );
+			out.add(AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
+		} else {
+			out.add(AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 		}
 	}
 }

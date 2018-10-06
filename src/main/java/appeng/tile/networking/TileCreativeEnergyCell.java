@@ -18,64 +18,52 @@
 
 package appeng.tile.networking;
 
-
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.config.AccessRestriction;
 import appeng.api.config.Actionable;
 import appeng.api.config.PowerMultiplier;
 import appeng.api.networking.energy.IAEPowerStorage;
 import appeng.api.util.AECableType;
 import appeng.tile.grid.AENetworkTile;
+import net.minecraftforge.common.util.ForgeDirection;
 
+public class TileCreativeEnergyCell extends AENetworkTile implements IAEPowerStorage {
 
-public class TileCreativeEnergyCell extends AENetworkTile implements IAEPowerStorage
-{
-
-	public TileCreativeEnergyCell()
-	{
-		this.getProxy().setIdlePowerUsage( 0 );
+	public TileCreativeEnergyCell() {
+		this.getProxy().setIdlePowerUsage(0);
 	}
 
 	@Override
-	public AECableType getCableConnectionType( final ForgeDirection dir )
-	{
+	public AECableType getCableConnectionType(final ForgeDirection dir) {
 		return AECableType.COVERED;
 	}
 
 	@Override
-	public double injectAEPower( final double amt, final Actionable mode )
-	{
+	public double injectAEPower(final double amt, final Actionable mode) {
 		return 0;
 	}
 
 	@Override
-	public double getAEMaxPower()
-	{
+	public double getAEMaxPower() {
 		return Long.MAX_VALUE / 10000;
 	}
 
 	@Override
-	public double getAECurrentPower()
-	{
+	public double getAECurrentPower() {
 		return Long.MAX_VALUE / 10000;
 	}
 
 	@Override
-	public boolean isAEPublicPowerStorage()
-	{
+	public boolean isAEPublicPowerStorage() {
 		return true;
 	}
 
 	@Override
-	public AccessRestriction getPowerFlow()
-	{
+	public AccessRestriction getPowerFlow() {
 		return AccessRestriction.READ_WRITE;
 	}
 
 	@Override
-	public double extractAEPower( final double amt, final Actionable mode, final PowerMultiplier pm )
-	{
+	public double extractAEPower(final double amt, final Actionable mode, final PowerMultiplier pm) {
 		return amt;
 	}
 }

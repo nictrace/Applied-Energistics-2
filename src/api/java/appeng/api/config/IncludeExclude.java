@@ -23,8 +23,6 @@
 
 package appeng.api.config;
 
-
-public enum IncludeExclude
-{
+public enum IncludeExclude {
 	WHITELIST, BLACKLIST
 }

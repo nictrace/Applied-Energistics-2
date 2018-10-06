@@ -18,21 +18,17 @@
 
 package appeng.client.gui.widgets;
 
-
-import java.util.regex.Pattern;
-
-import org.lwjgl.opengl.GL11;
-
+import appeng.client.texture.ExtraBlockTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.StatCollector;
+import org.lwjgl.opengl.GL11;
 
-import appeng.client.texture.ExtraBlockTextures;
+import java.util.regex.Pattern;
 
+public class GuiToggleButton extends GuiButton implements ITooltip {
 
-public class GuiToggleButton extends GuiButton implements ITooltip
-{
-	private static final Pattern PATTERN_NEW_LINE = Pattern.compile( "\\n", Pattern.LITERAL );
+	private static final Pattern PATTERN_NEW_LINE = Pattern.compile("\\n", Pattern.LITERAL);
 	private final int iconIdxOn;
 	private final int iconIdxOff;
 
@@ -41,9 +37,8 @@ public class GuiToggleButton extends GuiButton implements ITooltip
 
 	private boolean isActive;
 
-	public GuiToggleButton( final int x, final int y, final int on, final int off, final String displayName, final String displayHint )
-	{
-		super( 0, 0, 16, "" );
+	public GuiToggleButton(final int x, final int y, final int on, final int off, final String displayName, final String displayHint) {
+		super(0, 0, 16, "");
 		this.iconIdxOn = on;
 		this.iconIdxOff = off;
 		this.displayName = displayName;
@@ -54,64 +49,54 @@ public class GuiToggleButton extends GuiButton implements ITooltip
 		this.height = 16;
 	}
 
-	public void setState( final boolean isOn )
-	{
+	public void setState(final boolean isOn) {
 		this.isActive = isOn;
 	}
 
 	@Override
-	public void drawButton( final Minecraft par1Minecraft, final int par2, final int par3 )
-	{
-		if( this.visible )
-		{
+	public void drawButton(final Minecraft par1Minecraft, final int par2, final int par3) {
+		if (this.visible) {
 			final int iconIndex = this.getIconIndex();
 
-			GL11.glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-			par1Minecraft.renderEngine.bindTexture( ExtraBlockTextures.GuiTexture( "guis/states.png" ) );
+			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			par1Minecraft.renderEngine.bindTexture(ExtraBlockTextures.GuiTexture("guis/states.png"));
 			this.field_146123_n = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
 
-			final int uv_y = (int) Math.floor( iconIndex / 16 );
+			final int uv_y = (int) Math.floor(iconIndex / 16);
 			final int uv_x = iconIndex - uv_y * 16;
 
-			this.drawTexturedModalRect( this.xPosition, this.yPosition, 256 - 16, 256 - 16, 16, 16 );
-			this.drawTexturedModalRect( this.xPosition, this.yPosition, uv_x * 16, uv_y * 16, 16, 16 );
-			this.mouseDragged( par1Minecraft, par2, par3 );
+			this.drawTexturedModalRect(this.xPosition, this.yPosition, 256 - 16, 256 - 16, 16, 16);
+			this.drawTexturedModalRect(this.xPosition, this.yPosition, uv_x * 16, uv_y * 16, 16, 16);
+			this.mouseDragged(par1Minecraft, par2, par3);
 		}
 	}
 
-	private int getIconIndex()
-	{
+	private int getIconIndex() {
 		return this.isActive ? this.iconIdxOn : this.iconIdxOff;
 	}
 
 	@Override
-	public String getMessage()
-	{
-		if( this.displayName != null )
-		{
-			String name = StatCollector.translateToLocal( this.displayName );
-			String value = StatCollector.translateToLocal( this.displayHint );
+	public String getMessage() {
+		if (this.displayName != null) {
+			String name = StatCollector.translateToLocal(this.displayName);
+			String value = StatCollector.translateToLocal(this.displayHint);
 
-			if( name == null || name.isEmpty() )
-			{
+			if (name == null || name.isEmpty()) {
 				name = this.displayName;
 			}
-			if( value == null || value.isEmpty() )
-			{
+			if (value == null || value.isEmpty()) {
 				value = this.displayHint;
 			}
 
-			value = PATTERN_NEW_LINE.matcher( value ).replaceAll( "\n" );
-			final StringBuilder sb = new StringBuilder( value );
+			value = PATTERN_NEW_LINE.matcher(value).replaceAll("\n");
+			final StringBuilder sb = new StringBuilder(value);
 
-			int i = sb.lastIndexOf( "\n" );
-			if( i <= 0 )
-			{
+			int i = sb.lastIndexOf("\n");
+			if (i <= 0) {
 				i = 0;
 			}
-			while( i + 30 < sb.length() && ( i = sb.lastIndexOf( " ", i + 30 ) ) != -1 )
-			{
-				sb.replace( i, i + 1, "\n" );
+			while (i + 30 < sb.length() && (i = sb.lastIndexOf(" ", i + 30)) != -1) {
+				sb.replace(i, i + 1, "\n");
 			}
 
 			return name + '\n' + sb;
@@ -120,32 +105,27 @@ public class GuiToggleButton extends GuiButton implements ITooltip
 	}
 
 	@Override
-	public int xPos()
-	{
+	public int xPos() {
 		return this.xPosition;
 	}
 
 	@Override
-	public int yPos()
-	{
+	public int yPos() {
 		return this.yPosition;
 	}
 
 	@Override
-	public int getWidth()
-	{
+	public int getWidth() {
 		return 16;
 	}
 
 	@Override
-	public int getHeight()
-	{
+	public int getHeight() {
 		return 16;
 	}
 
 	@Override
-	public boolean isVisible()
-	{
+	public boolean isVisible() {
 		return this.visible;
 	}
 }

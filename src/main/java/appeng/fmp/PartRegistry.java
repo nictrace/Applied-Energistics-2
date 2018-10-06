@@ -18,69 +18,52 @@
 
 package appeng.fmp;
 
-
-import javax.annotation.Nullable;
-
-import net.minecraft.block.Block;
-
-import codechicken.multipart.TMultiPart;
-
 import appeng.block.AEBaseBlock;
 import appeng.block.misc.BlockQuartzTorch;
 import appeng.block.networking.BlockCableBus;
 import appeng.core.Api;
+import codechicken.multipart.TMultiPart;
+import net.minecraft.block.Block;
 
+import javax.annotation.Nullable;
 
-public enum PartRegistry
-{
-	QuartzTorchPart( "ae2_torch", BlockQuartzTorch.class, QuartzTorchPart.class ),
-	CableBusPart( "ae2_cablebus", BlockCableBus.class, CableBusPart.class );
+public enum PartRegistry {
+	QuartzTorchPart("ae2_torch", BlockQuartzTorch.class, QuartzTorchPart.class),
+	CableBusPart("ae2_cablebus", BlockCableBus.class, CableBusPart.class);
 
 	private final String name;
 	private final Class<? extends AEBaseBlock> blk;
 	private final Class<? extends TMultiPart> part;
 
-	PartRegistry( final String name, final Class<? extends AEBaseBlock> blk, final Class<? extends TMultiPart> part )
-	{
+	PartRegistry(final String name, final Class<? extends AEBaseBlock> blk, final Class<? extends TMultiPart> part) {
 		this.name = name;
 		this.blk = blk;
 		this.part = part;
 	}
 
 	@Nullable
-	public static TMultiPart getPartByBlock( final Block block, final int meta )
-	{
-		for( final PartRegistry pr : values() )
-		{
-			if( pr.blk.isInstance( block ) )
-			{
-				return pr.construct( meta );
+	public static TMultiPart getPartByBlock(final Block block, final int meta) {
+		for (final PartRegistry pr : values()) {
+			if (pr.blk.isInstance(block)) {
+				return pr.construct(meta);
 			}
 		}
 		return null;
 	}
 
-	public TMultiPart construct( final int meta )
-	{
-		try
-		{
-			if( this == CableBusPart )
-			{
-				return (TMultiPart) Api.INSTANCE.partHelper().getCombinedInstance( this.part.getName() ).newInstance();
+	public TMultiPart construct(final int meta) {
+		try {
+			if (this == CableBusPart) {
+				return (TMultiPart) Api.INSTANCE.partHelper().getCombinedInstance(this.part.getName()).newInstance();
+			} else {
+				return this.part.getConstructor(int.class).newInstance(meta);
 			}
-			else
-			{
-				return this.part.getConstructor( int.class ).newInstance( meta );
-			}
-		}
-		catch( final Throwable t )
-		{
-			throw new IllegalStateException( t );
+		} catch (final Throwable t) {
+			throw new IllegalStateException(t);
 		}
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return this.name;
 	}
 }

@@ -18,16 +18,6 @@
 
 package appeng.items.tools.quartz;
 
-
-import java.util.EnumSet;
-
-import com.google.common.base.Optional;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.implementations.guiobjects.IGuiItem;
 import appeng.api.implementations.guiobjects.IGuiItemObject;
 import appeng.core.features.AEFeature;
@@ -35,77 +25,72 @@ import appeng.core.sync.GuiBridge;
 import appeng.items.AEBaseItem;
 import appeng.items.contents.QuartzKnifeObj;
 import appeng.util.Platform;
+import com.google.common.base.Optional;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.EnumSet;
 
-public class ToolQuartzCuttingKnife extends AEBaseItem implements IGuiItem
-{
+public class ToolQuartzCuttingKnife extends AEBaseItem implements IGuiItem {
+
 	private final AEFeature type;
 
-	public ToolQuartzCuttingKnife( final AEFeature type )
-	{
-		super( Optional.of( type.name() ) );
+	public ToolQuartzCuttingKnife(final AEFeature type) {
+		super(Optional.of(type.name()));
 
 		this.type = type;
-		this.setFeature( EnumSet.of( type, AEFeature.QuartzKnife ) );
-		this.setMaxDamage( 50 );
-		this.setMaxStackSize( 1 );
+		this.setFeature(EnumSet.of(type, AEFeature.QuartzKnife));
+		this.setMaxDamage(50);
+		this.setMaxStackSize(1);
 	}
 
 	@Override
-	public boolean onItemUse( final ItemStack is, final EntityPlayer p, final World w, final int x, final int y, final int z, final int s, final float hitX, final float hitY, final float hitZ )
-	{
-		if( Platform.isServer() )
-		{
-			Platform.openGUI( p, null, ForgeDirection.UNKNOWN, GuiBridge.GUI_QUARTZ_KNIFE );
+	public boolean onItemUse(final ItemStack is, final EntityPlayer p, final World w, final int x, final int y, final int z, final int s, final float hitX, final float hitY, final float hitZ) {
+		if (Platform.isServer()) {
+			Platform.openGUI(p, null, ForgeDirection.UNKNOWN, GuiBridge.GUI_QUARTZ_KNIFE);
 		}
 		return true;
 	}
 
 	@Override
-	public ItemStack onItemRightClick( final ItemStack it, final World w, final EntityPlayer p )
-	{
-		if( Platform.isServer() )
-		{
-			Platform.openGUI( p, null, ForgeDirection.UNKNOWN, GuiBridge.GUI_QUARTZ_KNIFE );
+	public ItemStack onItemRightClick(final ItemStack it, final World w, final EntityPlayer p) {
+		if (Platform.isServer()) {
+			Platform.openGUI(p, null, ForgeDirection.UNKNOWN, GuiBridge.GUI_QUARTZ_KNIFE);
 		}
 		p.swingItem();
 		return it;
 	}
 
 	@Override
-	public boolean doesContainerItemLeaveCraftingGrid( final ItemStack par1ItemStack )
-	{
+	public boolean doesContainerItemLeaveCraftingGrid(final ItemStack par1ItemStack) {
 		return false;
 	}
 
 	@Override
-	public boolean getIsRepairable( final ItemStack a, final ItemStack b )
-	{
-		return Platform.canRepair( this.type, a, b );
+	public boolean getIsRepairable(final ItemStack a, final ItemStack b) {
+		return Platform.canRepair(this.type, a, b);
 	}
 
 	@Override
-	public boolean isRepairable()
-	{
+	public boolean isRepairable() {
 		return false;
 	}
 
 	@Override
-	public ItemStack getContainerItem( final ItemStack itemStack )
-	{
-		itemStack.setItemDamage( itemStack.getItemDamage() + 1 );
+	public ItemStack getContainerItem(final ItemStack itemStack) {
+		itemStack.setItemDamage(itemStack.getItemDamage() + 1);
 		return itemStack;
 	}
 
 	@Override
-	public boolean hasContainerItem( final ItemStack stack )
-	{
+	public boolean hasContainerItem(final ItemStack stack) {
 		return true;
 	}
 
 	@Override
-	public IGuiItemObject getGuiObject( final ItemStack is, final World world, final int x, final int y, final int z )
-	{
-		return new QuartzKnifeObj( is );
+	public IGuiItemObject getGuiObject(final ItemStack is, final World world, final int x, final int y, final int z) {
+		return new QuartzKnifeObj(is);
 	}
 }

@@ -18,20 +18,6 @@
 
 package appeng.integration.modules;
 
-
-import java.lang.reflect.Method;
-
-import com.google.common.base.Optional;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-
-import mods.immibis.core.api.multipart.ICoverSystem;
-import mods.immibis.core.api.multipart.IMultipartTile;
-
 import appeng.api.AEApi;
 import appeng.api.definitions.IBlockDefinition;
 import appeng.api.parts.IPartHost;
@@ -41,10 +27,19 @@ import appeng.helpers.Reflected;
 import appeng.integration.IIntegrationModule;
 import appeng.integration.IntegrationHelper;
 import appeng.integration.abstraction.IImmibisMicroblocks;
+import com.google.common.base.Optional;
+import mods.immibis.core.api.multipart.ICoverSystem;
+import mods.immibis.core.api.multipart.IMultipartTile;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
+import java.lang.reflect.Method;
 
-public class ImmibisMicroblocks implements IImmibisMicroblocks, IIntegrationModule
-{
+public class ImmibisMicroblocks implements IImmibisMicroblocks, IIntegrationModule {
+
 	@Reflected
 	public static ImmibisMicroblocks instance;
 
@@ -54,73 +49,60 @@ public class ImmibisMicroblocks implements IImmibisMicroblocks, IIntegrationModu
 	private Method mergeIntoMicroblockContainer;
 
 	@Reflected
-	public ImmibisMicroblocks()
-	{
-		IntegrationHelper.testClassExistence( this, mods.immibis.core.api.multipart.IMultipartTile.class );
-		IntegrationHelper.testClassExistence( this, mods.immibis.core.api.multipart.ICoverSystem.class );
-		IntegrationHelper.testClassExistence( this, mods.immibis.core.api.multipart.IPartContainer.class );
+	public ImmibisMicroblocks() {
+		IntegrationHelper.testClassExistence(this, mods.immibis.core.api.multipart.IMultipartTile.class);
+		IntegrationHelper.testClassExistence(this, mods.immibis.core.api.multipart.ICoverSystem.class);
+		IntegrationHelper.testClassExistence(this, mods.immibis.core.api.multipart.IPartContainer.class);
 	}
 
 	@Override
-	public void init() throws Throwable
-	{
-		try
-		{
-			this.MicroblockAPIUtils = Class.forName( "mods.immibis.microblocks.api.MicroblockAPIUtils" );
-			this.mergeIntoMicroblockContainer = this.MicroblockAPIUtils.getMethod( "mergeIntoMicroblockContainer", ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, Block.class, int.class );
+	public void init() throws Throwable {
+		try {
+			this.MicroblockAPIUtils = Class.forName("mods.immibis.microblocks.api.MicroblockAPIUtils");
+			this.mergeIntoMicroblockContainer = this.MicroblockAPIUtils.getMethod("mergeIntoMicroblockContainer", ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, Block.class, int.class);
 			this.canConvertTiles = true;
-		}
-		catch( final Throwable t )
-		{
-			AELog.debug( t );
+		} catch (final Throwable t) {
+			AELog.debug(t);
 		}
 	}
 
 	@Override
-	public void postInit()
-	{
+	public void postInit() {
 
 	}
 
 	@Override
-	public IPartHost getOrCreateHost( final EntityPlayer player, final int side, final TileEntity te )
-	{
+	public IPartHost getOrCreateHost(final EntityPlayer player, final int side, final TileEntity te) {
 		final World w = te.getWorldObj();
 		final int x = te.xCoord;
 		final int y = te.yCoord;
 		final int z = te.zCoord;
 		final boolean isPartItem = player != null && player.getHeldItem() != null && player.getHeldItem().getItem() instanceof IPartItem;
 
-		if( te instanceof IMultipartTile && this.canConvertTiles && isPartItem )
-		{
+		if (te instanceof IMultipartTile && this.canConvertTiles && isPartItem) {
 			final IBlockDefinition multiPart = AEApi.instance().definitions().blocks().multiPart();
 			final Optional<Block> maybeMultiPartBlock = multiPart.maybeBlock();
-			final Optional<ItemStack> maybeMultiPartStack = multiPart.maybeStack( 1 );
+			final Optional<ItemStack> maybeMultiPartStack = multiPart.maybeStack(1);
 
 			final boolean multiPartPresent = maybeMultiPartBlock.isPresent() && maybeMultiPartStack.isPresent();
 
-			if( multiPartPresent )
-			{
+			if (multiPartPresent) {
 				final Block multiPartBlock = maybeMultiPartBlock.get();
 				final ItemStack multiPartStack = maybeMultiPartStack.get();
 
-				try
-				{
+				try {
 					// ItemStack.class, EntityPlayer.class, World.class,
 					// int.class, int.class, int.class, int.class, Block.class, int.class );
-					this.mergeIntoMicroblockContainer.invoke( null, multiPartStack, player, w, x, y, z, side, multiPartBlock, 0 );
-				}
-				catch( final Throwable e )
-				{
+					this.mergeIntoMicroblockContainer.invoke(null, multiPartStack, player, w, x, y, z, side, multiPartBlock, 0);
+				} catch (final Throwable e) {
 					this.canConvertTiles = false;
 					return null;
 				}
 			}
 		}
 
-		final TileEntity tx = w.getTileEntity( x, y, z );
-		if( tx instanceof IPartHost )
-		{
+		final TileEntity tx = w.getTileEntity(x, y, z);
+		if (tx instanceof IPartHost) {
 			return (IPartHost) tx;
 		}
 
@@ -128,13 +110,10 @@ public class ImmibisMicroblocks implements IImmibisMicroblocks, IIntegrationModu
 	}
 
 	@Override
-	public boolean leaveParts( final TileEntity te )
-	{
-		if( te instanceof IMultipartTile )
-		{
-			final ICoverSystem ci = ( (IMultipartTile) te ).getCoverSystem();
-			if( ci != null )
-			{
+	public boolean leaveParts(final TileEntity te) {
+		if (te instanceof IMultipartTile) {
+			final ICoverSystem ci = ((IMultipartTile) te).getCoverSystem();
+			if (ci != null) {
 				ci.convertToContainerBlock();
 			}
 

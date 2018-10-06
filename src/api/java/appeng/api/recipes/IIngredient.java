@@ -23,22 +23,17 @@
 
 package appeng.api.recipes;
 
-
-import net.minecraft.item.ItemStack;
-
 import appeng.api.exceptions.MissingIngredientError;
 import appeng.api.exceptions.RegistrationError;
+import net.minecraft.item.ItemStack;
 
-
-public interface IIngredient
-{
+public interface IIngredient {
 
 	/**
 	 * Acquire a single input stack for the current recipe, if more then one ItemStack is possible a
 	 * RegistrationError exception will be thrown, ignore these and let the system handle the error.
 	 *
 	 * @return a single ItemStack for the recipe handler.
-	 *
 	 * @throws RegistrationError
 	 * @throws MissingIngredientError
 	 */
@@ -49,7 +44,6 @@ public interface IIngredient
 	 * multiple inputs per slot.
 	 *
 	 * @return an array of ItemStacks for the recipe handler.
-	 *
 	 * @throws RegistrationError
 	 * @throws MissingIngredientError
 	 */

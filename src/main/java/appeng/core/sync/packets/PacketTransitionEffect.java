@@ -18,10 +18,16 @@
 
 package appeng.core.sync.packets;
 
-
+import appeng.client.ClientHelper;
+import appeng.client.render.effects.EnergyFx;
+import appeng.core.CommonHelper;
+import appeng.core.sync.AppEngPacket;
+import appeng.core.sync.network.INetworkInfo;
+import appeng.util.Platform;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -31,19 +37,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import appeng.client.ClientHelper;
-import appeng.client.render.effects.EnergyFx;
-import appeng.core.CommonHelper;
-import appeng.core.sync.AppEngPacket;
-import appeng.core.sync.network.INetworkInfo;
-import appeng.util.Platform;
-
-
-public class PacketTransitionEffect extends AppEngPacket
-{
+public class PacketTransitionEffect extends AppEngPacket {
 
 	private final boolean mode;
 	private final double x;
@@ -52,18 +46,16 @@ public class PacketTransitionEffect extends AppEngPacket
 	private final ForgeDirection d;
 
 	// automatic.
-	public PacketTransitionEffect( final ByteBuf stream )
-	{
+	public PacketTransitionEffect(final ByteBuf stream) {
 		this.x = stream.readFloat();
 		this.y = stream.readFloat();
 		this.z = stream.readFloat();
-		this.d = ForgeDirection.getOrientation( stream.readByte() );
+		this.d = ForgeDirection.getOrientation(stream.readByte());
 		this.mode = stream.readBoolean();
 	}
 
 	// api
-	public PacketTransitionEffect( final double x, final double y, final double z, final ForgeDirection dir, final boolean wasBlock )
-	{
+	public PacketTransitionEffect(final double x, final double y, final double z, final ForgeDirection dir, final boolean wasBlock) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -72,46 +64,41 @@ public class PacketTransitionEffect extends AppEngPacket
 
 		final ByteBuf data = Unpooled.buffer();
 
-		data.writeInt( this.getPacketID() );
-		data.writeFloat( (float) x );
-		data.writeFloat( (float) y );
-		data.writeFloat( (float) z );
-		data.writeByte( this.d.ordinal() );
-		data.writeBoolean( wasBlock );
+		data.writeInt(this.getPacketID());
+		data.writeFloat((float) x);
+		data.writeFloat((float) y);
+		data.writeFloat((float) z);
+		data.writeByte(this.d.ordinal());
+		data.writeBoolean(wasBlock);
 
-		this.configureWrite( data );
+		this.configureWrite(data);
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public void clientPacketData( final INetworkInfo network, final AppEngPacket packet, final EntityPlayer player )
-	{
+	@SideOnly(Side.CLIENT)
+	public void clientPacketData(final INetworkInfo network, final AppEngPacket packet, final EntityPlayer player) {
 		final World world = ClientHelper.proxy.getWorld();
 
-		for( int zz = 0; zz < ( this.mode ? 32 : 8 ); zz++ )
-		{
-			if( CommonHelper.proxy.shouldAddParticles( Platform.getRandom() ) )
-			{
-				final EnergyFx fx = new EnergyFx( world, this.x + ( this.mode ? ( Platform.getRandomInt() % 100 ) * 0.01 : ( Platform.getRandomInt() % 100 ) * 0.005 - 0.25 ), this.y + ( this.mode ? ( Platform.getRandomInt() % 100 ) * 0.01 : ( Platform.getRandomInt() % 100 ) * 0.005 - 0.25 ), this.z + ( this.mode ? ( Platform.getRandomInt() % 100 ) * 0.01 : ( Platform.getRandomInt() % 100 ) * 0.005 - 0.25 ), Items.diamond );
+		for (int zz = 0; zz < (this.mode ? 32 : 8); zz++) {
+			if (CommonHelper.proxy.shouldAddParticles(Platform.getRandom())) {
+				final EnergyFx fx = new EnergyFx(world, this.x + (this.mode ? (Platform.getRandomInt() % 100) * 0.01 : (Platform.getRandomInt() % 100) * 0.005 - 0.25), this.y + (this.mode ? (Platform.getRandomInt() % 100) * 0.01 : (Platform.getRandomInt() % 100) * 0.005 - 0.25), this.z + (this.mode ? (Platform.getRandomInt() % 100) * 0.01 : (Platform.getRandomInt() % 100) * 0.005 - 0.25), Items.diamond);
 
-				if( !this.mode )
-				{
-					fx.fromItem( this.d );
+				if (!this.mode) {
+					fx.fromItem(this.d);
 				}
 
 				fx.motionX = -0.1 * this.d.offsetX;
 				fx.motionY = -0.1 * this.d.offsetY;
 				fx.motionZ = -0.1 * this.d.offsetZ;
 
-				Minecraft.getMinecraft().effectRenderer.addEffect( fx );
+				Minecraft.getMinecraft().effectRenderer.addEffect(fx);
 			}
 		}
 
-		if( this.mode )
-		{
-			final Block block = world.getBlock( (int) this.x, (int) this.y, (int) this.z );
+		if (this.mode) {
+			final Block block = world.getBlock((int) this.x, (int) this.y, (int) this.z);
 
-			Minecraft.getMinecraft().getSoundHandler().playSound( new PositionedSoundRecord( new ResourceLocation( block.stepSound.getBreakSound() ), ( block.stepSound.getVolume() + 1.0F ) / 2.0F, block.stepSound.getPitch() * 0.8F, (float) this.x + 0.5F, (float) this.y + 0.5F, (float) this.z + 0.5F ) );
+			Minecraft.getMinecraft().getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation(block.stepSound.getBreakSound()), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F, (float) this.x + 0.5F, (float) this.y + 0.5F, (float) this.z + 0.5F));
 		}
 	}
 }

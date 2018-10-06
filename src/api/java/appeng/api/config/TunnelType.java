@@ -23,9 +23,7 @@
 
 package appeng.api.config;
 
-
-public enum TunnelType
-{
+public enum TunnelType {
 	ME, // Network Tunnel
 	IC2_POWER, // EU Tunnel
 	RF_POWER, // RF Tunnel

@@ -18,50 +18,40 @@
 
 package appeng.integration.modules;
 
-
-import net.minecraft.item.ItemStack;
-
-import cpw.mods.fml.common.Loader;
-
-import invtweaks.api.InvTweaksAPI;
-
 import appeng.helpers.Reflected;
 import appeng.integration.IIntegrationModule;
 import appeng.integration.IntegrationHelper;
 import appeng.integration.abstraction.IInvTweaks;
+import cpw.mods.fml.common.Loader;
+import invtweaks.api.InvTweaksAPI;
+import net.minecraft.item.ItemStack;
 
+public class InvTweaks implements IInvTweaks, IIntegrationModule {
 
-public class InvTweaks implements IInvTweaks, IIntegrationModule
-{
 	@Reflected
 	public static InvTweaks instance;
 
 	static InvTweaksAPI api;
 
 	@Reflected
-	public InvTweaks()
-	{
-		IntegrationHelper.testClassExistence( this, invtweaks.api.InvTweaksAPI.class );
+	public InvTweaks() {
+		IntegrationHelper.testClassExistence(this, invtweaks.api.InvTweaksAPI.class);
 	}
 
 	@Override
-	public void init()
-	{
-		api = (InvTweaksAPI) Loader.instance().getIndexedModList().get( "inventorytweaks" ).getMod();
+	public void init() {
+		api = (InvTweaksAPI) Loader.instance().getIndexedModList().get("inventorytweaks").getMod();
 	}
 
 	@Override
-	public void postInit()
-	{
-		if( api == null )
-		{
-			throw new IllegalStateException( "InvTweaks API Instance Failed." );
+	public void postInit() {
+		if (api == null) {
+			throw new IllegalStateException("InvTweaks API Instance Failed.");
 		}
 	}
 
 	@Override
-	public int compareItems( final ItemStack i, final ItemStack j )
-	{
-		return api.compareItems( i, j );
+	public int compareItems(final ItemStack i, final ItemStack j) {
+		return api.compareItems(i, j);
 	}
 }

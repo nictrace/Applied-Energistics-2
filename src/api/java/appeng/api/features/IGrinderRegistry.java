@@ -23,17 +23,14 @@
 
 package appeng.api.features;
 
-
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 
+import java.util.List;
 
 /**
  * Lets you manipulate Grinder Recipes, by adding or editing existing ones.
  */
-public interface IGrinderRegistry
-{
+public interface IGrinderRegistry {
 
 	/**
 	 * Current list of registered recipes, you can modify this if you want too.
@@ -49,7 +46,7 @@ public interface IGrinderRegistry
 	 * @param out   output
 	 * @param turns amount of turns to turn the input into the output
 	 */
-	void addRecipe( ItemStack in, ItemStack out, int turns );
+	void addRecipe(ItemStack in, ItemStack out, int turns);
 
 	/**
 	 * add a new recipe with optional outputs, duplicates will not be added.
@@ -60,7 +57,7 @@ public interface IGrinderRegistry
 	 * @param chance   chance to get the optional output within 0.0 - 1.0
 	 * @param turns    amount of turns to turn the input into the outputs
 	 */
-	void addRecipe( ItemStack in, ItemStack out, ItemStack optional, float chance, int turns );
+	void addRecipe(ItemStack in, ItemStack out, ItemStack optional, float chance, int turns);
 
 	/**
 	 * add a new recipe with optional outputs, duplicates will not be added.
@@ -73,14 +70,13 @@ public interface IGrinderRegistry
 	 * @param chance2   chance to get the second optional output within 0.0 - 1.0
 	 * @param turns     amount of turns to turn the input into the outputs
 	 */
-	void addRecipe( ItemStack in, ItemStack out, ItemStack optional, float chance, ItemStack optional2, float chance2, int turns );
+	void addRecipe(ItemStack in, ItemStack out, ItemStack optional, float chance, ItemStack optional2, float chance2, int turns);
 
 	/**
 	 * Searches for a recipe for a given input, and returns it.
 	 *
 	 * @param input input
-	 *
 	 * @return identified recipe or null
 	 */
-	IGrinderEntry getRecipeForInput( ItemStack input );
+	IGrinderEntry getRecipeForInput(ItemStack input);
 }

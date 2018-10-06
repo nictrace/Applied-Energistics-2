@@ -18,7 +18,6 @@
 
 package appeng.crafting;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -38,9 +37,7 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 
-
-public class CraftingTreeNode
-{
+public class CraftingTreeNode {
 
 	// what slot!
 	private final int slot;
@@ -61,8 +58,7 @@ public class CraftingTreeNode
 
 	private boolean sim;
 
-	public CraftingTreeNode( final ICraftingGrid cc, final CraftingJob job, final IAEItemStack wat, final CraftingTreeProcess par, final int slot, final int depth )
-	{
+	public CraftingTreeNode(final ICraftingGrid cc, final CraftingJob job, final IAEItemStack wat, final CraftingTreeProcess par, final int slot, final int depth) {
 		this.what = wat;
 		this.parent = par;
 		this.slot = slot;
@@ -70,145 +66,118 @@ public class CraftingTreeNode
 		this.job = job;
 		this.sim = false;
 
-		this.canEmit = cc.canEmitFor( this.what );
+		this.canEmit = cc.canEmitFor(this.what);
 
-		if( this.canEmit )
-		{
+		if (this.canEmit) {
 			return; // if you can emit for something, you can't make it with patterns.
 		}
 
-		for( final ICraftingPatternDetails details : cc.getCraftingFor( this.what, this.parent == null ? null : this.parent.details, slot, this.world ) )// in
+		for (final ICraftingPatternDetails details : cc.getCraftingFor(this.what, this.parent == null ? null : this.parent.details, slot, this.world))// in
 		// order.
 		{
-			if( this.parent == null || this.parent.notRecursive( details ) )
-			{
-				this.nodes.add( new CraftingTreeProcess( cc, job, details, this, depth + 1 ) );
+			if (this.parent == null || this.parent.notRecursive(details)) {
+				this.nodes.add(new CraftingTreeProcess(cc, job, details, this, depth + 1));
 			}
 		}
 	}
 
-	boolean notRecursive( final ICraftingPatternDetails details )
-	{
+	boolean notRecursive(final ICraftingPatternDetails details) {
 		IAEItemStack[] o = details.getCondensedOutputs();
 
-		for( final IAEItemStack i : o )
-		{
-			if( i.equals( this.what ) )
-			{
+		for (final IAEItemStack i : o) {
+			if (i.equals(this.what)) {
 				return false;
 			}
 		}
 
 		o = details.getCondensedInputs();
 
-		for( final IAEItemStack i : o )
-		{
-			if( i.equals( this.what ) )
-			{
+		for (final IAEItemStack i : o) {
+			if (i.equals(this.what)) {
 				return false;
 			}
 		}
 
-		if( this.parent == null )
-		{
+		if (this.parent == null) {
 			return true;
 		}
 
-		return this.parent.notRecursive( details );
+		return this.parent.notRecursive(details);
 	}
 
-	IAEItemStack request( final MECraftingInventory inv, long l, final BaseActionSource src ) throws CraftBranchFailure, InterruptedException
-	{
+	IAEItemStack request(final MECraftingInventory inv, long l, final BaseActionSource src) throws CraftBranchFailure, InterruptedException {
 		this.job.handlePausing();
 
 		final List<IAEItemStack> thingsUsed = new LinkedList<IAEItemStack>();
 
-		this.what.setStackSize( l );
-		if( this.getSlot() >= 0 && this.parent != null && this.parent.details.isCraftable() )
-		{
+		this.what.setStackSize(l);
+		if (this.getSlot() >= 0 && this.parent != null && this.parent.details.isCraftable()) {
 			final Collection<IAEItemStack> itemList;
 			final IItemList<IAEItemStack> inventoryList = inv.getItemList();
 
-			if( this.parent.details.canSubstitute() )
-			{
-				itemList = inventoryList.findFuzzy( this.what, FuzzyMode.IGNORE_ALL );
-			}
-			else
-			{
+			if (this.parent.details.canSubstitute()) {
+				itemList = inventoryList.findFuzzy(this.what, FuzzyMode.IGNORE_ALL);
+			} else {
 				itemList = Lists.newArrayList();
 
-				final IAEItemStack item = inventoryList.findPrecise( this.what );
+				final IAEItemStack item = inventoryList.findPrecise(this.what);
 
-				if( item != null )
-				{
-					itemList.add( item );
+				if (item != null) {
+					itemList.add(item);
 				}
 			}
 
-			for( IAEItemStack fuzz : itemList )
-			{
-				if( this.parent.details.isValidItemForSlot( this.getSlot(), fuzz.getItemStack(), this.world ) )
-				{
+			for (IAEItemStack fuzz : itemList) {
+				if (this.parent.details.isValidItemForSlot(this.getSlot(), fuzz.getItemStack(), this.world)) {
 					fuzz = fuzz.copy();
-					fuzz.setStackSize( l );
+					fuzz.setStackSize(l);
 
-					final IAEItemStack available = inv.extractItems( fuzz, Actionable.MODULATE, src );
+					final IAEItemStack available = inv.extractItems(fuzz, Actionable.MODULATE, src);
 
-					if( available != null )
-					{
-						if( !this.exhausted )
-						{
-							final IAEItemStack is = this.job.checkUse( available );
+					if (available != null) {
+						if (!this.exhausted) {
+							final IAEItemStack is = this.job.checkUse(available);
 
-							if( is != null )
-							{
-								thingsUsed.add( is.copy() );
-								this.used.add( is );
+							if (is != null) {
+								thingsUsed.add(is.copy());
+								this.used.add(is);
 							}
 						}
 
 						this.bytes += available.getStackSize();
 						l -= available.getStackSize();
 
-						if( l == 0 )
-						{
+						if (l == 0) {
 							return available;
 						}
 					}
 				}
 			}
-		}
-		else
-		{
-			final IAEItemStack available = inv.extractItems( this.what, Actionable.MODULATE, src );
+		} else {
+			final IAEItemStack available = inv.extractItems(this.what, Actionable.MODULATE, src);
 
-			if( available != null )
-			{
-				if( !this.exhausted )
-				{
-					final IAEItemStack is = this.job.checkUse( available );
+			if (available != null) {
+				if (!this.exhausted) {
+					final IAEItemStack is = this.job.checkUse(available);
 
-					if( is != null )
-					{
-						thingsUsed.add( is.copy() );
-						this.used.add( is );
+					if (is != null) {
+						thingsUsed.add(is.copy());
+						this.used.add(is);
 					}
 				}
 
 				this.bytes += available.getStackSize();
 				l -= available.getStackSize();
 
-				if( l == 0 )
-				{
+				if (l == 0) {
 					return available;
 				}
 			}
 		}
 
-		if( this.canEmit )
-		{
+		if (this.canEmit) {
 			final IAEItemStack wat = this.what.copy();
-			wat.setStackSize( l );
+			wat.setStackSize(l);
 
 			this.howManyEmitted = wat.getStackSize();
 			this.bytes += wat.getStackSize();
@@ -218,190 +187,153 @@ public class CraftingTreeNode
 
 		this.exhausted = true;
 
-		if( this.nodes.size() == 1 )
-		{
-			final CraftingTreeProcess pro = this.nodes.get( 0 );
+		if (this.nodes.size() == 1) {
+			final CraftingTreeProcess pro = this.nodes.get(0);
 
-			while( pro.possible && l > 0 )
-			{
-				final IAEItemStack madeWhat = pro.getAmountCrafted( this.what );
+			while (pro.possible && l > 0) {
+				final IAEItemStack madeWhat = pro.getAmountCrafted(this.what);
 
-				pro.request( inv, pro.getTimes( l, madeWhat.getStackSize() ), src );
+				pro.request(inv, pro.getTimes(l, madeWhat.getStackSize()), src);
 
-				madeWhat.setStackSize( l );
+				madeWhat.setStackSize(l);
 
-				final IAEItemStack available = inv.extractItems( madeWhat, Actionable.MODULATE, src );
+				final IAEItemStack available = inv.extractItems(madeWhat, Actionable.MODULATE, src);
 
-				if( available != null )
-				{
+				if (available != null) {
 					this.bytes += available.getStackSize();
 					l -= available.getStackSize();
 
-					if( l <= 0 )
-					{
+					if (l <= 0) {
 						return available;
 					}
-				}
-				else
-				{
+				} else {
 					pro.possible = false; // ;P
 				}
 			}
-		}
-		else if( this.nodes.size() > 1 )
-		{
-			for( final CraftingTreeProcess pro : this.nodes )
-			{
-				try
-				{
-					while( pro.possible && l > 0 )
-					{
-						final MECraftingInventory subInv = new MECraftingInventory( inv, true, true, true );
-						pro.request( subInv, 1, src );
+		} else if (this.nodes.size() > 1) {
+			for (final CraftingTreeProcess pro : this.nodes) {
+				try {
+					while (pro.possible && l > 0) {
+						final MECraftingInventory subInv = new MECraftingInventory(inv, true, true, true);
+						pro.request(subInv, 1, src);
 
-						this.what.setStackSize( l );
-						final IAEItemStack available = subInv.extractItems( this.what, Actionable.MODULATE, src );
+						this.what.setStackSize(l);
+						final IAEItemStack available = subInv.extractItems(this.what, Actionable.MODULATE, src);
 
-						if( available != null )
-						{
-							if( !subInv.commit( src ) )
-							{
-								throw new CraftBranchFailure( this.what, l );
+						if (available != null) {
+							if (!subInv.commit(src)) {
+								throw new CraftBranchFailure(this.what, l);
 							}
 
 							this.bytes += available.getStackSize();
 							l -= available.getStackSize();
 
-							if( l <= 0 )
-							{
+							if (l <= 0) {
 								return available;
 							}
-						}
-						else
-						{
+						} else {
 							pro.possible = false; // ;P
 						}
 					}
-				}
-				catch( final CraftBranchFailure fail )
-				{
+				} catch (final CraftBranchFailure fail) {
 					pro.possible = true;
 				}
 			}
 		}
 
-		if( this.sim )
-		{
+		if (this.sim) {
 			this.missing += l;
 			this.bytes += l;
 			final IAEItemStack rv = this.what.copy();
-			rv.setStackSize( l );
+			rv.setStackSize(l);
 			return rv;
 		}
 
-		for( final IAEItemStack o : thingsUsed )
-		{
-			this.job.refund( o.copy() );
-			o.setStackSize( -o.getStackSize() );
-			this.used.add( o );
+		for (final IAEItemStack o : thingsUsed) {
+			this.job.refund(o.copy());
+			o.setStackSize(-o.getStackSize());
+			this.used.add(o);
 		}
 
-		throw new CraftBranchFailure( this.what, l );
+		throw new CraftBranchFailure(this.what, l);
 	}
 
-	void dive( final CraftingJob job )
-	{
-		if( this.missing > 0 )
-		{
-			job.addMissing( this.getStack( this.missing ) );
+	void dive(final CraftingJob job) {
+		if (this.missing > 0) {
+			job.addMissing(this.getStack(this.missing));
 		}
 		// missing = 0;
 
-		job.addBytes( 8 + this.bytes );
+		job.addBytes(8 + this.bytes);
 
-		for( final CraftingTreeProcess pro : this.nodes )
-		{
-			pro.dive( job );
+		for (final CraftingTreeProcess pro : this.nodes) {
+			pro.dive(job);
 		}
 	}
 
-	IAEItemStack getStack( final long size )
-	{
+	IAEItemStack getStack(final long size) {
 		final IAEItemStack is = this.what.copy();
-		is.setStackSize( size );
+		is.setStackSize(size);
 		return is;
 	}
 
-	void setSimulate()
-	{
+	void setSimulate() {
 		this.sim = true;
 		this.missing = 0;
 		this.bytes = 0;
 		this.used.resetStatus();
 		this.exhausted = false;
 
-		for( final CraftingTreeProcess pro : this.nodes )
-		{
+		for (final CraftingTreeProcess pro : this.nodes) {
 			pro.setSimulate();
 		}
 	}
 
-	public void setJob( final MECraftingInventory storage, final CraftingCPUCluster craftingCPUCluster, final BaseActionSource src ) throws CraftBranchFailure
-	{
-		for( final IAEItemStack i : this.used )
-		{
-			final IAEItemStack ex = storage.extractItems( i, Actionable.MODULATE, src );
+	public void setJob(final MECraftingInventory storage, final CraftingCPUCluster craftingCPUCluster, final BaseActionSource src) throws CraftBranchFailure {
+		for (final IAEItemStack i : this.used) {
+			final IAEItemStack ex = storage.extractItems(i, Actionable.MODULATE, src);
 
-			if( ex == null || ex.getStackSize() != i.getStackSize() )
-			{
-				throw new CraftBranchFailure( i, i.getStackSize() );
+			if (ex == null || ex.getStackSize() != i.getStackSize()) {
+				throw new CraftBranchFailure(i, i.getStackSize());
 			}
 
-			craftingCPUCluster.addStorage( ex );
+			craftingCPUCluster.addStorage(ex);
 		}
 
-		if( this.howManyEmitted > 0 )
-		{
+		if (this.howManyEmitted > 0) {
 			final IAEItemStack i = this.what.copy();
-			i.setStackSize( this.howManyEmitted );
-			craftingCPUCluster.addEmitable( i );
+			i.setStackSize(this.howManyEmitted);
+			craftingCPUCluster.addEmitable(i);
 		}
 
-		for( final CraftingTreeProcess pro : this.nodes )
-		{
-			pro.setJob( storage, craftingCPUCluster, src );
+		for (final CraftingTreeProcess pro : this.nodes) {
+			pro.setJob(storage, craftingCPUCluster, src);
 		}
 	}
 
-	void getPlan( final IItemList<IAEItemStack> plan )
-	{
-		if( this.missing > 0 )
-		{
+	void getPlan(final IItemList<IAEItemStack> plan) {
+		if (this.missing > 0) {
 			final IAEItemStack o = this.what.copy();
-			o.setStackSize( this.missing );
-			plan.add( o );
+			o.setStackSize(this.missing);
+			plan.add(o);
 		}
 
-		if( this.howManyEmitted > 0 )
-		{
+		if (this.howManyEmitted > 0) {
 			final IAEItemStack i = this.what.copy();
-			i.setCountRequestable( this.howManyEmitted );
-			plan.addRequestable( i );
+			i.setCountRequestable(this.howManyEmitted);
+			plan.addRequestable(i);
 		}
 
-		for( final IAEItemStack i : this.used )
-		{
-			plan.add( i.copy() );
+		for (final IAEItemStack i : this.used) {
+			plan.add(i.copy());
 		}
 
-		for( final CraftingTreeProcess pro : this.nodes )
-		{
-			pro.getPlan( plan );
+		for (final CraftingTreeProcess pro : this.nodes) {
+			pro.getPlan(plan);
 		}
 	}
 
-	int getSlot()
-	{
+	int getSlot() {
 		return this.slot;
 	}
 }

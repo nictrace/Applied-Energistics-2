@@ -18,24 +18,20 @@
 
 package appeng.core;
 
+import appeng.core.features.IFeatureHandler;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import appeng.core.features.IFeatureHandler;
+public final class FeatureHandlerRegistry {
 
-
-public final class FeatureHandlerRegistry
-{
 	private final Set<IFeatureHandler> registry = new LinkedHashSet<IFeatureHandler>();
 
-	public void addFeatureHandler( final IFeatureHandler feature )
-	{
-		this.registry.add( feature );
+	public void addFeatureHandler(final IFeatureHandler feature) {
+		this.registry.add(feature);
 	}
 
-	Set<IFeatureHandler> getRegisteredFeatureHandlers()
-	{
+	Set<IFeatureHandler> getRegisteredFeatureHandlers() {
 		return this.registry;
 	}
 }

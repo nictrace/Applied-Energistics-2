@@ -23,16 +23,14 @@
 
 package appeng.api.definitions;
 
-
 import appeng.api.util.AEItemDefinition;
-
 
 /**
  * @deprecated use {@link IBlocks} now
  */
 @Deprecated
-public class Blocks
-{
+public class Blocks {
+
 	public AEItemDefinition blockQuartzOre;
 
 	public AEItemDefinition blockQuartzOreCharged;

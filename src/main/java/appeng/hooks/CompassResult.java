@@ -18,9 +18,7 @@
 
 package appeng.hooks;
 
-
-public class CompassResult
-{
+public class CompassResult {
 
 	private final boolean hasResult;
 	private final boolean spin;
@@ -28,41 +26,34 @@ public class CompassResult
 	private final long time;
 	private boolean requested = false;
 
-	public CompassResult( final boolean hasResult, final boolean spin, final double rad )
-	{
+	public CompassResult(final boolean hasResult, final boolean spin, final double rad) {
 		this.hasResult = hasResult;
 		this.spin = spin;
 		this.rad = rad;
 		this.time = System.currentTimeMillis();
 	}
 
-	public boolean isValidResult()
-	{
+	public boolean isValidResult() {
 		return this.hasResult;
 	}
 
-	public boolean isSpin()
-	{
+	public boolean isSpin() {
 		return this.spin;
 	}
 
-	public double getRad()
-	{
+	public double getRad() {
 		return this.rad;
 	}
 
-	boolean isRequested()
-	{
+	boolean isRequested() {
 		return this.requested;
 	}
 
-	void setRequested( final boolean requested )
-	{
+	void setRequested(final boolean requested) {
 		this.requested = requested;
 	}
 
-	long getTime()
-	{
+	long getTime() {
 		return this.time;
 	}
 }

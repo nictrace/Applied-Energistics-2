@@ -18,40 +18,33 @@
 
 package appeng.util.iterators;
 
+import appeng.api.networking.IGridHost;
+import appeng.api.networking.IGridNode;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Iterator;
 
-import net.minecraftforge.common.util.ForgeDirection;
+public final class ProxyNodeIterator implements Iterator<IGridNode> {
 
-import appeng.api.networking.IGridHost;
-import appeng.api.networking.IGridNode;
-
-
-public final class ProxyNodeIterator implements Iterator<IGridNode>
-{
 	private final Iterator<IGridHost> hosts;
 
-	public ProxyNodeIterator( final Iterator<IGridHost> hosts )
-	{
+	public ProxyNodeIterator(final Iterator<IGridHost> hosts) {
 		this.hosts = hosts;
 	}
 
 	@Override
-	public boolean hasNext()
-	{
+	public boolean hasNext() {
 		return this.hosts.hasNext();
 	}
 
 	@Override
-	public IGridNode next()
-	{
+	public IGridNode next() {
 		final IGridHost host = this.hosts.next();
-		return host.getGridNode( ForgeDirection.UNKNOWN );
+		return host.getGridNode(ForgeDirection.UNKNOWN);
 	}
 
 	@Override
-	public void remove()
-	{
+	public void remove() {
 		throw new UnsupportedOperationException();
 	}
 }

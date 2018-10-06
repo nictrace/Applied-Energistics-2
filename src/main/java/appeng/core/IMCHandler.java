@@ -18,21 +18,14 @@
 
 package appeng.core;
 
+import appeng.api.config.TunnelType;
+import appeng.core.api.IIMCProcessor;
+import appeng.core.api.imc.*;
+import cpw.mods.fml.common.event.FMLInterModComms;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import cpw.mods.fml.common.event.FMLInterModComms;
-
-import appeng.api.config.TunnelType;
-import appeng.core.api.IIMCProcessor;
-import appeng.core.api.imc.IMCBlackListSpatial;
-import appeng.core.api.imc.IMCGrinder;
-import appeng.core.api.imc.IMCMatterCannon;
-import appeng.core.api.imc.IMCP2PAttunement;
-import appeng.core.api.imc.IMCSpatial;
-
 
 /**
  * Handles the delegation of the corresponding IMC messages to the suitable IMC processors
@@ -41,13 +34,13 @@ import appeng.core.api.imc.IMCSpatial;
  * @version rv3 - 10.08.2015
  * @since rv1
  */
-public class IMCHandler
-{
+public class IMCHandler {
+
 	private static final int INITIAL_PROCESSORS_CAPACITY = 20;
 
 	/**
 	 * Contains the processors,
-	 *
+	 * <p>
 	 * is mutable, but write access only by the constructor
 	 */
 	private final Map<String, IIMCProcessor> processors;
@@ -55,18 +48,16 @@ public class IMCHandler
 	/**
 	 * Initializes the processors
 	 */
-	public IMCHandler()
-	{
-		this.processors = new HashMap<String, IIMCProcessor>( INITIAL_PROCESSORS_CAPACITY );
+	public IMCHandler() {
+		this.processors = new HashMap<String, IIMCProcessor>(INITIAL_PROCESSORS_CAPACITY);
 
-		this.processors.put( "blacklist-block-spatial", new IMCBlackListSpatial() );
-		this.processors.put( "whitelist-spatial", new IMCSpatial() );
-		this.processors.put( "add-grindable", new IMCGrinder() );
-		this.processors.put( "add-mattercannon-ammo", new IMCMatterCannon() );
+		this.processors.put("blacklist-block-spatial", new IMCBlackListSpatial());
+		this.processors.put("whitelist-spatial", new IMCSpatial());
+		this.processors.put("add-grindable", new IMCGrinder());
+		this.processors.put("add-mattercannon-ammo", new IMCMatterCannon());
 
-		for( final TunnelType type : TunnelType.values() )
-		{
-			this.processors.put( "add-p2p-attunement-" + type.name().replace( '_', '-' ).toLowerCase( Locale.ENGLISH ), new IMCP2PAttunement() );
+		for (final TunnelType type : TunnelType.values()) {
+			this.processors.put("add-p2p-attunement-" + type.name().replace('_', '-').toLowerCase(Locale.ENGLISH), new IMCP2PAttunement());
 		}
 	}
 
@@ -75,28 +66,20 @@ public class IMCHandler
 	 *
 	 * @param event Event carrying the identifier and message for the handlers
 	 */
-	void handleIMCEvent( final FMLInterModComms.IMCEvent event )
-	{
-		for( final FMLInterModComms.IMCMessage message : event.getMessages() )
-		{
+	void handleIMCEvent(final FMLInterModComms.IMCEvent event) {
+		for (final FMLInterModComms.IMCMessage message : event.getMessages()) {
 			final String key = message.key;
 
-			try
-			{
-				final IIMCProcessor handler = this.processors.get( key );
-				if( handler != null )
-				{
-					handler.process( message );
+			try {
+				final IIMCProcessor handler = this.processors.get(key);
+				if (handler != null) {
+					handler.process(message);
+				} else {
+					throw new IllegalStateException("Invalid IMC Called: " + key);
 				}
-				else
-				{
-					throw new IllegalStateException( "Invalid IMC Called: " + key );
-				}
-			}
-			catch( final Exception t )
-			{
-				AELog.warn( "Problem detected when processing IMC " + key + " from " + message.getSender() );
-				AELog.debug( t );
+			} catch (final Exception t) {
+				AELog.warn("Problem detected when processing IMC " + key + " from " + message.getSender());
+				AELog.debug(t);
 			}
 		}
 	}

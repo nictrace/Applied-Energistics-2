@@ -18,21 +18,15 @@
 
 package appeng.core;
 
-
 import appeng.api.definitions.IDefinitions;
 import appeng.api.parts.IPartHelper;
-import appeng.core.api.definitions.ApiBlocks;
-import appeng.core.api.definitions.ApiItems;
-import appeng.core.api.definitions.ApiMaterials;
-import appeng.core.api.definitions.ApiParts;
-import appeng.core.api.definitions.DefinitionConstructor;
-
+import appeng.core.api.definitions.*;
 
 /**
  * Internal implementation of the definitions for the API
  */
-public final class ApiDefinitions implements IDefinitions
-{
+public final class ApiDefinitions implements IDefinitions {
+
 	private final ApiBlocks blocks;
 	private final ApiItems items;
 	private final ApiMaterials materials;
@@ -40,50 +34,43 @@ public final class ApiDefinitions implements IDefinitions
 	private final FeatureHandlerRegistry handlers;
 	private final FeatureRegistry features;
 
-	public ApiDefinitions( final IPartHelper partHelper )
-	{
+	public ApiDefinitions(final IPartHelper partHelper) {
 		this.features = new FeatureRegistry();
 		this.handlers = new FeatureHandlerRegistry();
 
-		final DefinitionConstructor constructor = new DefinitionConstructor( this.features, this.handlers );
+		final DefinitionConstructor constructor = new DefinitionConstructor(this.features, this.handlers);
 
-		this.blocks = new ApiBlocks( constructor );
-		this.items = new ApiItems( constructor );
-		this.materials = new ApiMaterials( constructor );
-		this.parts = new ApiParts( constructor, partHelper );
+		this.blocks = new ApiBlocks(constructor);
+		this.items = new ApiItems(constructor);
+		this.materials = new ApiMaterials(constructor);
+		this.parts = new ApiParts(constructor, partHelper);
 	}
 
-	FeatureHandlerRegistry getFeatureHandlerRegistry()
-	{
+	FeatureHandlerRegistry getFeatureHandlerRegistry() {
 		return this.handlers;
 	}
 
-	FeatureRegistry getFeatureRegistry()
-	{
+	FeatureRegistry getFeatureRegistry() {
 		return this.features;
 	}
 
 	@Override
-	public ApiBlocks blocks()
-	{
+	public ApiBlocks blocks() {
 		return this.blocks;
 	}
 
 	@Override
-	public ApiItems items()
-	{
+	public ApiItems items() {
 		return this.items;
 	}
 
 	@Override
-	public ApiMaterials materials()
-	{
+	public ApiMaterials materials() {
 		return this.materials;
 	}
 
 	@Override
-	public ApiParts parts()
-	{
+	public ApiParts parts() {
 		return this.parts;
 	}
 }

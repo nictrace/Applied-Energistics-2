@@ -18,7 +18,6 @@
 
 package appeng.facade;
 
-
 import java.io.IOException;
 
 import io.netty.buffer.ByteBuf;
@@ -39,39 +38,30 @@ import appeng.integration.abstraction.IBuildCraftTransport;
 import appeng.items.parts.ItemFacade;
 import appeng.parts.CableBusStorage;
 
-
-public class FacadeContainer implements IFacadeContainer
-{
+public class FacadeContainer implements IFacadeContainer {
 
 	private final int facades = 6;
 	private final CableBusStorage storage;
 
-	public FacadeContainer( final CableBusStorage cbs )
-	{
+	public FacadeContainer(final CableBusStorage cbs) {
 		this.storage = cbs;
 	}
 
 	@Override
-	public boolean addFacade( final IFacadePart a )
-	{
-		if( this.getFacade( a.getSide() ) == null )
-		{
-			this.storage.setFacade( a.getSide().ordinal(), a );
+	public boolean addFacade(final IFacadePart a) {
+		if (this.getFacade(a.getSide()) == null) {
+			this.storage.setFacade(a.getSide().ordinal(), a);
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public void removeFacade( final IPartHost host, final ForgeDirection side )
-	{
-		if( side != null && side != ForgeDirection.UNKNOWN )
-		{
-			if( this.storage.getFacade( side.ordinal() ) != null )
-			{
-				this.storage.setFacade( side.ordinal(), null );
-				if( host != null )
-				{
+	public void removeFacade(final IPartHost host, final ForgeDirection side) {
+		if (side != null && side != ForgeDirection.UNKNOWN) {
+			if (this.storage.getFacade(side.ordinal()) != null) {
+				this.storage.setFacade(side.ordinal(), null);
+				if (host != null) {
 					host.markForUpdate();
 				}
 			}
@@ -79,90 +69,74 @@ public class FacadeContainer implements IFacadeContainer
 	}
 
 	@Override
-	public IFacadePart getFacade( final ForgeDirection s )
-	{
-		return this.storage.getFacade( s.ordinal() );
+	public IFacadePart getFacade(final ForgeDirection s) {
+		return this.storage.getFacade(s.ordinal());
 	}
 
 	@Override
-	public void rotateLeft()
-	{
+	public void rotateLeft() {
 		final IFacadePart[] newFacades = new FacadePart[6];
 
-		newFacades[ForgeDirection.UP.ordinal()] = this.storage.getFacade( ForgeDirection.UP.ordinal() );
-		newFacades[ForgeDirection.DOWN.ordinal()] = this.storage.getFacade( ForgeDirection.DOWN.ordinal() );
+		newFacades[ForgeDirection.UP.ordinal()] = this.storage.getFacade(ForgeDirection.UP.ordinal());
+		newFacades[ForgeDirection.DOWN.ordinal()] = this.storage.getFacade(ForgeDirection.DOWN.ordinal());
 
-		newFacades[ForgeDirection.EAST.ordinal()] = this.storage.getFacade( ForgeDirection.NORTH.ordinal() );
-		newFacades[ForgeDirection.SOUTH.ordinal()] = this.storage.getFacade( ForgeDirection.EAST.ordinal() );
+		newFacades[ForgeDirection.EAST.ordinal()] = this.storage.getFacade(ForgeDirection.NORTH.ordinal());
+		newFacades[ForgeDirection.SOUTH.ordinal()] = this.storage.getFacade(ForgeDirection.EAST.ordinal());
 
-		newFacades[ForgeDirection.WEST.ordinal()] = this.storage.getFacade( ForgeDirection.SOUTH.ordinal() );
-		newFacades[ForgeDirection.NORTH.ordinal()] = this.storage.getFacade( ForgeDirection.WEST.ordinal() );
+		newFacades[ForgeDirection.WEST.ordinal()] = this.storage.getFacade(ForgeDirection.SOUTH.ordinal());
+		newFacades[ForgeDirection.NORTH.ordinal()] = this.storage.getFacade(ForgeDirection.WEST.ordinal());
 
-		for( int x = 0; x < this.facades; x++ )
-		{
-			this.storage.setFacade( x, newFacades[x] );
+		for (int x = 0; x < this.facades; x++) {
+			this.storage.setFacade(x, newFacades[x]);
 		}
 	}
 
 	@Override
-	public void writeToNBT( final NBTTagCompound c )
-	{
-		for( int x = 0; x < this.facades; x++ )
-		{
-			if( this.storage.getFacade( x ) != null )
-			{
+	public void writeToNBT(final NBTTagCompound c) {
+		for (int x = 0; x < this.facades; x++) {
+			if (this.storage.getFacade(x) != null) {
 				final NBTTagCompound data = new NBTTagCompound();
-				this.storage.getFacade( x ).getItemStack().writeToNBT( data );
-				c.setTag( "facade:" + x, data );
+				this.storage.getFacade(x).getItemStack().writeToNBT(data);
+				c.setTag("facade:" + x, data);
 			}
 		}
 	}
 
 	@Override
-	public boolean readFromStream( final ByteBuf out ) throws IOException
-	{
+	public boolean readFromStream(final ByteBuf out) throws IOException {
 		final int facadeSides = out.readByte();
 
 		boolean changed = false;
 
 		final int[] ids = new int[2];
-		for( int x = 0; x < this.facades; x++ )
-		{
-			final ForgeDirection side = ForgeDirection.getOrientation( x );
-			final int ix = ( 1 << x );
-			if( ( facadeSides & ix ) == ix )
-			{
+		for (int x = 0; x < this.facades; x++) {
+			final ForgeDirection side = ForgeDirection.getOrientation(x);
+			final int ix = (1 << x);
+			if ((facadeSides & ix) == ix) {
 				ids[0] = out.readInt();
 				ids[1] = out.readInt();
 				final boolean isBC = ids[0] < 0;
-				ids[0] = Math.abs( ids[0] );
+				ids[0] = Math.abs(ids[0]);
 
-				if( isBC && IntegrationRegistry.INSTANCE.isEnabled( IntegrationType.BuildCraftTransport ) )
-				{
-					final IBuildCraftTransport bc = (IBuildCraftTransport) IntegrationRegistry.INSTANCE.getInstance( IntegrationType.BuildCraftTransport );
-					final IFacadePart created = bc.createFacadePart( (Block) Block.blockRegistry.getObjectById( ids[0] ), ids[1], side );
-					changed = changed || this.storage.getFacade( x ) == null;
+				if (isBC && IntegrationRegistry.INSTANCE.isEnabled(IntegrationType.BuildCraftTransport)) {
+					final IBuildCraftTransport bc = (IBuildCraftTransport) IntegrationRegistry.INSTANCE.getInstance(IntegrationType.BuildCraftTransport);
+					final IFacadePart created = bc.createFacadePart((Block) Block.blockRegistry.getObjectById(ids[0]), ids[1], side);
+					changed = changed || this.storage.getFacade(x) == null;
 
-					this.storage.setFacade( x, created );
-				}
-				else if( !isBC )
-				{
-					for( final Item facadeItem : AEApi.instance().definitions().items().facade().maybeItem().asSet() )
-					{
+					this.storage.setFacade(x, created);
+				} else if (!isBC) {
+					for (final Item facadeItem : AEApi.instance().definitions().items().facade().maybeItem().asSet()) {
 						final ItemFacade ifa = (ItemFacade) facadeItem;
-						final ItemStack facade = ifa.createFromIDs( ids );
-						if( facade != null )
-						{
-							changed = changed || this.storage.getFacade( x ) == null;
-							this.storage.setFacade( x, ifa.createPartFromItemStack( facade, side ) );
+						final ItemStack facade = ifa.createFromIDs(ids);
+						if (facade != null) {
+							changed = changed || this.storage.getFacade(x) == null;
+							this.storage.setFacade(x, ifa.createPartFromItemStack(facade, side));
 						}
 					}
 				}
-			}
-			else
-			{
-				changed = changed || this.storage.getFacade( x ) != null;
-				this.storage.setFacade( x, null );
+			} else {
+				changed = changed || this.storage.getFacade(x) != null;
+				this.storage.setFacade(x, null);
 			}
 		}
 
@@ -170,31 +144,22 @@ public class FacadeContainer implements IFacadeContainer
 	}
 
 	@Override
-	public void readFromNBT( final NBTTagCompound c )
-	{
-		for( int x = 0; x < this.facades; x++ )
-		{
-			this.storage.setFacade( x, null );
+	public void readFromNBT(final NBTTagCompound c) {
+		for (int x = 0; x < this.facades; x++) {
+			this.storage.setFacade(x, null);
 
-			final NBTTagCompound t = c.getCompoundTag( "facade:" + x );
-			if( t != null )
-			{
-				final ItemStack is = ItemStack.loadItemStackFromNBT( t );
-				if( is != null )
-				{
+			final NBTTagCompound t = c.getCompoundTag("facade:" + x);
+			if (t != null) {
+				final ItemStack is = ItemStack.loadItemStackFromNBT(t);
+				if (is != null) {
 					final Item i = is.getItem();
-					if( i instanceof IFacadeItem )
-					{
-						this.storage.setFacade( x, ( (IFacadeItem) i ).createPartFromItemStack( is, ForgeDirection.getOrientation( x ) ) );
-					}
-					else
-					{
-						if( IntegrationRegistry.INSTANCE.isEnabled( IntegrationType.BuildCraftTransport ) )
-						{
-							final IBuildCraftTransport bc = (IBuildCraftTransport) IntegrationRegistry.INSTANCE.getInstance( IntegrationType.BuildCraftTransport );
-							if( bc.isFacade( is ) )
-							{
-								this.storage.setFacade( x, bc.createFacadePart( is, ForgeDirection.getOrientation( x ) ) );
+					if (i instanceof IFacadeItem) {
+						this.storage.setFacade(x, ((IFacadeItem) i).createPartFromItemStack(is, ForgeDirection.getOrientation(x)));
+					} else {
+						if (IntegrationRegistry.INSTANCE.isEnabled(IntegrationType.BuildCraftTransport)) {
+							final IBuildCraftTransport bc = (IBuildCraftTransport) IntegrationRegistry.INSTANCE.getInstance(IntegrationType.BuildCraftTransport);
+							if (bc.isFacade(is)) {
+								this.storage.setFacade(x, bc.createFacadePart(is, ForgeDirection.getOrientation(x)));
 							}
 						}
 					}
@@ -204,38 +169,30 @@ public class FacadeContainer implements IFacadeContainer
 	}
 
 	@Override
-	public void writeToStream( final ByteBuf out ) throws IOException
-	{
+	public void writeToStream(final ByteBuf out) throws IOException {
 		int facadeSides = 0;
-		for( int x = 0; x < this.facades; x++ )
-		{
-			if( this.getFacade( ForgeDirection.getOrientation( x ) ) != null )
-			{
-				facadeSides |= ( 1 << x );
+		for (int x = 0; x < this.facades; x++) {
+			if (this.getFacade(ForgeDirection.getOrientation(x)) != null) {
+				facadeSides |= (1 << x);
 			}
 		}
-		out.writeByte( (byte) facadeSides );
+		out.writeByte((byte) facadeSides);
 
-		for( int x = 0; x < this.facades; x++ )
-		{
-			final IFacadePart part = this.getFacade( ForgeDirection.getOrientation( x ) );
-			if( part != null )
-			{
-				final int itemID = Item.getIdFromItem( part.getItem() );
+		for (int x = 0; x < this.facades; x++) {
+			final IFacadePart part = this.getFacade(ForgeDirection.getOrientation(x));
+			if (part != null) {
+				final int itemID = Item.getIdFromItem(part.getItem());
 				final int dmgValue = part.getItemDamage();
-				out.writeInt( itemID * ( part.notAEFacade() ? -1 : 1 ) );
-				out.writeInt( dmgValue );
+				out.writeInt(itemID * (part.notAEFacade() ? -1 : 1));
+				out.writeInt(dmgValue);
 			}
 		}
 	}
 
 	@Override
-	public boolean isEmpty()
-	{
-		for( int x = 0; x < this.facades; x++ )
-		{
-			if( this.storage.getFacade( x ) != null )
-			{
+	public boolean isEmpty() {
+		for (int x = 0; x < this.facades; x++) {
+			if (this.storage.getFacade(x) != null) {
 				return false;
 			}
 		}

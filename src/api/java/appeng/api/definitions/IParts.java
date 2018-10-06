@@ -23,15 +23,13 @@
 
 package appeng.api.definitions;
 
-
 import appeng.api.util.AEColoredItemDefinition;
-
 
 /**
  * A list of all parts in AE
  */
-public interface IParts
-{
+public interface IParts {
+
 	AEColoredItemDefinition cableSmart();
 
 	AEColoredItemDefinition cableCovered();

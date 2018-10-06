@@ -23,17 +23,13 @@
 
 package appeng.api.networking.events;
 
-
 import appeng.api.networking.IGridNode;
 
-
-public class MENetworkCraftingCpuChange extends MENetworkEvent
-{
+public class MENetworkCraftingCpuChange extends MENetworkEvent {
 
 	public final IGridNode node;
 
-	public MENetworkCraftingCpuChange( final IGridNode n )
-	{
+	public MENetworkCraftingCpuChange(final IGridNode n) {
 		this.node = n;
 	}
 }

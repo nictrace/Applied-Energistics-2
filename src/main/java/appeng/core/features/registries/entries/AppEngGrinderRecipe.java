@@ -18,14 +18,10 @@
 
 package appeng.core.features.registries.entries;
 
-
+import appeng.api.features.IGrinderEntry;
 import net.minecraft.item.ItemStack;
 
-import appeng.api.features.IGrinderEntry;
-
-
-public class AppEngGrinderRecipe implements IGrinderEntry
-{
+public class AppEngGrinderRecipe implements IGrinderEntry {
 
 	private ItemStack in;
 	private ItemStack out;
@@ -38,15 +34,13 @@ public class AppEngGrinderRecipe implements IGrinderEntry
 
 	private int energy;
 
-	public AppEngGrinderRecipe( final ItemStack a, final ItemStack b, final int cost )
-	{
+	public AppEngGrinderRecipe(final ItemStack a, final ItemStack b, final int cost) {
 		this.in = a;
 		this.out = b;
 		this.energy = cost;
 	}
 
-	public AppEngGrinderRecipe( final ItemStack a, final ItemStack b, final ItemStack c, final float chance, final int cost )
-	{
+	public AppEngGrinderRecipe(final ItemStack a, final ItemStack b, final ItemStack c, final float chance, final int cost) {
 		this.in = a;
 		this.out = b;
 
@@ -56,8 +50,7 @@ public class AppEngGrinderRecipe implements IGrinderEntry
 		this.energy = cost;
 	}
 
-	public AppEngGrinderRecipe( final ItemStack a, final ItemStack b, final ItemStack c, final ItemStack d, final float chance, final float chance2, final int cost )
-	{
+	public AppEngGrinderRecipe(final ItemStack a, final ItemStack b, final ItemStack c, final ItemStack d, final float chance, final float chance2, final int cost) {
 		this.in = a;
 		this.out = b;
 
@@ -71,76 +64,64 @@ public class AppEngGrinderRecipe implements IGrinderEntry
 	}
 
 	@Override
-	public ItemStack getInput()
-	{
+	public ItemStack getInput() {
 		return this.in;
 	}
 
 	@Override
-	public void setInput( final ItemStack i )
-	{
+	public void setInput(final ItemStack i) {
 		this.in = i.copy();
 	}
 
 	@Override
-	public ItemStack getOutput()
-	{
+	public ItemStack getOutput() {
 		return this.out;
 	}
 
 	@Override
-	public void setOutput( final ItemStack o )
-	{
+	public void setOutput(final ItemStack o) {
 		this.out = o.copy();
 	}
 
 	@Override
-	public ItemStack getOptionalOutput()
-	{
+	public ItemStack getOptionalOutput() {
 		return this.optionalOutput;
 	}
 
 	@Override
-	public ItemStack getSecondOptionalOutput()
-	{
+	public ItemStack getSecondOptionalOutput() {
 		return this.optionalOutput2;
 	}
 
 	@Override
-	public void setOptionalOutput( final ItemStack output, final float chance )
-	{
+	public void setOptionalOutput(final ItemStack output, final float chance) {
 		this.optionalOutput = output.copy();
 		this.optionalChance = chance;
 	}
 
 	@Override
-	public float getOptionalChance()
-	{
+	public float getOptionalChance() {
 		return this.optionalChance;
 	}
 
 	@Override
-	public void setSecondOptionalOutput( final ItemStack output, final float chance )
-	{
+	public void setSecondOptionalOutput(final ItemStack output, final float chance) {
 		this.optionalChance2 = chance;
 		this.optionalOutput2 = output.copy();
 	}
 
 	@Override
-	public float getSecondOptionalChance()
-	{
+	public float getSecondOptionalChance() {
 		return this.optionalChance2;
 	}
 
 	@Override
-	public int getEnergyCost()
-	{
+	public int getEnergyCost() {
 		return this.energy;
 	}
 
 	@Override
-	public void setEnergyCost( final int c )
-	{
+	public void setEnergyCost(final int c) {
 		this.energy = c;
 	}
 }

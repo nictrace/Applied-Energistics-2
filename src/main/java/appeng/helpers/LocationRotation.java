@@ -18,23 +18,19 @@
 
 package appeng.helpers;
 
-
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import appeng.api.util.IOrientable;
 
-
-public class LocationRotation implements IOrientable
-{
+public class LocationRotation implements IOrientable {
 
 	private final IBlockAccess w;
 	private final int x;
 	private final int y;
 	private final int z;
 
-	public LocationRotation( final IBlockAccess world, final int x, final int y, final int z )
-	{
+	public LocationRotation(final IBlockAccess world, final int x, final int y, final int z) {
 		this.w = world;
 		this.x = x;
 		this.y = y;
@@ -42,31 +38,26 @@ public class LocationRotation implements IOrientable
 	}
 
 	@Override
-	public boolean canBeRotated()
-	{
+	public boolean canBeRotated() {
 		return false;
 	}
 
 	@Override
-	public ForgeDirection getForward()
-	{
-		if( this.getUp().offsetY == 0 )
-		{
+	public ForgeDirection getForward() {
+		if (this.getUp().offsetY == 0) {
 			return ForgeDirection.UP;
 		}
 		return ForgeDirection.SOUTH;
 	}
 
 	@Override
-	public ForgeDirection getUp()
-	{
-		final int num = Math.abs( this.x + this.y + this.z ) % 6;
-		return ForgeDirection.getOrientation( num );
+	public ForgeDirection getUp() {
+		final int num = Math.abs(this.x + this.y + this.z) % 6;
+		return ForgeDirection.getOrientation(num);
 	}
 
 	@Override
-	public void setOrientation( final ForgeDirection forward, final ForgeDirection up )
-	{
+	public void setOrientation(final ForgeDirection forward, final ForgeDirection up) {
 
 	}
 }

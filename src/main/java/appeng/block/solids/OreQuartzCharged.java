@@ -18,73 +18,59 @@
 
 package appeng.block.solids;
 
-
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import appeng.api.AEApi;
 import appeng.api.exceptions.MissingDefinition;
 import appeng.client.render.effects.ChargedOreFX;
 import appeng.core.AEConfig;
 import appeng.core.CommonHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+import java.util.Random;
 
-public class OreQuartzCharged extends OreQuartz
-{
+public class OreQuartzCharged extends OreQuartz {
 
-	public OreQuartzCharged()
-	{
-		this.setBoostBrightnessLow( 2 );
-		this.setBoostBrightnessHigh( 5 );
+	public OreQuartzCharged() {
+		this.setBoostBrightnessLow(2);
+		this.setBoostBrightnessHigh(5);
 	}
 
 	@Nullable
 	@Override
-	public Item getItemDropped( final int id, final Random rand, final int meta )
-	{
-		for( final Item charged : AEApi.instance().definitions().materials().certusQuartzCrystalCharged().maybeItem().asSet() )
-		{
+	public Item getItemDropped(final int id, final Random rand, final int meta) {
+		for (final Item charged : AEApi.instance().definitions().materials().certusQuartzCrystalCharged().maybeItem().asSet()) {
 			return charged;
 		}
 
-		throw new MissingDefinition( "Tried to access charged certus quartz crystal, even though they are disabled" );
+		throw new MissingDefinition("Tried to access charged certus quartz crystal, even though they are disabled");
 	}
 
 	@Override
-	public int damageDropped( final int id )
-	{
-		for( final ItemStack crystalStack : AEApi.instance().definitions().materials().certusQuartzCrystalCharged().maybeStack( 1 ).asSet() )
-		{
+	public int damageDropped(final int id) {
+		for (final ItemStack crystalStack : AEApi.instance().definitions().materials().certusQuartzCrystalCharged().maybeStack(1).asSet()) {
 			return crystalStack.getItemDamage();
 		}
 
-		throw new MissingDefinition( "Tried to access charged certus quartz crystal, even though they are disabled" );
+		throw new MissingDefinition("Tried to access charged certus quartz crystal, even though they are disabled");
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public void randomDisplayTick( final World w, final int x, final int y, final int z, final Random r )
-	{
-		if( !AEConfig.instance.enableEffects )
-		{
+	@SideOnly(Side.CLIENT)
+	public void randomDisplayTick(final World w, final int x, final int y, final int z, final Random r) {
+		if (!AEConfig.instance.enableEffects) {
 			return;
 		}
 
-		double xOff = ( r.nextFloat() );
-		double yOff = ( r.nextFloat() );
-		double zOff = ( r.nextFloat() );
+		double xOff = (r.nextFloat());
+		double yOff = (r.nextFloat());
+		double zOff = (r.nextFloat());
 
-		switch( r.nextInt( 6 ) )
-		{
+		switch (r.nextInt(6)) {
 			case 0:
 				xOff = -0.01;
 				break;
@@ -108,10 +94,9 @@ public class OreQuartzCharged extends OreQuartz
 				break;
 		}
 
-		if( CommonHelper.proxy.shouldAddParticles( r ) )
-		{
-			final ChargedOreFX fx = new ChargedOreFX( w, x + xOff, y + yOff, z + zOff, 0.0f, 0.0f, 0.0f );
-			Minecraft.getMinecraft().effectRenderer.addEffect( fx );
+		if (CommonHelper.proxy.shouldAddParticles(r)) {
+			final ChargedOreFX fx = new ChargedOreFX(w, x + xOff, y + yOff, z + zOff, 0.0f, 0.0f, 0.0f);
+			Minecraft.getMinecraft().effectRenderer.addEffect(fx);
 		}
 	}
 }

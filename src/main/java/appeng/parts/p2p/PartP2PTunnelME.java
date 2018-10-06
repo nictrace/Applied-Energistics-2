@@ -18,17 +18,6 @@
 
 package appeng.parts.p2p;
 
-
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.AEApi;
 import appeng.api.exceptions.FailedConnection;
 import appeng.api.networking.GridFlags;
@@ -45,202 +34,162 @@ import appeng.me.GridAccessException;
 import appeng.me.cache.helpers.Connections;
 import appeng.me.cache.helpers.TunnelConnection;
 import appeng.me.helpers.AENetworkProxy;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 
-public class PartP2PTunnelME extends PartP2PTunnel<PartP2PTunnelME> implements IGridTickable
-{
+public class PartP2PTunnelME extends PartP2PTunnel<PartP2PTunnelME> implements IGridTickable {
 
-	private final Connections connection = new Connections( this );
-	private final AENetworkProxy outerProxy = new AENetworkProxy( this, "outer", null, true );
+	private final Connections connection = new Connections(this);
+	private final AENetworkProxy outerProxy = new AENetworkProxy(this, "outer", null, true);
 
-	public PartP2PTunnelME( final ItemStack is )
-	{
-		super( is );
-		this.getProxy().setFlags( GridFlags.REQUIRE_CHANNEL, GridFlags.COMPRESSED_CHANNEL );
-		this.outerProxy.setFlags( GridFlags.DENSE_CAPACITY, GridFlags.CANNOT_CARRY_COMPRESSED );
+	public PartP2PTunnelME(final ItemStack is) {
+		super(is);
+		this.getProxy().setFlags(GridFlags.REQUIRE_CHANNEL, GridFlags.COMPRESSED_CHANNEL);
+		this.outerProxy.setFlags(GridFlags.DENSE_CAPACITY, GridFlags.CANNOT_CARRY_COMPRESSED);
 	}
 
 	@Override
-	public void readFromNBT( final NBTTagCompound extra )
-	{
-		super.readFromNBT( extra );
-		this.outerProxy.readFromNBT( extra );
+	public void readFromNBT(final NBTTagCompound extra) {
+		super.readFromNBT(extra);
+		this.outerProxy.readFromNBT(extra);
 	}
 
 	@Override
-	public void writeToNBT( final NBTTagCompound extra )
-	{
-		super.writeToNBT( extra );
-		this.outerProxy.writeToNBT( extra );
+	public void writeToNBT(final NBTTagCompound extra) {
+		super.writeToNBT(extra);
+		this.outerProxy.writeToNBT(extra);
 	}
 
 	@Override
-	public void onTunnelNetworkChange()
-	{
+	public void onTunnelNetworkChange() {
 		super.onTunnelNetworkChange();
-		if( !this.isOutput() )
-		{
-			try
-			{
-				this.getProxy().getTick().wakeDevice( this.getProxy().getNode() );
-			}
-			catch( final GridAccessException e )
-			{
+		if (!this.isOutput()) {
+			try {
+				this.getProxy().getTick().wakeDevice(this.getProxy().getNode());
+			} catch (final GridAccessException e) {
 				// :P
 			}
 		}
 	}
 
 	@Override
-	public AECableType getCableConnectionType( final ForgeDirection dir )
-	{
+	public AECableType getCableConnectionType(final ForgeDirection dir) {
 		return AECableType.DENSE;
 	}
 
 	@Override
-	public void removeFromWorld()
-	{
+	public void removeFromWorld() {
 		super.removeFromWorld();
 		this.outerProxy.invalidate();
 	}
 
 	@Override
-	public void addToWorld()
-	{
+	public void addToWorld() {
 		super.addToWorld();
 		this.outerProxy.onReady();
 	}
 
 	@Override
-	public void setPartHostInfo( final ForgeDirection side, final IPartHost host, final TileEntity tile )
-	{
-		super.setPartHostInfo( side, host, tile );
-		this.outerProxy.setValidSides( EnumSet.of( side ) );
+	public void setPartHostInfo(final ForgeDirection side, final IPartHost host, final TileEntity tile) {
+		super.setPartHostInfo(side, host, tile);
+		this.outerProxy.setValidSides(EnumSet.of(side));
 	}
 
 	@Override
-	public IGridNode getExternalFacingNode()
-	{
+	public IGridNode getExternalFacingNode() {
 		return this.outerProxy.getNode();
 	}
 
 	@Override
-	public void onPlacement( final EntityPlayer player, final ItemStack held, final ForgeDirection side )
-	{
-		super.onPlacement( player, held, side );
-		this.outerProxy.setOwner( player );
+	public void onPlacement(final EntityPlayer player, final ItemStack held, final ForgeDirection side) {
+		super.onPlacement(player, held, side);
+		this.outerProxy.setOwner(player);
 	}
 
 	@Override
-	public TickingRequest getTickingRequest( final IGridNode node )
-	{
-		return new TickingRequest( TickRates.METunnel.getMin(), TickRates.METunnel.getMax(), true, false );
+	public TickingRequest getTickingRequest(final IGridNode node) {
+		return new TickingRequest(TickRates.METunnel.getMin(), TickRates.METunnel.getMax(), true, false);
 	}
 
 	@Override
-	public TickRateModulation tickingRequest( final IGridNode node, final int ticksSinceLastCall )
-	{
+	public TickRateModulation tickingRequest(final IGridNode node, final int ticksSinceLastCall) {
 		// just move on...
-		try
-		{
-			if( !this.getProxy().getPath().isNetworkBooting() )
-			{
-				if( !this.getProxy().getEnergy().isNetworkPowered() )
-				{
+		try {
+			if (!this.getProxy().getPath().isNetworkBooting()) {
+				if (!this.getProxy().getEnergy().isNetworkPowered()) {
 					this.connection.markDestroy();
-					TickHandler.INSTANCE.addCallable( this.getTile().getWorldObj(), this.connection );
-				}
-				else
-				{
-					if( this.getProxy().isActive() )
-					{
+					TickHandler.INSTANCE.addCallable(this.getTile().getWorldObj(), this.connection);
+				} else {
+					if (this.getProxy().isActive()) {
 						this.connection.markCreate();
-						TickHandler.INSTANCE.addCallable( this.getTile().getWorldObj(), this.connection );
-					}
-					else
-					{
+						TickHandler.INSTANCE.addCallable(this.getTile().getWorldObj(), this.connection);
+					} else {
 						this.connection.markDestroy();
-						TickHandler.INSTANCE.addCallable( this.getTile().getWorldObj(), this.connection );
+						TickHandler.INSTANCE.addCallable(this.getTile().getWorldObj(), this.connection);
 					}
 				}
 
 				return TickRateModulation.SLEEP;
 			}
-		}
-		catch( final GridAccessException e )
-		{
+		} catch (final GridAccessException e) {
 			// meh?
 		}
 
 		return TickRateModulation.IDLE;
 	}
 
-	public void updateConnections( final Connections connections )
-	{
-		if( connections.isDestroy() )
-		{
-			for( final TunnelConnection cw : this.connection.getConnections().values() )
-			{
+	public void updateConnections(final Connections connections) {
+		if (connections.isDestroy()) {
+			for (final TunnelConnection cw : this.connection.getConnections().values()) {
 				cw.getConnection().destroy();
 			}
 
 			this.connection.getConnections().clear();
-		}
-		else if( connections.isCreate() )
-		{
+		} else if (connections.isCreate()) {
 
 			final Iterator<TunnelConnection> i = this.connection.getConnections().values().iterator();
-			while( i.hasNext() )
-			{
+			while (i.hasNext()) {
 				final TunnelConnection cw = i.next();
-				try
-				{
-					if( cw.getTunnel().getProxy().getGrid() != this.getProxy().getGrid() )
-					{
+				try {
+					if (cw.getTunnel().getProxy().getGrid() != this.getProxy().getGrid()) {
+						cw.getConnection().destroy();
+						i.remove();
+					} else if (!cw.getTunnel().getProxy().isActive()) {
 						cw.getConnection().destroy();
 						i.remove();
 					}
-					else if( !cw.getTunnel().getProxy().isActive() )
-					{
-						cw.getConnection().destroy();
-						i.remove();
-					}
-				}
-				catch( final GridAccessException e )
-				{
+				} catch (final GridAccessException e) {
 					// :P
 				}
 			}
 
 			final LinkedList<PartP2PTunnelME> newSides = new LinkedList<PartP2PTunnelME>();
-			try
-			{
-				for( final PartP2PTunnelME me : this.getOutputs() )
-				{
-					if( me.getProxy().isActive() && connections.getConnections().get( me.getGridNode() ) == null )
-					{
-						newSides.add( me );
+			try {
+				for (final PartP2PTunnelME me : this.getOutputs()) {
+					if (me.getProxy().isActive() && connections.getConnections().get(me.getGridNode()) == null) {
+						newSides.add(me);
 					}
 				}
 
-				for( final PartP2PTunnelME me : newSides )
-				{
-					try
-					{
-						connections.getConnections().put( me.getGridNode(), new TunnelConnection( me, AEApi.instance().createGridConnection( this.outerProxy.getNode(), me.outerProxy.getNode() ) ) );
-					}
-					catch( final FailedConnection e )
-					{
+				for (final PartP2PTunnelME me : newSides) {
+					try {
+						connections.getConnections().put(me.getGridNode(), new TunnelConnection(me, AEApi.instance().createGridConnection(this.outerProxy.getNode(), me.outerProxy.getNode())));
+					} catch (final FailedConnection e) {
 						final TileEntity start = this.getTile();
 						final TileEntity end = me.getTile();
-						AELog.warn( "Failed to establish a ME P2P Tunnel between the tunnels at [x=%d, y=%d, z=%d] and [x=%d, y=%d, z=%d]", start.xCoord, start.yCoord, start.zCoord, end.xCoord, end.yCoord, end.zCoord );
+						AELog.warn("Failed to establish a ME P2P Tunnel between the tunnels at [x=%d, y=%d, z=%d] and [x=%d, y=%d, z=%d]", start.xCoord, start.yCoord, start.zCoord, end.xCoord, end.yCoord, end.zCoord);
 						// :(
 					}
 				}
-			}
-			catch( final GridAccessException e )
-			{
-				AELog.debug( e );
+			} catch (final GridAccessException e) {
+				AELog.debug(e);
 			}
 		}
 	}

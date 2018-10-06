@@ -18,12 +18,13 @@
 
 package appeng.integration.modules.waila;
 
-
-import java.util.List;
-
+import appeng.api.parts.IPart;
+import appeng.integration.modules.waila.part.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaDataProvider;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,19 +32,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaDataProvider;
-
-import appeng.api.parts.IPart;
-import appeng.integration.modules.waila.part.ChannelWailaDataProvider;
-import appeng.integration.modules.waila.part.IPartWailaDataProvider;
-import appeng.integration.modules.waila.part.PartAccessor;
-import appeng.integration.modules.waila.part.PartStackWailaDataProvider;
-import appeng.integration.modules.waila.part.PowerStateWailaDataProvider;
-import appeng.integration.modules.waila.part.StorageMonitorWailaDataProvider;
-import appeng.integration.modules.waila.part.Tracer;
-
+import java.util.List;
 
 /**
  * Delegation provider for parts through {@link appeng.integration.modules.waila.part.IPartWailaDataProvider}
@@ -52,8 +41,8 @@ import appeng.integration.modules.waila.part.Tracer;
  * @version rv2
  * @since rv2
  */
-public final class PartWailaDataProvider implements IWailaDataProvider
-{
+public final class PartWailaDataProvider implements IWailaDataProvider {
+
 	/**
 	 * Contains all providers
 	 */
@@ -72,33 +61,29 @@ public final class PartWailaDataProvider implements IWailaDataProvider
 	/**
 	 * Initializes the provider list with all wanted providers
 	 */
-	public PartWailaDataProvider()
-	{
+	public PartWailaDataProvider() {
 		final IPartWailaDataProvider channel = new ChannelWailaDataProvider();
 		final IPartWailaDataProvider storageMonitor = new StorageMonitorWailaDataProvider();
 		final IPartWailaDataProvider powerState = new PowerStateWailaDataProvider();
 		final IPartWailaDataProvider partStack = new PartStackWailaDataProvider();
 
-		this.providers = Lists.newArrayList( channel, storageMonitor, powerState, partStack );
+		this.providers = Lists.newArrayList(channel, storageMonitor, powerState, partStack);
 	}
 
 	@Override
-	public ItemStack getWailaStack( final IWailaDataAccessor accessor, final IWailaConfigHandler config )
-	{
+	public ItemStack getWailaStack(final IWailaDataAccessor accessor, final IWailaConfigHandler config) {
 		final TileEntity te = accessor.getTileEntity();
 		final MovingObjectPosition mop = accessor.getPosition();
 
-		final Optional<IPart> maybePart = this.accessor.getMaybePart( te, mop );
+		final Optional<IPart> maybePart = this.accessor.getMaybePart(te, mop);
 
-		if( maybePart.isPresent() )
-		{
+		if (maybePart.isPresent()) {
 			final IPart part = maybePart.get();
 
 			ItemStack wailaStack = null;
 
-			for( final IPartWailaDataProvider provider : this.providers )
-			{
-				wailaStack = provider.getWailaStack( part, config, wailaStack );
+			for (final IPartWailaDataProvider provider : this.providers) {
+				wailaStack = provider.getWailaStack(part, config, wailaStack);
 			}
 			return wailaStack;
 		}
@@ -107,20 +92,17 @@ public final class PartWailaDataProvider implements IWailaDataProvider
 	}
 
 	@Override
-	public List<String> getWailaHead( final ItemStack itemStack, final List<String> currentToolTip, final IWailaDataAccessor accessor, final IWailaConfigHandler config )
-	{
+	public List<String> getWailaHead(final ItemStack itemStack, final List<String> currentToolTip, final IWailaDataAccessor accessor, final IWailaConfigHandler config) {
 		final TileEntity te = accessor.getTileEntity();
 		final MovingObjectPosition mop = accessor.getPosition();
 
-		final Optional<IPart> maybePart = this.accessor.getMaybePart( te, mop );
+		final Optional<IPart> maybePart = this.accessor.getMaybePart(te, mop);
 
-		if( maybePart.isPresent() )
-		{
+		if (maybePart.isPresent()) {
 			final IPart part = maybePart.get();
 
-			for( final IPartWailaDataProvider provider : this.providers )
-			{
-				provider.getWailaHead( part, currentToolTip, accessor, config );
+			for (final IPartWailaDataProvider provider : this.providers) {
+				provider.getWailaHead(part, currentToolTip, accessor, config);
 			}
 		}
 
@@ -128,20 +110,17 @@ public final class PartWailaDataProvider implements IWailaDataProvider
 	}
 
 	@Override
-	public List<String> getWailaBody( final ItemStack itemStack, final List<String> currentToolTip, final IWailaDataAccessor accessor, final IWailaConfigHandler config )
-	{
+	public List<String> getWailaBody(final ItemStack itemStack, final List<String> currentToolTip, final IWailaDataAccessor accessor, final IWailaConfigHandler config) {
 		final TileEntity te = accessor.getTileEntity();
 		final MovingObjectPosition mop = accessor.getPosition();
 
-		final Optional<IPart> maybePart = this.accessor.getMaybePart( te, mop );
+		final Optional<IPart> maybePart = this.accessor.getMaybePart(te, mop);
 
-		if( maybePart.isPresent() )
-		{
+		if (maybePart.isPresent()) {
 			final IPart part = maybePart.get();
 
-			for( final IPartWailaDataProvider provider : this.providers )
-			{
-				provider.getWailaBody( part, currentToolTip, accessor, config );
+			for (final IPartWailaDataProvider provider : this.providers) {
+				provider.getWailaBody(part, currentToolTip, accessor, config);
 			}
 		}
 
@@ -149,20 +128,17 @@ public final class PartWailaDataProvider implements IWailaDataProvider
 	}
 
 	@Override
-	public List<String> getWailaTail( final ItemStack itemStack, final List<String> currentToolTip, final IWailaDataAccessor accessor, final IWailaConfigHandler config )
-	{
+	public List<String> getWailaTail(final ItemStack itemStack, final List<String> currentToolTip, final IWailaDataAccessor accessor, final IWailaConfigHandler config) {
 		final TileEntity te = accessor.getTileEntity();
 		final MovingObjectPosition mop = accessor.getPosition();
 
-		final Optional<IPart> maybePart = this.accessor.getMaybePart( te, mop );
+		final Optional<IPart> maybePart = this.accessor.getMaybePart(te, mop);
 
-		if( maybePart.isPresent() )
-		{
+		if (maybePart.isPresent()) {
 			final IPart part = maybePart.get();
 
-			for( final IPartWailaDataProvider provider : this.providers )
-			{
-				provider.getWailaTail( part, currentToolTip, accessor, config );
+			for (final IPartWailaDataProvider provider : this.providers) {
+				provider.getWailaTail(part, currentToolTip, accessor, config);
 			}
 		}
 
@@ -170,21 +146,17 @@ public final class PartWailaDataProvider implements IWailaDataProvider
 	}
 
 	@Override
-	public NBTTagCompound getNBTData( final EntityPlayerMP player, final TileEntity te, final NBTTagCompound tag, final World world, final int x, final int y, final int z )
-	{
-		final MovingObjectPosition mop = this.tracer.retraceBlock( world, player, x, y, z );
+	public NBTTagCompound getNBTData(final EntityPlayerMP player, final TileEntity te, final NBTTagCompound tag, final World world, final int x, final int y, final int z) {
+		final MovingObjectPosition mop = this.tracer.retraceBlock(world, player, x, y, z);
 
-		if( mop != null )
-		{
-			final Optional<IPart> maybePart = this.accessor.getMaybePart( te, mop );
+		if (mop != null) {
+			final Optional<IPart> maybePart = this.accessor.getMaybePart(te, mop);
 
-			if( maybePart.isPresent() )
-			{
+			if (maybePart.isPresent()) {
 				final IPart part = maybePart.get();
 
-				for( final IPartWailaDataProvider provider : this.providers )
-				{
-					provider.getNBTData( player, part, te, tag, world, x, y, z );
+				for (final IPartWailaDataProvider provider : this.providers) {
+					provider.getNBTData(player, part, te, tag, world, x, y, z);
 				}
 			}
 		}

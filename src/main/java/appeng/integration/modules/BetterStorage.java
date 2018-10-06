@@ -18,10 +18,6 @@
 
 package appeng.integration.modules;
 
-
-import net.mcft.copy.betterstorage.api.crate.ICrateStorage;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.AEApi;
 import appeng.helpers.Reflected;
 import appeng.integration.IIntegrationModule;
@@ -30,43 +26,38 @@ import appeng.integration.abstraction.IBetterStorage;
 import appeng.integration.modules.helpers.BSCrateHandler;
 import appeng.integration.modules.helpers.BSCrateStorageAdaptor;
 import appeng.util.InventoryAdaptor;
+import net.mcft.copy.betterstorage.api.crate.ICrateStorage;
+import net.minecraftforge.common.util.ForgeDirection;
 
+public class BetterStorage implements IIntegrationModule, IBetterStorage {
 
-public class BetterStorage implements IIntegrationModule, IBetterStorage
-{
 	@Reflected
 	public static BetterStorage instance;
 
 	@Reflected
-	public BetterStorage()
-	{
-		IntegrationHelper.testClassExistence( this, net.mcft.copy.betterstorage.api.crate.ICrateStorage.class );
+	public BetterStorage() {
+		IntegrationHelper.testClassExistence(this, net.mcft.copy.betterstorage.api.crate.ICrateStorage.class);
 	}
 
 	@Override
-	public boolean isStorageCrate( final Object te )
-	{
+	public boolean isStorageCrate(final Object te) {
 		return te instanceof ICrateStorage;
 	}
 
 	@Override
-	public InventoryAdaptor getAdaptor( final Object te, final ForgeDirection d )
-	{
-		if( te instanceof ICrateStorage )
-		{
-			return new BSCrateStorageAdaptor( te );
+	public InventoryAdaptor getAdaptor(final Object te, final ForgeDirection d) {
+		if (te instanceof ICrateStorage) {
+			return new BSCrateStorageAdaptor(te);
 		}
 		return null;
 	}
 
 	@Override
-	public void init()
-	{
+	public void init() {
 	}
 
 	@Override
-	public void postInit()
-	{
-		AEApi.instance().registries().externalStorage().addExternalStorageInterface( new BSCrateHandler() );
+	public void postInit() {
+		AEApi.instance().registries().externalStorage().addExternalStorageInterface(new BSCrateHandler());
 	}
 }

@@ -18,61 +18,47 @@
 
 package appeng.core;
 
-
+import appeng.api.AEApi;
+import appeng.api.definitions.*;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import appeng.api.AEApi;
-import appeng.api.definitions.IBlocks;
-import appeng.api.definitions.IDefinitions;
-import appeng.api.definitions.IItemDefinition;
-import appeng.api.definitions.IItems;
-import appeng.api.definitions.IMaterials;
+public final class CreativeTab extends CreativeTabs {
 
-
-public final class CreativeTab extends CreativeTabs
-{
 	public static CreativeTab instance = null;
 
-	public CreativeTab()
-	{
-		super( "appliedenergistics2" );
+	public CreativeTab() {
+		super("appliedenergistics2");
 	}
 
-	static void init()
-	{
+	static void init() {
 		instance = new CreativeTab();
 	}
 
 	@Override
-	public Item getTabIconItem()
-	{
+	public Item getTabIconItem() {
 		return this.getIconItemStack().getItem();
 	}
 
 	@Override
-	public ItemStack getIconItemStack()
-	{
+	public ItemStack getIconItemStack() {
 		final IDefinitions definitions = AEApi.instance().definitions();
 		final IBlocks blocks = definitions.blocks();
 		final IItems items = definitions.items();
 		final IMaterials materials = definitions.materials();
 
-		return this.findFirst( blocks.controller(), blocks.chest(), blocks.cellWorkbench(), blocks.fluix(), items.cell1k(), items.networkTool(), materials.fluixCrystal(), materials.certusQuartzCrystal() );
+		return this.findFirst(blocks.controller(), blocks.chest(), blocks.cellWorkbench(), blocks.fluix(), items.cell1k(), items.networkTool(), materials.fluixCrystal(), materials.certusQuartzCrystal());
 	}
 
-	private ItemStack findFirst( final IItemDefinition... choices )
-	{
-		for( final IItemDefinition definition : choices )
-		{
-			for( final ItemStack definitionStack : definition.maybeStack( 1 ).asSet() )
-			{
+	private ItemStack findFirst(final IItemDefinition... choices) {
+		for (final IItemDefinition definition : choices) {
+			for (final ItemStack definitionStack : definition.maybeStack(1).asSet()) {
 				return definitionStack;
 			}
 		}
 
-		return new ItemStack( Blocks.chest );
+		return new ItemStack(Blocks.chest);
 	}
 }

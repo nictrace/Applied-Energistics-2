@@ -18,15 +18,6 @@
 
 package appeng.parts.reporting;
 
-
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
-
 import appeng.api.config.Settings;
 import appeng.api.config.SortDir;
 import appeng.api.config.SortOrder;
@@ -45,11 +36,17 @@ import appeng.tile.inventory.InvOperation;
 import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
 import appeng.util.Platform;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Vec3;
 
+import java.util.List;
 
 /**
  * Anything resembling an network terminal with view cells can reuse this.
- *
+ * <p>
  * Note this applies only to terminals like the ME Terminal. It does not apply for more specialized terminals like the
  * Interface Terminal.
  *
@@ -58,70 +55,58 @@ import appeng.util.Platform;
  * @version rv3
  * @since rv3
  */
-public abstract class AbstractPartTerminal extends AbstractPartDisplay implements ITerminalHost, IConfigManagerHost, IViewCellStorage, IAEAppEngInventory
-{
+public abstract class AbstractPartTerminal extends AbstractPartDisplay implements ITerminalHost, IConfigManagerHost, IViewCellStorage, IAEAppEngInventory {
 
-	private final IConfigManager cm = new ConfigManager( this );
-	private final AppEngInternalInventory viewCell = new AppEngInternalInventory( this, 5 );
+	private final IConfigManager cm = new ConfigManager(this);
+	private final AppEngInternalInventory viewCell = new AppEngInternalInventory(this, 5);
 
-	public AbstractPartTerminal( final ItemStack is )
-	{
-		super( is );
+	public AbstractPartTerminal(final ItemStack is) {
+		super(is);
 
-		this.cm.registerSetting( Settings.SORT_BY, SortOrder.NAME );
-		this.cm.registerSetting( Settings.VIEW_MODE, ViewItems.ALL );
-		this.cm.registerSetting( Settings.SORT_DIRECTION, SortDir.ASCENDING );
+		this.cm.registerSetting(Settings.SORT_BY, SortOrder.NAME);
+		this.cm.registerSetting(Settings.VIEW_MODE, ViewItems.ALL);
+		this.cm.registerSetting(Settings.SORT_DIRECTION, SortDir.ASCENDING);
 	}
 
 	@Override
-	public void getDrops( final List<ItemStack> drops, final boolean wrenched )
-	{
-		super.getDrops( drops, wrenched );
+	public void getDrops(final List<ItemStack> drops, final boolean wrenched) {
+		super.getDrops(drops, wrenched);
 
-		for( final ItemStack is : this.viewCell )
-		{
-			if( is != null )
-			{
-				drops.add( is );
+		for (final ItemStack is : this.viewCell) {
+			if (is != null) {
+				drops.add(is);
 			}
 		}
 	}
 
 	@Override
-	public IConfigManager getConfigManager()
-	{
+	public IConfigManager getConfigManager() {
 		return this.cm;
 	}
 
 	@Override
-	public void readFromNBT( final NBTTagCompound data )
-	{
-		super.readFromNBT( data );
-		this.cm.readFromNBT( data );
-		this.viewCell.readFromNBT( data, "viewCell" );
+	public void readFromNBT(final NBTTagCompound data) {
+		super.readFromNBT(data);
+		this.cm.readFromNBT(data);
+		this.viewCell.readFromNBT(data, "viewCell");
 	}
 
 	@Override
-	public void writeToNBT( final NBTTagCompound data )
-	{
-		super.writeToNBT( data );
-		this.cm.writeToNBT( data );
-		this.viewCell.writeToNBT( data, "viewCell" );
+	public void writeToNBT(final NBTTagCompound data) {
+		super.writeToNBT(data);
+		this.cm.writeToNBT(data);
+		this.viewCell.writeToNBT(data, "viewCell");
 	}
 
 	@Override
-	public boolean onPartActivate( final EntityPlayer player, final Vec3 pos )
-	{
-		if( !super.onPartActivate( player, pos ) )
-		{
-			if( !player.isSneaking() )
-			{
-				if( Platform.isClient() )
-				{
+	public boolean onPartActivate(final EntityPlayer player, final Vec3 pos) {
+		if (!super.onPartActivate(player, pos)) {
+			if (!player.isSneaking()) {
+				if (Platform.isClient()) {
 					return true;
 				}
 
-				Platform.openGUI( player, this.getHost().getTile(), this.getSide(), this.getGui( player ) );
+				Platform.openGUI(player, this.getHost().getTile(), this.getSide(), this.getGui(player));
 
 				return true;
 			}
@@ -129,54 +114,42 @@ public abstract class AbstractPartTerminal extends AbstractPartDisplay implement
 		return false;
 	}
 
-	public GuiBridge getGui( final EntityPlayer player )
-	{
+	public GuiBridge getGui(final EntityPlayer player) {
 		return GuiBridge.GUI_ME;
 	}
 
 	@Override
-	public IMEMonitor<IAEItemStack> getItemInventory()
-	{
-		try
-		{
+	public IMEMonitor<IAEItemStack> getItemInventory() {
+		try {
 			return this.getProxy().getStorage().getItemInventory();
-		}
-		catch( final GridAccessException e )
-		{
+		} catch (final GridAccessException e) {
 			// err nope?
 		}
 		return null;
 	}
 
 	@Override
-	public IMEMonitor<IAEFluidStack> getFluidInventory()
-	{
-		try
-		{
+	public IMEMonitor<IAEFluidStack> getFluidInventory() {
+		try {
 			return this.getProxy().getStorage().getFluidInventory();
-		}
-		catch( final GridAccessException e )
-		{
+		} catch (final GridAccessException e) {
 			// err nope?
 		}
 		return null;
 	}
 
 	@Override
-	public void updateSetting( final IConfigManager manager, final Enum settingName, final Enum newValue )
-	{
+	public void updateSetting(final IConfigManager manager, final Enum settingName, final Enum newValue) {
 
 	}
 
 	@Override
-	public IInventory getViewCellStorage()
-	{
+	public IInventory getViewCellStorage() {
 		return this.viewCell;
 	}
 
 	@Override
-	public void onChangeInventory( final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack )
-	{
+	public void onChangeInventory(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack) {
 		this.getHost().markForSave();
 	}
 }

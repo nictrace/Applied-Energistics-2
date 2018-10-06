@@ -18,49 +18,34 @@
 
 package appeng.core.features.registries;
 
+import appeng.api.storage.*;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.item.ItemStack;
-
-import appeng.api.storage.ICellHandler;
-import appeng.api.storage.ICellRegistry;
-import appeng.api.storage.IMEInventoryHandler;
-import appeng.api.storage.ISaveProvider;
-import appeng.api.storage.StorageChannel;
-
-
-public class CellRegistry implements ICellRegistry
-{
+public class CellRegistry implements ICellRegistry {
 
 	private final List<ICellHandler> handlers;
 
-	public CellRegistry()
-	{
+	public CellRegistry() {
 		this.handlers = new ArrayList<ICellHandler>();
 	}
 
 	@Override
-	public void addCellHandler( final ICellHandler h )
-	{
-		if( h != null )
-		{
-			this.handlers.add( h );
+	public void addCellHandler(final ICellHandler h) {
+		if (h != null) {
+			this.handlers.add(h);
 		}
 	}
 
 	@Override
-	public boolean isCellHandled( final ItemStack is )
-	{
-		if( is == null )
-		{
+	public boolean isCellHandled(final ItemStack is) {
+		if (is == null) {
 			return false;
 		}
-		for( final ICellHandler ch : this.handlers )
-		{
-			if( ch.isCell( is ) )
-			{
+		for (final ICellHandler ch : this.handlers) {
+			if (ch.isCell(is)) {
 				return true;
 			}
 		}
@@ -68,16 +53,12 @@ public class CellRegistry implements ICellRegistry
 	}
 
 	@Override
-	public ICellHandler getHandler( final ItemStack is )
-	{
-		if( is == null )
-		{
+	public ICellHandler getHandler(final ItemStack is) {
+		if (is == null) {
 			return null;
 		}
-		for( final ICellHandler ch : this.handlers )
-		{
-			if( ch.isCell( is ) )
-			{
+		for (final ICellHandler ch : this.handlers) {
+			if (ch.isCell(is)) {
 				return ch;
 			}
 		}
@@ -85,17 +66,13 @@ public class CellRegistry implements ICellRegistry
 	}
 
 	@Override
-	public IMEInventoryHandler getCellInventory( final ItemStack is, final ISaveProvider container, final StorageChannel chan )
-	{
-		if( is == null )
-		{
+	public IMEInventoryHandler getCellInventory(final ItemStack is, final ISaveProvider container, final StorageChannel chan) {
+		if (is == null) {
 			return null;
 		}
-		for( final ICellHandler ch : this.handlers )
-		{
-			if( ch.isCell( is ) )
-			{
-				return ch.getCellInventory( is, container, chan );
+		for (final ICellHandler ch : this.handlers) {
+			if (ch.isCell(is)) {
+				return ch.getCellInventory(is, container, chan);
 			}
 		}
 		return null;

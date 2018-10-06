@@ -18,16 +18,13 @@
 
 package appeng.me.cluster;
 
+import appeng.api.networking.IGridHost;
 
 import java.util.Iterator;
 
-import appeng.api.networking.IGridHost;
+public interface IAECluster {
 
-
-public interface IAECluster
-{
-
-	void updateStatus( boolean updateGrid );
+	void updateStatus(boolean updateGrid);
 
 	void destroy();
 

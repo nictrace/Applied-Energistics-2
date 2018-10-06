@@ -23,10 +23,9 @@
 
 package appeng.api.exceptions;
 
-
 /**
  * Exception due to trying to connect different security realms.
- *
+ * <p>
  * Intended to signal an internal exception and not intended to be thrown by
  * any 3rd party module.
  *
@@ -34,19 +33,17 @@ package appeng.api.exceptions;
  * @version rv3
  * @since rv3
  */
-public class SecurityConnectionException extends FailedConnection
-{
+public class SecurityConnectionException extends FailedConnection {
+
 	private static final long serialVersionUID = 5048714900434215426L;
 	private static final String DEFAULT_MESSAGE = "Connection failed due to different security realms.";
 
-	public SecurityConnectionException()
-	{
-		super( DEFAULT_MESSAGE );
+	public SecurityConnectionException() {
+		super(DEFAULT_MESSAGE);
 	}
 
-	public SecurityConnectionException( String message )
-	{
-		super( message );
+	public SecurityConnectionException(String message) {
+		super(message);
 	}
 
 }

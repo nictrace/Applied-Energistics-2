@@ -18,9 +18,7 @@
 
 package appeng.util;
 
-
-public enum SettingsFrom
-{
+public enum SettingsFrom {
 	// moved the item, and replaced it.
 	DISMANTLE_ITEM,
 

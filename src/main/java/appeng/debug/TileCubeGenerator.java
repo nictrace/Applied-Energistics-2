@@ -18,104 +18,81 @@
 
 package appeng.debug;
 
-
+import appeng.core.CommonHelper;
+import appeng.tile.AEBaseTile;
+import appeng.tile.TileEvent;
+import appeng.tile.events.TileEventType;
+import appeng.util.Platform;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import appeng.core.CommonHelper;
-import appeng.tile.AEBaseTile;
-import appeng.tile.TileEvent;
-import appeng.tile.events.TileEventType;
-import appeng.util.Platform;
-
-
-public class TileCubeGenerator extends AEBaseTile
-{
+public class TileCubeGenerator extends AEBaseTile {
 
 	private int size = 3;
 	private ItemStack is = null;
 	private int countdown = 20 * 10;
 	private EntityPlayer who = null;
 
-	@TileEvent( TileEventType.TICK )
-	public void onTickEvent()
-	{
-		if( this.is != null && Platform.isServer() )
-		{
+	@TileEvent(TileEventType.TICK)
+	public void onTickEvent() {
+		if (this.is != null && Platform.isServer()) {
 			this.countdown--;
 
-			if( this.countdown % 20 == 0 )
-			{
-				for( final EntityPlayer e : CommonHelper.proxy.getPlayers() )
-				{
-					e.addChatMessage( new ChatComponentText( "Spawning in... " + ( this.countdown / 20 ) ) );
+			if (this.countdown % 20 == 0) {
+				for (final EntityPlayer e : CommonHelper.proxy.getPlayers()) {
+					e.addChatMessage(new ChatComponentText("Spawning in... " + (this.countdown / 20)));
 				}
 			}
 
-			if( this.countdown <= 0 )
-			{
+			if (this.countdown <= 0) {
 				this.spawn();
 			}
 		}
 	}
 
-	private void spawn()
-	{
-		this.worldObj.setBlock( this.xCoord, this.yCoord, this.zCoord, Platform.AIR_BLOCK, 0, 3 );
+	private void spawn() {
+		this.worldObj.setBlock(this.xCoord, this.yCoord, this.zCoord, Platform.AIR_BLOCK, 0, 3);
 
 		final Item i = this.is.getItem();
 		final int side = ForgeDirection.UP.ordinal();
 
-		final int half = (int) Math.floor( this.size / 2 );
+		final int half = (int) Math.floor(this.size / 2);
 
-		for( int y = 0; y < this.size; y++ )
-		{
-			for( int x = -half; x < half; x++ )
-			{
-				for( int z = -half; z < half; z++ )
-				{
-					i.onItemUse( this.is.copy(), this.who, this.worldObj, x + this.xCoord, y + this.yCoord - 1, z + this.zCoord, side, 0.5f, 0.0f, 0.5f );
+		for (int y = 0; y < this.size; y++) {
+			for (int x = -half; x < half; x++) {
+				for (int z = -half; z < half; z++) {
+					i.onItemUse(this.is.copy(), this.who, this.worldObj, x + this.xCoord, y + this.yCoord - 1, z + this.zCoord, side, 0.5f, 0.0f, 0.5f);
 				}
 			}
 		}
 	}
 
-	void click( final EntityPlayer player )
-	{
-		if( Platform.isServer() )
-		{
+	void click(final EntityPlayer player) {
+		if (Platform.isServer()) {
 			final ItemStack hand = player.inventory.getCurrentItem();
 			this.who = player;
 
-			if( hand == null )
-			{
+			if (hand == null) {
 				this.is = null;
 
-				if( player.isSneaking() )
-				{
+				if (player.isSneaking()) {
 					this.size--;
-				}
-				else
-				{
+				} else {
 					this.size++;
 				}
 
-				if( this.size < 3 )
-				{
+				if (this.size < 3) {
 					this.size = 3;
 				}
-				if( this.size > 64 )
-				{
+				if (this.size > 64) {
 					this.size = 64;
 				}
 
-				player.addChatMessage( new ChatComponentText( "Size: " + this.size ) );
-			}
-			else
-			{
+				player.addChatMessage(new ChatComponentText("Size: " + this.size));
+			} else {
 				this.countdown = 20 * 10;
 				this.is = hand;
 			}

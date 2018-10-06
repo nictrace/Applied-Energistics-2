@@ -18,44 +18,36 @@
 
 package appeng.util;
 
+import appeng.api.util.IReadOnlyCollection;
 
 import java.util.Collection;
 import java.util.Iterator;
 
-import appeng.api.util.IReadOnlyCollection;
-
-
-public class ReadOnlyCollection<T> implements IReadOnlyCollection<T>
-{
+public class ReadOnlyCollection<T> implements IReadOnlyCollection<T> {
 
 	private final Collection<T> c;
 
-	public ReadOnlyCollection( final Collection<T> in )
-	{
+	public ReadOnlyCollection(final Collection<T> in) {
 		this.c = in;
 	}
 
 	@Override
-	public Iterator<T> iterator()
-	{
+	public Iterator<T> iterator() {
 		return this.c.iterator();
 	}
 
 	@Override
-	public int size()
-	{
+	public int size() {
 		return this.c.size();
 	}
 
 	@Override
-	public boolean isEmpty()
-	{
+	public boolean isEmpty() {
 		return this.c.isEmpty();
 	}
 
 	@Override
-	public boolean contains( final Object node )
-	{
-		return this.c.contains( node );
+	public boolean contains(final Object node) {
+		return this.c.contains(node);
 	}
 }

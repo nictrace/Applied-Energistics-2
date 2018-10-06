@@ -23,22 +23,19 @@
 
 package appeng.api.implementations.tiles;
 
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 
 /**
  * Crank/Crankable API,
- *
+ * <p>
  * Tiles that Implement this can receive power, from the crank, and have the
  * crank placed on them.
- *
+ * <p>
  * Tiles that access other tiles that implement this method can act as Cranks.
- *
+ * <p>
  * This interface must be implemented by a tile entity.
  */
-public interface ICrankable
-{
+public interface ICrankable {
 
 	/**
 	 * Test if the crank can turn, return false if there is no work to be done.
@@ -55,5 +52,5 @@ public interface ICrankable
 	/**
 	 * @return true if the crank can attach on the given side.
 	 */
-	boolean canCrankAttach( ForgeDirection directionToCrank );
+	boolean canCrankAttach(ForgeDirection directionToCrank);
 }

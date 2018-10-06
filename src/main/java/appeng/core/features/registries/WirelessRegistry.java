@@ -18,14 +18,6 @@
 
 package appeng.core.features.registries;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-
 import appeng.api.AEApi;
 import appeng.api.features.ILocatable;
 import appeng.api.features.IWirelessTermHandler;
@@ -33,33 +25,32 @@ import appeng.api.features.IWirelessTermRegistry;
 import appeng.core.localization.PlayerMessages;
 import appeng.core.sync.GuiBridge;
 import appeng.util.Platform;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public final class WirelessRegistry implements IWirelessTermRegistry
-{
+public final class WirelessRegistry implements IWirelessTermRegistry {
+
 	private final List<IWirelessTermHandler> handlers;
 
-	public WirelessRegistry()
-	{
+	public WirelessRegistry() {
 		this.handlers = new ArrayList<IWirelessTermHandler>();
 	}
 
 	@Override
-	public void registerWirelessHandler( final IWirelessTermHandler handler )
-	{
-		if( handler != null )
-		{
-			this.handlers.add( handler );
+	public void registerWirelessHandler(final IWirelessTermHandler handler) {
+		if (handler != null) {
+			this.handlers.add(handler);
 		}
 	}
 
 	@Override
-	public boolean isWirelessTerminal( final ItemStack is )
-	{
-		for( final IWirelessTermHandler h : this.handlers )
-		{
-			if( h.canHandle( is ) )
-			{
+	public boolean isWirelessTerminal(final ItemStack is) {
+		for (final IWirelessTermHandler h : this.handlers) {
+			if (h.canHandle(is)) {
 				return true;
 			}
 		}
@@ -67,12 +58,9 @@ public final class WirelessRegistry implements IWirelessTermRegistry
 	}
 
 	@Override
-	public IWirelessTermHandler getWirelessTerminalHandler( final ItemStack is )
-	{
-		for( final IWirelessTermHandler h : this.handlers )
-		{
-			if( h.canHandle( is ) )
-			{
+	public IWirelessTermHandler getWirelessTerminalHandler(final ItemStack is) {
+		for (final IWirelessTermHandler h : this.handlers) {
+			if (h.canHandle(is)) {
 				return h;
 			}
 		}
@@ -80,42 +68,34 @@ public final class WirelessRegistry implements IWirelessTermRegistry
 	}
 
 	@Override
-	public void openWirelessTerminalGui( final ItemStack item, final World w, final EntityPlayer player )
-	{
-		if( Platform.isClient() )
-		{
+	public void openWirelessTerminalGui(final ItemStack item, final World w, final EntityPlayer player) {
+		if (Platform.isClient()) {
 			return;
 		}
 
-		if( !this.isWirelessTerminal( item ) )
-		{
-			player.addChatMessage( PlayerMessages.DeviceNotWirelessTerminal.get() );
+		if (!this.isWirelessTerminal(item)) {
+			player.addChatMessage(PlayerMessages.DeviceNotWirelessTerminal.get());
 			return;
 		}
 
-		final IWirelessTermHandler handler = this.getWirelessTerminalHandler( item );
-		final String unparsedKey = handler.getEncryptionKey( item );
-		if( unparsedKey.isEmpty() )
-		{
-			player.addChatMessage( PlayerMessages.DeviceNotLinked.get() );
+		final IWirelessTermHandler handler = this.getWirelessTerminalHandler(item);
+		final String unparsedKey = handler.getEncryptionKey(item);
+		if (unparsedKey.isEmpty()) {
+			player.addChatMessage(PlayerMessages.DeviceNotLinked.get());
 			return;
 		}
 
-		final long parsedKey = Long.parseLong( unparsedKey );
-		final ILocatable securityStation = AEApi.instance().registries().locatable().getLocatableBy( parsedKey );
-		if( securityStation == null )
-		{
-			player.addChatMessage( PlayerMessages.StationCanNotBeLocated.get() );
+		final long parsedKey = Long.parseLong(unparsedKey);
+		final ILocatable securityStation = AEApi.instance().registries().locatable().getLocatableBy(parsedKey);
+		if (securityStation == null) {
+			player.addChatMessage(PlayerMessages.StationCanNotBeLocated.get());
 			return;
 		}
 
-		if( handler.hasPower( player, 0.5, item ) )
-		{
-			Platform.openGUI( player, null, null, GuiBridge.GUI_WIRELESS_TERM );
-		}
-		else
-		{
-			player.addChatMessage( PlayerMessages.DeviceNotPowered.get() );
+		if (handler.hasPower(player, 0.5, item)) {
+			Platform.openGUI(player, null, null, GuiBridge.GUI_WIRELESS_TERM);
+		} else {
+			player.addChatMessage(PlayerMessages.DeviceNotPowered.get());
 		}
 	}
 }

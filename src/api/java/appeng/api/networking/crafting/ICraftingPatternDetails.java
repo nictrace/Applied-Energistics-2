@@ -23,22 +23,18 @@
 
 package appeng.api.networking.crafting;
 
-
+import appeng.api.implementations.ICraftingPatternItem;
+import appeng.api.storage.data.IAEItemStack;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import appeng.api.implementations.ICraftingPatternItem;
-import appeng.api.storage.data.IAEItemStack;
-
-
 /**
  * do not implement provided by {@link ICraftingPatternItem}
- *
+ * <p>
  * caching this INSTANCE will increase performance of validation and checks.
  */
-public interface ICraftingPatternDetails
-{
+public interface ICraftingPatternDetails {
 
 	/**
 	 * @return source item.
@@ -49,10 +45,9 @@ public interface ICraftingPatternDetails
 	 * @param slotIndex specific slot index
 	 * @param itemStack item in slot
 	 * @param world     crafting world
-	 *
 	 * @return if an item can be used in the specific slot for this pattern.
 	 */
-	boolean isValidItemForSlot( int slotIndex, ItemStack itemStack, World world );
+	boolean isValidItemForSlot(int slotIndex, ItemStack itemStack, World world);
 
 	/**
 	 * @return if this pattern is a crafting pattern ( work bench )
@@ -89,10 +84,9 @@ public interface ICraftingPatternDetails
 	 *
 	 * @param craftingInv inventory
 	 * @param world       crafting world
-	 *
 	 * @return the crafted ( work bench ) item.
 	 */
-	ItemStack getOutput( InventoryCrafting craftingInv, World world );
+	ItemStack getOutput(InventoryCrafting craftingInv, World world);
 
 	/**
 	 * Get the priority of this pattern
@@ -106,5 +100,5 @@ public interface ICraftingPatternDetails
 	 *
 	 * @param priority priority of pattern
 	 */
-	void setPriority( int priority );
+	void setPriority(int priority);
 }

@@ -18,49 +18,41 @@
 
 package appeng.items.tools.quartz;
 
-
-import java.util.EnumSet;
-
-import com.google.common.base.Optional;
-
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemStack;
-
 import appeng.core.features.AEFeature;
 import appeng.core.features.IAEFeature;
 import appeng.core.features.IFeatureHandler;
 import appeng.core.features.ItemFeatureHandler;
 import appeng.util.Platform;
+import com.google.common.base.Optional;
+import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemStack;
 
+import java.util.EnumSet;
 
-public class ToolQuartzHoe extends ItemHoe implements IAEFeature
-{
+public class ToolQuartzHoe extends ItemHoe implements IAEFeature {
+
 	private final AEFeature feature;
 	private final IFeatureHandler handler;
 
-	public ToolQuartzHoe( final AEFeature feature )
-	{
-		super( ToolMaterial.IRON );
+	public ToolQuartzHoe(final AEFeature feature) {
+		super(ToolMaterial.IRON);
 
 		this.feature = feature;
-		this.handler = new ItemFeatureHandler( EnumSet.of( feature, AEFeature.QuartzHoe ), this, this, Optional.of( feature.name() ) );
+		this.handler = new ItemFeatureHandler(EnumSet.of(feature, AEFeature.QuartzHoe), this, this, Optional.of(feature.name()));
 	}
 
 	@Override
-	public IFeatureHandler handler()
-	{
+	public IFeatureHandler handler() {
 		return this.handler;
 	}
 
 	@Override
-	public void postInit()
-	{
+	public void postInit() {
 		// override!
 	}
 
 	@Override
-	public boolean getIsRepairable( final ItemStack a, final ItemStack b )
-	{
-		return Platform.canRepair( this.feature, a, b );
+	public boolean getIsRepairable(final ItemStack a, final ItemStack b) {
+		return Platform.canRepair(this.feature, a, b);
 	}
 }

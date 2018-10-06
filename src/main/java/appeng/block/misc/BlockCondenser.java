@@ -18,7 +18,6 @@
 
 package appeng.block.misc;
 
-
 import appeng.block.AEBaseTileBlock;
 import appeng.core.features.AEFeature;
 import appeng.core.sync.GuiBridge;
@@ -31,32 +30,25 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.EnumSet;
 
+public class BlockCondenser extends AEBaseTileBlock {
 
-public class BlockCondenser extends AEBaseTileBlock
-{
+	public BlockCondenser() {
+		super(Material.iron);
 
-	public BlockCondenser()
-	{
-		super( Material.iron );
-
-		this.setTileEntity( TileCondenser.class );
-		this.setFeature( EnumSet.of( AEFeature.Core ) );
+		this.setTileEntity(TileCondenser.class);
+		this.setFeature(EnumSet.of(AEFeature.Core));
 	}
 
 	@Override
-	public boolean onActivated( final World w, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		if( player.isSneaking() )
-		{
+	public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ) {
+		if (player.isSneaking()) {
 			return false;
 		}
 
-		if( Platform.isServer() )
-		{
-			final TileCondenser tc = this.getTileEntity( w, x, y, z );
-			if( tc != null && !player.isSneaking() )
-			{
-				Platform.openGUI( player, tc, ForgeDirection.getOrientation( side ), GuiBridge.GUI_CONDENSER );
+		if (Platform.isServer()) {
+			final TileCondenser tc = this.getTileEntity(w, x, y, z);
+			if (tc != null && !player.isSneaking()) {
+				Platform.openGUI(player, tc, ForgeDirection.getOrientation(side), GuiBridge.GUI_CONDENSER);
 				return true;
 			}
 		}

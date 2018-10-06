@@ -1,28 +1,25 @@
 package appeng.api.features;
 
-
-import java.util.List;
-import javax.annotation.Nonnull;
-
+import com.google.common.base.Optional;
 import net.minecraft.item.ItemStack;
 
-import com.google.common.base.Optional;
-
+import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Registration Records for {@link IInscriberRegistry}
- *
+ * <p>
  * You have to pay attention though, that recipes are not mirrored,
  * where the top and bottom slots are switching places.
- *
+ * <p>
  * This is applied on runtime.
  *
  * @author thatsIch
  * @version rv2
  * @since rv2
  */
-public interface IInscriberRecipe
-{
+public interface IInscriberRecipe {
+
 	/**
 	 * the current inputs
 	 *

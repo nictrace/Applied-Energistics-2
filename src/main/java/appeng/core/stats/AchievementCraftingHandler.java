@@ -18,12 +18,9 @@
 
 package appeng.core.stats;
 
-
+import appeng.util.Platform;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
-
-import appeng.util.Platform;
-
 
 /**
  * handles the achievement when an {@link net.minecraft.item.Item} is crafted by a player.
@@ -32,38 +29,31 @@ import appeng.util.Platform;
  * @author thatsIch
  * @since rv2
  */
-public class AchievementCraftingHandler
-{
+public class AchievementCraftingHandler {
+
 	private final PlayerDifferentiator differentiator;
 
-	public AchievementCraftingHandler( final PlayerDifferentiator differentiator )
-	{
+	public AchievementCraftingHandler(final PlayerDifferentiator differentiator) {
 		this.differentiator = differentiator;
 	}
 
 	@SubscribeEvent
-	public void onPlayerCraftingEvent( final PlayerEvent.ItemCraftedEvent event )
-	{
-		if( this.differentiator.isNoPlayer( event.player ) || event.crafting == null )
-		{
+	public void onPlayerCraftingEvent(final PlayerEvent.ItemCraftedEvent event) {
+		if (this.differentiator.isNoPlayer(event.player) || event.crafting == null) {
 			return;
 		}
 
-		for( final Achievements achievement : Achievements.values() )
-		{
-			switch( achievement.getType() )
-			{
+		for (final Achievements achievement : Achievements.values()) {
+			switch (achievement.getType()) {
 				case Craft:
-					if( Platform.isSameItemPrecise( achievement.getStack(), event.crafting ) )
-					{
-						achievement.addToPlayer( event.player );
+					if (Platform.isSameItemPrecise(achievement.getStack(), event.crafting)) {
+						achievement.addToPlayer(event.player);
 						return;
 					}
 					break;
 				case CraftItem:
-					if( achievement.getStack() != null && achievement.getStack().getItem().getClass() == event.crafting.getItem().getClass() )
-					{
-						achievement.addToPlayer( event.player );
+					if (achievement.getStack() != null && achievement.getStack().getItem().getClass() == event.crafting.getItem().getClass()) {
+						achievement.addToPlayer(event.player);
 						return;
 					}
 				default:

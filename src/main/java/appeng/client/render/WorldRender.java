@@ -18,28 +18,23 @@
 
 package appeng.client.render;
 
-
-import java.util.HashMap;
-import java.util.Map;
-
+import appeng.block.AEBaseBlock;
+import appeng.core.AELog;
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.HashMap;
+import java.util.Map;
 
-import appeng.block.AEBaseBlock;
-import appeng.core.AELog;
-
-
-@SideOnly( Side.CLIENT )
-public final class WorldRender implements ISimpleBlockRenderingHandler
-{
+@SideOnly(Side.CLIENT)
+public final class WorldRender implements ISimpleBlockRenderingHandler {
 
 	public static final WorldRender INSTANCE = new WorldRender();
 	private final Map<AEBaseBlock, BaseBlockRender> blockRenders = new HashMap<AEBaseBlock, BaseBlockRender>();
@@ -47,66 +42,54 @@ public final class WorldRender implements ISimpleBlockRenderingHandler
 	private final RenderBlocks renderer = new RenderBlocks();
 	private boolean hasError = false;
 
-	private WorldRender()
-	{
+	private WorldRender() {
 	}
 
-	void setRender( final AEBaseBlock in, final BaseBlockRender r )
-	{
-		this.blockRenders.put( in, r );
+	void setRender(final AEBaseBlock in, final BaseBlockRender r) {
+		this.blockRenders.put(in, r);
 	}
 
 	@Override
-	public void renderInventoryBlock( final Block block, final int metadata, final int modelID, final RenderBlocks renderer )
-	{
+	public void renderInventoryBlock(final Block block, final int metadata, final int modelID, final RenderBlocks renderer) {
 		// wtf is this for?
 	}
 
 	@Override
-	public boolean renderWorldBlock( final IBlockAccess world, final int x, final int y, final int z, final Block block, final int modelId, final RenderBlocks renderer )
-	{
+	public boolean renderWorldBlock(final IBlockAccess world, final int x, final int y, final int z, final Block block, final int modelId, final RenderBlocks renderer) {
 		final AEBaseBlock blk = (AEBaseBlock) block;
-		renderer.setRenderBoundsFromBlock( block );
-		return this.getRender( blk ).renderInWorld( blk, world, x, y, z, renderer );
+		renderer.setRenderBoundsFromBlock(block);
+		return this.getRender(blk).renderInWorld(blk, world, x, y, z, renderer);
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory( final int modelId )
-	{
+	public boolean shouldRender3DInInventory(final int modelId) {
 		return true;
 	}
 
 	@Override
-	public int getRenderId()
-	{
+	public int getRenderId() {
 		return this.renderID;
 	}
 
-	private BaseBlockRender getRender( final AEBaseBlock block )
-	{
+	private BaseBlockRender getRender(final AEBaseBlock block) {
 		return block.getRendererInstance().getRendererInstance();
 	}
 
-	void renderItemBlock( final ItemStack item, final ItemRenderType type, final Object[] data )
-	{
-		final Block blk = Block.getBlockFromItem( item.getItem() );
-		if( blk instanceof AEBaseBlock )
-		{
+	void renderItemBlock(final ItemStack item, final ItemRenderType type, final Object[] data) {
+		final Block blk = Block.getBlockFromItem(item.getItem());
+		if (blk instanceof AEBaseBlock) {
 			final AEBaseBlock block = (AEBaseBlock) blk;
-			this.renderer.setRenderBoundsFromBlock( block );
+			this.renderer.setRenderBoundsFromBlock(block);
 
 			this.renderer.uvRotateBottom = this.renderer.uvRotateEast = this.renderer.uvRotateNorth = this.renderer.uvRotateSouth = this.renderer.uvRotateTop = this.renderer.uvRotateWest = 0;
-			this.getRender( block ).renderInventory( block, item, this.renderer, type, data );
+			this.getRender(block).renderInventory(block, item, this.renderer, type, data);
 			this.renderer.uvRotateBottom = this.renderer.uvRotateEast = this.renderer.uvRotateNorth = this.renderer.uvRotateSouth = this.renderer.uvRotateTop = this.renderer.uvRotateWest = 0;
-		}
-		else
-		{
-			if( !this.hasError )
-			{
+		} else {
+			if (!this.hasError) {
 				this.hasError = true;
-				AELog.error( "Invalid render - item/block mismatch" );
-				AELog.error( "		item: " + item.getUnlocalizedName() );
-				AELog.error( "		block: " + blk.getUnlocalizedName() );
+				AELog.error("Invalid render - item/block mismatch");
+				AELog.error("		item: " + item.getUnlocalizedName());
+				AELog.error("		block: " + blk.getUnlocalizedName());
 			}
 		}
 	}

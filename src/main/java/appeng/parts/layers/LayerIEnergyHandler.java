@@ -18,76 +18,61 @@
 
 package appeng.parts.layers;
 
-
-import net.minecraftforge.common.util.ForgeDirection;
-
+import appeng.api.parts.IPart;
+import appeng.api.parts.LayerBase;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+import net.minecraftforge.common.util.ForgeDirection;
 
-import appeng.api.parts.IPart;
-import appeng.api.parts.LayerBase;
-
-
-public class LayerIEnergyHandler extends LayerBase implements IEnergyHandler
-{
+public class LayerIEnergyHandler extends LayerBase implements IEnergyHandler {
 
 	@Override
-	public int receiveEnergy( final ForgeDirection from, final int maxReceive, final boolean simulate )
-	{
-		final IPart part = this.getPart( from );
-		if( part instanceof IEnergyReceiver )
-		{
-			return ( (IEnergyReceiver) part ).receiveEnergy( from, maxReceive, simulate );
+	public int receiveEnergy(final ForgeDirection from, final int maxReceive, final boolean simulate) {
+		final IPart part = this.getPart(from);
+		if (part instanceof IEnergyReceiver) {
+			return ((IEnergyReceiver) part).receiveEnergy(from, maxReceive, simulate);
 		}
 
 		return 0;
 	}
 
 	@Override
-	public int extractEnergy( final ForgeDirection from, final int maxExtract, final boolean simulate )
-	{
-		final IPart part = this.getPart( from );
-		if( part instanceof IEnergyProvider )
-		{
-			return ( (IEnergyProvider) part ).extractEnergy( from, maxExtract, simulate );
+	public int extractEnergy(final ForgeDirection from, final int maxExtract, final boolean simulate) {
+		final IPart part = this.getPart(from);
+		if (part instanceof IEnergyProvider) {
+			return ((IEnergyProvider) part).extractEnergy(from, maxExtract, simulate);
 		}
 
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored( final ForgeDirection from )
-	{
-		final IPart part = this.getPart( from );
-		if( part instanceof IEnergyProvider )
-		{
-			return ( (IEnergyProvider) part ).getEnergyStored( from );
+	public int getEnergyStored(final ForgeDirection from) {
+		final IPart part = this.getPart(from);
+		if (part instanceof IEnergyProvider) {
+			return ((IEnergyProvider) part).getEnergyStored(from);
 		}
 
 		return 0;
 	}
 
 	@Override
-	public int getMaxEnergyStored( final ForgeDirection from )
-	{
-		final IPart part = this.getPart( from );
-		if( part instanceof IEnergyProvider )
-		{
-			return ( (IEnergyProvider) part ).getMaxEnergyStored( from );
+	public int getMaxEnergyStored(final ForgeDirection from) {
+		final IPart part = this.getPart(from);
+		if (part instanceof IEnergyProvider) {
+			return ((IEnergyProvider) part).getMaxEnergyStored(from);
 		}
 
 		return 0;
 	}
 
 	@Override
-	public boolean canConnectEnergy( final ForgeDirection from )
-	{
-		final IPart part = this.getPart( from );
-		if( part instanceof IEnergyConnection )
-		{
-			return ( (IEnergyConnection) part ).canConnectEnergy( from );
+	public boolean canConnectEnergy(final ForgeDirection from) {
+		final IPart part = this.getPart(from);
+		if (part instanceof IEnergyConnection) {
+			return ((IEnergyConnection) part).canConnectEnergy(from);
 		}
 
 		return false;

@@ -23,17 +23,14 @@
 
 package appeng.api.networking.events;
 
-
 import appeng.api.networking.IGrid;
-
 
 /**
  * Part of AE's Event Bus.
- *
+ * <p>
  * Posted via {@link IGrid}.postEvent or {@link IGrid}.postEventTo
  */
-public class MENetworkEvent
-{
+public class MENetworkEvent {
 
 	private int visited = 0;
 	private boolean canceled = false;
@@ -41,8 +38,7 @@ public class MENetworkEvent
 	/**
 	 * Call to prevent AE from posting the event to any further objects.
 	 */
-	public void cancel()
-	{
+	public void cancel() {
 		this.canceled = true;
 	}
 
@@ -51,8 +47,7 @@ public class MENetworkEvent
 	 *
 	 * @return true to cancel future calls
 	 */
-	public boolean isCanceled()
-	{
+	public boolean isCanceled() {
 		return this.canceled;
 	}
 
@@ -61,8 +56,7 @@ public class MENetworkEvent
 	 *
 	 * @return number of visitors
 	 */
-	public int getVisitedObjects()
-	{
+	public int getVisitedObjects() {
 		return this.visited;
 	}
 
@@ -71,8 +65,7 @@ public class MENetworkEvent
 	 *
 	 * @param v current number of visitors
 	 */
-	public void setVisitedObjects( final int v )
-	{
+	public void setVisitedObjects(final int v) {
 		this.visited = v;
 	}
 }

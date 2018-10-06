@@ -18,17 +18,6 @@
 
 package appeng.block.misc;
 
-
-import java.util.EnumSet;
-import java.util.Random;
-
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.block.AEBaseTileBlock;
 import appeng.client.texture.ExtraBlockTextures;
 import appeng.core.AEConfig;
@@ -37,27 +26,31 @@ import appeng.core.sync.GuiBridge;
 import appeng.tile.AEBaseTile;
 import appeng.tile.misc.TileVibrationChamber;
 import appeng.util.Platform;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.EnumSet;
+import java.util.Random;
 
-public final class BlockVibrationChamber extends AEBaseTileBlock
-{
+public final class BlockVibrationChamber extends AEBaseTileBlock {
 
-	public BlockVibrationChamber()
-	{
-		super( Material.iron );
-		this.setTileEntity( TileVibrationChamber.class );
-		this.setHardness( 4.2F );
-		this.setFeature( EnumSet.of( AEFeature.PowerGen ) );
+	public BlockVibrationChamber() {
+		super(Material.iron);
+		this.setTileEntity(TileVibrationChamber.class);
+		this.setHardness(4.2F);
+		this.setFeature(EnumSet.of(AEFeature.PowerGen));
 	}
 
 	@Override
-	public IIcon getIcon( final IBlockAccess w, final int x, final int y, final int z, final int s )
-	{
-		final IIcon ico = super.getIcon( w, x, y, z, s );
-		final TileVibrationChamber tvc = this.getTileEntity( w, x, y, z );
+	public IIcon getIcon(final IBlockAccess w, final int x, final int y, final int z, final int s) {
+		final IIcon ico = super.getIcon(w, x, y, z, s);
+		final TileVibrationChamber tvc = this.getTileEntity(w, x, y, z);
 
-		if( tvc != null && tvc.isOn && ico == this.getRendererInstance().getTexture( ForgeDirection.SOUTH ) )
-		{
+		if (tvc != null && tvc.isOn && ico == this.getRendererInstance().getTexture(ForgeDirection.SOUTH)) {
 			return ExtraBlockTextures.BlockVibrationChamberFrontOn.getIcon();
 		}
 
@@ -65,19 +58,15 @@ public final class BlockVibrationChamber extends AEBaseTileBlock
 	}
 
 	@Override
-	public boolean onActivated( final World w, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		if( player.isSneaking() )
-		{
+	public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ) {
+		if (player.isSneaking()) {
 			return false;
 		}
 
-		if( Platform.isServer() )
-		{
-			final TileVibrationChamber tc = this.getTileEntity( w, x, y, z );
-			if( tc != null && !player.isSneaking() )
-			{
-				Platform.openGUI( player, tc, ForgeDirection.getOrientation( side ), GuiBridge.GUI_VIBRATION_CHAMBER );
+		if (Platform.isServer()) {
+			final TileVibrationChamber tc = this.getTileEntity(w, x, y, z);
+			if (tc != null && !player.isSneaking()) {
+				Platform.openGUI(player, tc, ForgeDirection.getOrientation(side), GuiBridge.GUI_VIBRATION_CHAMBER);
 				return true;
 			}
 		}
@@ -86,19 +75,15 @@ public final class BlockVibrationChamber extends AEBaseTileBlock
 	}
 
 	@Override
-	public void randomDisplayTick( final World w, final int x, final int y, final int z, final Random r )
-	{
-		if( !AEConfig.instance.enableEffects )
-		{
+	public void randomDisplayTick(final World w, final int x, final int y, final int z, final Random r) {
+		if (!AEConfig.instance.enableEffects) {
 			return;
 		}
 
-		final AEBaseTile tile = this.getTileEntity( w, x, y, z );
-		if( tile instanceof TileVibrationChamber )
-		{
+		final AEBaseTile tile = this.getTileEntity(w, x, y, z);
+		if (tile instanceof TileVibrationChamber) {
 			final TileVibrationChamber tc = (TileVibrationChamber) tile;
-			if( tc.isOn )
-			{
+			if (tc.isOn) {
 				float f1 = x + 0.5F;
 				float f2 = y + 0.5F;
 				float f3 = z + 0.5F;
@@ -117,16 +102,16 @@ public final class BlockVibrationChamber extends AEBaseTileBlock
 				final float ox = r.nextFloat();
 				final float oy = r.nextFloat() * 0.2f;
 
-				f1 += up.offsetX * ( -0.3 + oy );
-				f2 += up.offsetY * ( -0.3 + oy );
-				f3 += up.offsetZ * ( -0.3 + oy );
+				f1 += up.offsetX * (-0.3 + oy);
+				f2 += up.offsetY * (-0.3 + oy);
+				f3 += up.offsetZ * (-0.3 + oy);
 
-				f1 += west_x * ( 0.3 * ox - 0.15 );
-				f2 += west_y * ( 0.3 * ox - 0.15 );
-				f3 += west_z * ( 0.3 * ox - 0.15 );
+				f1 += west_x * (0.3 * ox - 0.15);
+				f2 += west_y * (0.3 * ox - 0.15);
+				f3 += west_z * (0.3 * ox - 0.15);
 
-				w.spawnParticle( "smoke", f1, f2, f3, 0.0D, 0.0D, 0.0D );
-				w.spawnParticle( "flame", f1, f2, f3, 0.0D, 0.0D, 0.0D );
+				w.spawnParticle("smoke", f1, f2, f3, 0.0D, 0.0D, 0.0D);
+				w.spawnParticle("flame", f1, f2, f3, 0.0D, 0.0D, 0.0D);
 			}
 		}
 	}

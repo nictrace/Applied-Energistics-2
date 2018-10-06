@@ -18,28 +18,22 @@
 
 package appeng.helpers;
 
-
 import java.util.Iterator;
 
 import scala.NotImplementedError;
 
-
-public class NonNullArrayIterator<E> implements Iterator<E>
-{
+public class NonNullArrayIterator<E> implements Iterator<E> {
 
 	private final E[] g;
 	private int offset = 0;
 
-	public NonNullArrayIterator( final E[] o )
-	{
+	public NonNullArrayIterator(final E[] o) {
 		this.g = o;
 	}
 
 	@Override
-	public boolean hasNext()
-	{
-		while( this.offset < this.g.length && this.g[this.offset] == null )
-		{
+	public boolean hasNext() {
+		while (this.offset < this.g.length && this.g[this.offset] == null) {
 			this.offset++;
 		}
 
@@ -47,8 +41,7 @@ public class NonNullArrayIterator<E> implements Iterator<E>
 	}
 
 	@Override
-	public E next()
-	{
+	public E next() {
 		final E result = this.g[this.offset];
 		this.offset++;
 
@@ -56,8 +49,7 @@ public class NonNullArrayIterator<E> implements Iterator<E>
 	}
 
 	@Override
-	public void remove()
-	{
+	public void remove() {
 		throw new NotImplementedError();
 	}
 }

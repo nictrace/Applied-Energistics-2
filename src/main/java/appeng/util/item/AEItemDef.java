@@ -18,25 +18,20 @@
 
 package appeng.util.item;
 
-
-import java.util.List;
-
+import appeng.util.Platform;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 
-import appeng.util.Platform;
+public class AEItemDef {
 
-
-public class AEItemDef
-{
-
-	static final AESharedNBT LOW_TAG = new AESharedNBT( Integer.MIN_VALUE );
-	static final AESharedNBT HIGH_TAG = new AESharedNBT( Integer.MAX_VALUE );
+	static final AESharedNBT LOW_TAG = new AESharedNBT(Integer.MIN_VALUE);
+	static final AESharedNBT HIGH_TAG = new AESharedNBT(Integer.MAX_VALUE);
 
 	private final int itemID;
 	private final Item item;
@@ -46,62 +41,53 @@ public class AEItemDef
 	private int displayDamage;
 	private int maxDamage;
 	private AESharedNBT tagCompound;
-	@SideOnly( Side.CLIENT )
+	@SideOnly(Side.CLIENT)
 	private String displayName;
-	@SideOnly( Side.CLIENT )
+	@SideOnly(Side.CLIENT)
 	private List tooltip;
-	@SideOnly( Side.CLIENT )
+	@SideOnly(Side.CLIENT)
 	private UniqueIdentifier uniqueID;
 	private OreReference isOre;
 
-	public AEItemDef( final Item it )
-	{
+	public AEItemDef(final Item it) {
 		this.item = it;
-		this.itemID = Item.getIdFromItem( it );
+		this.itemID = Item.getIdFromItem(it);
 	}
 
-	AEItemDef copy()
-	{
-		final AEItemDef t = new AEItemDef( this.getItem() );
+	AEItemDef copy() {
+		final AEItemDef t = new AEItemDef(this.getItem());
 		t.def = this.def;
-		t.setDamageValue( this.getDamageValue() );
-		t.setDisplayDamage( this.getDisplayDamage() );
-		t.setMaxDamage( this.getMaxDamage() );
-		t.setTagCompound( this.getTagCompound() );
-		t.setIsOre( this.getIsOre() );
+		t.setDamageValue(this.getDamageValue());
+		t.setDisplayDamage(this.getDisplayDamage());
+		t.setMaxDamage(this.getMaxDamage());
+		t.setTagCompound(this.getTagCompound());
+		t.setIsOre(this.getIsOre());
 		return t;
 	}
 
 	@Override
-	public boolean equals( final Object obj )
-	{
-		if( obj == null )
-		{
+	public boolean equals(final Object obj) {
+		if (obj == null) {
 			return false;
 		}
-		if( this.getClass() != obj.getClass() )
-		{
+		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
 		final AEItemDef other = (AEItemDef) obj;
 		return other.getDamageValue() == this.getDamageValue() && other.getItem() == this.getItem() && this.getTagCompound() == other.getTagCompound();
 	}
 
-	boolean isItem( final ItemStack otherStack )
-	{
+	boolean isItem(final ItemStack otherStack) {
 		// hackery!
-		final int dmg = this.getDamageValueHack( otherStack );
+		final int dmg = this.getDamageValueHack(otherStack);
 
-		if( this.getItem() == otherStack.getItem() && dmg == this.getDamageValue() )
-		{
-			if( ( this.getTagCompound() != null ) == otherStack.hasTagCompound() )
-			{
+		if (this.getItem() == otherStack.getItem() && dmg == this.getDamageValue()) {
+			if ((this.getTagCompound() != null) == otherStack.hasTagCompound()) {
 				return true;
 			}
 
-			if( this.getTagCompound() != null && otherStack.hasTagCompound() )
-			{
-				return Platform.NBTEqualityTest( this.getTagCompound(), otherStack.getTagCompound() );
+			if (this.getTagCompound() != null && otherStack.hasTagCompound()) {
+				return Platform.NBTEqualityTest(this.getTagCompound(), otherStack.getTagCompound());
 			}
 
 			return true;
@@ -109,115 +95,94 @@ public class AEItemDef
 		return false;
 	}
 
-	int getDamageValueHack( final ItemStack is )
-	{
-		return Items.blaze_rod.getDamage( is );
+	int getDamageValueHack(final ItemStack is) {
+		return Items.blaze_rod.getDamage(is);
 	}
 
-	void reHash()
-	{
+	void reHash() {
 		this.def = this.getItemID() << Platform.DEF_OFFSET | this.getDamageValue();
-		this.myHash = this.def ^ ( this.getTagCompound() == null ? 0 : System.identityHashCode( this.getTagCompound() ) );
+		this.myHash = this.def ^ (this.getTagCompound() == null ? 0 : System.identityHashCode(this.getTagCompound()));
 	}
 
-	AESharedNBT getTagCompound()
-	{
+	AESharedNBT getTagCompound() {
 		return this.tagCompound;
 	}
 
-	void setTagCompound( final AESharedNBT tagCompound )
-	{
+	void setTagCompound(final AESharedNBT tagCompound) {
 		this.tagCompound = tagCompound;
 	}
 
-	int getDamageValue()
-	{
+	int getDamageValue() {
 		return this.damageValue;
 	}
 
-	int setDamageValue( final int damageValue )
-	{
+	int setDamageValue(final int damageValue) {
 		this.damageValue = damageValue;
 		return damageValue;
 	}
 
-	Item getItem()
-	{
+	Item getItem() {
 		return this.item;
 	}
 
-	int getDisplayDamage()
-	{
+	int getDisplayDamage() {
 		return this.displayDamage;
 	}
 
-	void setDisplayDamage( final int displayDamage )
-	{
+	void setDisplayDamage(final int displayDamage) {
 		this.displayDamage = displayDamage;
 	}
 
-	String getDisplayName()
-	{
+	String getDisplayName() {
 		return this.displayName;
 	}
 
-	void setDisplayName( final String displayName )
-	{
+	void setDisplayName(final String displayName) {
 		this.displayName = displayName;
 	}
 
-	List getTooltip()
-	{
+	List getTooltip() {
 		return this.tooltip;
 	}
 
-	List setTooltip( final List tooltip )
-	{
+	List setTooltip(final List tooltip) {
 		this.tooltip = tooltip;
 		return tooltip;
 	}
 
-	UniqueIdentifier getUniqueID()
-	{
+	UniqueIdentifier getUniqueID() {
 		return this.uniqueID;
 	}
 
-	UniqueIdentifier setUniqueID( final UniqueIdentifier uniqueID )
-	{
+	UniqueIdentifier setUniqueID(final UniqueIdentifier uniqueID) {
 		this.uniqueID = uniqueID;
 		return uniqueID;
 	}
 
-	OreReference getIsOre()
-	{
+	OreReference getIsOre() {
 		return this.isOre;
 	}
 
-	void setIsOre( final OreReference isOre )
-	{
+	void setIsOre(final OreReference isOre) {
 		this.isOre = isOre;
 	}
 
-	int getItemID()
-	{
+	int getItemID() {
 		return this.itemID;
 	}
 
-	int getMaxDamage()
-	{
+	int getMaxDamage() {
 		return this.maxDamage;
 	}
 
-	void setMaxDamage( final int maxDamage )
-	{
+	void setMaxDamage(final int maxDamage) {
 		this.maxDamage = maxDamage;
 	}
 
 	/**
 	 * TODO: Check if replaceable by hashCode();
 	 */
-	int getMyHash()
-	{
+	int getMyHash() {
 		return this.myHash;
 	}
 

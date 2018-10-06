@@ -18,26 +18,18 @@
 
 package appeng.tile.networking;
 
-
 import appeng.block.networking.BlockCableBus;
 
-
-public class TileCableBusTESR extends TileCableBus
-{
+public class TileCableBusTESR extends TileCableBus {
 
 	@Override
-	protected void updateTileSetting()
-	{
-		if( !this.getCableBus().isRequiresDynamicRender() )
-		{
-			try
-			{
+	protected void updateTileSetting() {
+		if (!this.getCableBus().isRequiresDynamicRender()) {
+			try {
 				final TileCableBus tcb = (TileCableBus) BlockCableBus.getNoTesrTile().newInstance();
-				tcb.copyFrom( this );
-				this.getWorldObj().setTileEntity( this.xCoord, this.yCoord, this.zCoord, tcb );
-			}
-			catch( final Throwable ignored )
-			{
+				tcb.copyFrom(this);
+				this.getWorldObj().setTileEntity(this.xCoord, this.yCoord, this.zCoord, tcb);
+			} catch (final Throwable ignored) {
 
 			}
 		}

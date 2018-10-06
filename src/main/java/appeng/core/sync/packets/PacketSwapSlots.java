@@ -18,48 +18,39 @@
 
 package appeng.core.sync.packets;
 
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
-import net.minecraft.entity.player.EntityPlayer;
-
 import appeng.container.AEBaseContainer;
 import appeng.core.sync.AppEngPacket;
 import appeng.core.sync.network.INetworkInfo;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.entity.player.EntityPlayer;
 
-
-public class PacketSwapSlots extends AppEngPacket
-{
+public class PacketSwapSlots extends AppEngPacket {
 
 	private final int slotA;
 	private final int slotB;
 
 	// automatic.
-	public PacketSwapSlots( final ByteBuf stream )
-	{
+	public PacketSwapSlots(final ByteBuf stream) {
 		this.slotA = stream.readInt();
 		this.slotB = stream.readInt();
 	}
 
 	// api
-	public PacketSwapSlots( final int slotA, final int slotB )
-	{
+	public PacketSwapSlots(final int slotA, final int slotB) {
 		final ByteBuf data = Unpooled.buffer();
 
-		data.writeInt( this.getPacketID() );
-		data.writeInt( this.slotA = slotA );
-		data.writeInt( this.slotB = slotB );
+		data.writeInt(this.getPacketID());
+		data.writeInt(this.slotA = slotA);
+		data.writeInt(this.slotB = slotB);
 
-		this.configureWrite( data );
+		this.configureWrite(data);
 	}
 
 	@Override
-	public void serverPacketData( final INetworkInfo manager, final AppEngPacket packet, final EntityPlayer player )
-	{
-		if( player != null && player.openContainer instanceof AEBaseContainer )
-		{
-			( (AEBaseContainer) player.openContainer ).swapSlotContents( this.slotA, this.slotB );
+	public void serverPacketData(final INetworkInfo manager, final AppEngPacket packet, final EntityPlayer player) {
+		if (player != null && player.openContainer instanceof AEBaseContainer) {
+			((AEBaseContainer) player.openContainer).swapSlotContents(this.slotA, this.slotB);
 		}
 	}
 }

@@ -23,26 +23,22 @@
 
 package appeng.api.networking.energy;
 
-
 import appeng.api.config.AccessRestriction;
 import appeng.api.config.Actionable;
-
 
 /**
  * Used to access information about AE's various power accepting blocks for monitoring purposes.
  */
-public interface IAEPowerStorage extends IEnergySource
-{
+public interface IAEPowerStorage extends IEnergySource {
 
 	/**
 	 * Inject amt, power into the device, it will store what it can, and return the amount unable to be stored.
 	 *
 	 * @param amt  to be injected amount
 	 * @param mode action mode
-	 *
 	 * @return amount of power which was unable to be stored
 	 */
-	double injectAEPower( double amt, Actionable mode );
+	double injectAEPower(double amt, Actionable mode);
 
 	/**
 	 * @return the current maximum power ( this can change :P )

@@ -18,13 +18,6 @@
 
 package appeng.tile.misc;
 
-
-import java.util.EnumSet;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.implementations.IPowerChannelState;
 import appeng.api.implementations.tiles.ICrystalGrowthAccelerator;
 import appeng.api.networking.events.MENetworkEventSubscribe;
@@ -35,71 +28,59 @@ import appeng.tile.TileEvent;
 import appeng.tile.events.TileEventType;
 import appeng.tile.grid.AENetworkTile;
 import appeng.util.Platform;
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.EnumSet;
 
-public class TileQuartzGrowthAccelerator extends AENetworkTile implements IPowerChannelState, ICrystalGrowthAccelerator
-{
+public class TileQuartzGrowthAccelerator extends AENetworkTile implements IPowerChannelState, ICrystalGrowthAccelerator {
 
 	private boolean hasPower = false;
 
-	public TileQuartzGrowthAccelerator()
-	{
-		this.getProxy().setValidSides( EnumSet.noneOf( ForgeDirection.class ) );
+	public TileQuartzGrowthAccelerator() {
+		this.getProxy().setValidSides(EnumSet.noneOf(ForgeDirection.class));
 		this.getProxy().setFlags();
-		this.getProxy().setIdlePowerUsage( 8 );
+		this.getProxy().setIdlePowerUsage(8);
 	}
 
 	@MENetworkEventSubscribe
-	public void onPower( final MENetworkPowerStatusChange ch )
-	{
+	public void onPower(final MENetworkPowerStatusChange ch) {
 		this.markForUpdate();
 	}
 
 	@Override
-	public AECableType getCableConnectionType( final ForgeDirection dir )
-	{
+	public AECableType getCableConnectionType(final ForgeDirection dir) {
 		return AECableType.COVERED;
 	}
 
-	@TileEvent( TileEventType.NETWORK_READ )
-	public boolean readFromStream_TileQuartzGrowthAccelerator( final ByteBuf data )
-	{
+	@TileEvent(TileEventType.NETWORK_READ)
+	public boolean readFromStream_TileQuartzGrowthAccelerator(final ByteBuf data) {
 		final boolean hadPower = this.isPowered();
-		this.setPowered( data.readBoolean() );
+		this.setPowered(data.readBoolean());
 		return this.isPowered() != hadPower;
 	}
 
-	@TileEvent( TileEventType.NETWORK_WRITE )
-	public void writeToStream_TileQuartzGrowthAccelerator( final ByteBuf data )
-	{
-		try
-		{
-			data.writeBoolean( this.getProxy().getEnergy().isNetworkPowered() );
-		}
-		catch( final GridAccessException e )
-		{
-			data.writeBoolean( false );
+	@TileEvent(TileEventType.NETWORK_WRITE)
+	public void writeToStream_TileQuartzGrowthAccelerator(final ByteBuf data) {
+		try {
+			data.writeBoolean(this.getProxy().getEnergy().isNetworkPowered());
+		} catch (final GridAccessException e) {
+			data.writeBoolean(false);
 		}
 	}
 
 	@Override
-	public void setOrientation( final ForgeDirection inForward, final ForgeDirection inUp )
-	{
-		super.setOrientation( inForward, inUp );
-		this.getProxy().setValidSides( EnumSet.of( this.getUp(), this.getUp().getOpposite() ) );
+	public void setOrientation(final ForgeDirection inForward, final ForgeDirection inUp) {
+		super.setOrientation(inForward, inUp);
+		this.getProxy().setValidSides(EnumSet.of(this.getUp(), this.getUp().getOpposite()));
 	}
 
 	@Override
-	public boolean isPowered()
-	{
-		if( Platform.isServer() )
-		{
-			try
-			{
+	public boolean isPowered() {
+		if (Platform.isServer()) {
+			try {
 				return this.getProxy().getEnergy().isNetworkPowered();
-			}
-			catch( final GridAccessException e )
-			{
+			} catch (final GridAccessException e) {
 				return false;
 			}
 		}
@@ -108,13 +89,11 @@ public class TileQuartzGrowthAccelerator extends AENetworkTile implements IPower
 	}
 
 	@Override
-	public boolean isActive()
-	{
+	public boolean isActive() {
 		return this.isPowered();
 	}
 
-	private void setPowered( final boolean hasPower )
-	{
+	private void setPowered(final boolean hasPower) {
 		this.hasPower = hasPower;
 	}
 }

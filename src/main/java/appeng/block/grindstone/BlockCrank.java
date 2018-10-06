@@ -18,9 +18,15 @@
 
 package appeng.block.grindstone;
 
-
-import java.util.EnumSet;
-
+import appeng.api.implementations.tiles.ICrankable;
+import appeng.block.AEBaseTileBlock;
+import appeng.client.render.blocks.RenderBlockCrank;
+import appeng.core.features.AEFeature;
+import appeng.core.stats.Stats;
+import appeng.tile.AEBaseTile;
+import appeng.tile.grindstone.TileCrank;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,132 +37,98 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.EnumSet;
 
-import appeng.api.implementations.tiles.ICrankable;
-import appeng.block.AEBaseTileBlock;
-import appeng.client.render.blocks.RenderBlockCrank;
-import appeng.core.features.AEFeature;
-import appeng.core.stats.Stats;
-import appeng.tile.AEBaseTile;
-import appeng.tile.grindstone.TileCrank;
+public class BlockCrank extends AEBaseTileBlock {
 
+	public BlockCrank() {
+		super(Material.wood);
 
-public class BlockCrank extends AEBaseTileBlock
-{
-
-	public BlockCrank()
-	{
-		super( Material.wood );
-
-		this.setTileEntity( TileCrank.class );
-		this.setLightOpacity( 0 );
-		this.setHarvestLevel( "axe", 0 );
+		this.setTileEntity(TileCrank.class);
+		this.setLightOpacity(0);
+		this.setHarvestLevel("axe", 0);
 		this.isFullSize = this.isOpaque = false;
-		this.setFeature( EnumSet.of( AEFeature.GrindStone ) );
+		this.setFeature(EnumSet.of(AEFeature.GrindStone));
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public RenderBlockCrank getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	public RenderBlockCrank getRenderer() {
 		return new RenderBlockCrank();
 	}
 
 	@Override
-	public boolean onActivated( final World w, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		if( player instanceof FakePlayer || player == null )
-		{
-			this.dropCrank( w, x, y, z );
+	public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ) {
+		if (player instanceof FakePlayer || player == null) {
+			this.dropCrank(w, x, y, z);
 			return true;
 		}
 
-		final AEBaseTile tile = this.getTileEntity( w, x, y, z );
-		if( tile instanceof TileCrank )
-		{
-			if( ( (TileCrank) tile ).power() )
-			{
-				Stats.TurnedCranks.addToPlayer( player, 1 );
+		final AEBaseTile tile = this.getTileEntity(w, x, y, z);
+		if (tile instanceof TileCrank) {
+			if (((TileCrank) tile).power()) {
+				Stats.TurnedCranks.addToPlayer(player, 1);
 			}
 		}
 
 		return true;
 	}
 
-	private void dropCrank( final World world, final int x, final int y, final int z )
-	{
-		world.func_147480_a( x, y, z, true ); // w.destroyBlock( x, y, z, true );
-		world.markBlockForUpdate( x, y, z );
+	private void dropCrank(final World world, final int x, final int y, final int z) {
+		world.func_147480_a(x, y, z, true); // w.destroyBlock( x, y, z, true );
+		world.markBlockForUpdate(x, y, z);
 	}
 
 	@Override
-	public void onBlockPlacedBy( final World world, final int x, final int y, final int z, final EntityLivingBase placer, final ItemStack itemStack )
-	{
-		final AEBaseTile tile = this.getTileEntity( world, x, y, z );
-		if( tile != null )
-		{
-			final ForgeDirection mnt = this.findCrankable( world, x, y, z );
+	public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase placer, final ItemStack itemStack) {
+		final AEBaseTile tile = this.getTileEntity(world, x, y, z);
+		if (tile != null) {
+			final ForgeDirection mnt = this.findCrankable(world, x, y, z);
 			ForgeDirection forward = ForgeDirection.UP;
-			if( mnt == ForgeDirection.UP || mnt == ForgeDirection.DOWN )
-			{
+			if (mnt == ForgeDirection.UP || mnt == ForgeDirection.DOWN) {
 				forward = ForgeDirection.SOUTH;
 			}
-			tile.setOrientation( forward, mnt.getOpposite() );
-		}
-		else
-		{
-			this.dropCrank( world, x, y, z );
+			tile.setOrientation(forward, mnt.getOpposite());
+		} else {
+			this.dropCrank(world, x, y, z);
 		}
 	}
 
 	@Override
-	public boolean isValidOrientation( final World world, final int x, final int y, final int z, final ForgeDirection forward, final ForgeDirection up )
-	{
-		final TileEntity te = world.getTileEntity( x, y, z );
-		return !( te instanceof TileCrank ) || this.isCrankable( world, x, y, z, up.getOpposite() );
+	public boolean isValidOrientation(final World world, final int x, final int y, final int z, final ForgeDirection forward, final ForgeDirection up) {
+		final TileEntity te = world.getTileEntity(x, y, z);
+		return !(te instanceof TileCrank) || this.isCrankable(world, x, y, z, up.getOpposite());
 	}
 
-	private ForgeDirection findCrankable( final World world, final int x, final int y, final int z )
-	{
-		for( final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS )
-		{
-			if( this.isCrankable( world, x, y, z, dir ) )
-			{
+	private ForgeDirection findCrankable(final World world, final int x, final int y, final int z) {
+		for (final ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			if (this.isCrankable(world, x, y, z, dir)) {
 				return dir;
 			}
 		}
 		return ForgeDirection.UNKNOWN;
 	}
 
-	private boolean isCrankable( final World world, final int x, final int y, final int z, final ForgeDirection offset )
-	{
-		final TileEntity te = world.getTileEntity( x + offset.offsetX, y + offset.offsetY, z + offset.offsetZ );
+	private boolean isCrankable(final World world, final int x, final int y, final int z, final ForgeDirection offset) {
+		final TileEntity te = world.getTileEntity(x + offset.offsetX, y + offset.offsetY, z + offset.offsetZ);
 
-		return te instanceof ICrankable && ( (ICrankable) te ).canCrankAttach( offset.getOpposite() );
+		return te instanceof ICrankable && ((ICrankable) te).canCrankAttach(offset.getOpposite());
 	}
 
 	@Override
-	public void onNeighborBlockChange( final World world, final int x, final int y, final int z, final Block block )
-	{
-		final AEBaseTile tile = this.getTileEntity( world, x, y, z );
-		if( tile != null )
-		{
-			if( !this.isCrankable( world, x, y, z, tile.getUp().getOpposite() ) )
-			{
-				this.dropCrank( world, x, y, z );
+	public void onNeighborBlockChange(final World world, final int x, final int y, final int z, final Block block) {
+		final AEBaseTile tile = this.getTileEntity(world, x, y, z);
+		if (tile != null) {
+			if (!this.isCrankable(world, x, y, z, tile.getUp().getOpposite())) {
+				this.dropCrank(world, x, y, z);
 			}
-		}
-		else
-		{
-			this.dropCrank( world, x, y, z );
+		} else {
+			this.dropCrank(world, x, y, z);
 		}
 	}
 
 	@Override
-	public boolean canPlaceBlockAt( final World world, final int x, final int y, final int z )
-	{
-		return this.findCrankable( world, x, y, z ) != ForgeDirection.UNKNOWN;
+	public boolean canPlaceBlockAt(final World world, final int x, final int y, final int z) {
+		return this.findCrankable(world, x, y, z) != ForgeDirection.UNKNOWN;
 	}
 }

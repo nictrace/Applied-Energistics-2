@@ -18,15 +18,6 @@
 
 package appeng.integration.modules;
 
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-import buildcraft.api.tools.IToolWrench;
-
 import appeng.api.AEApi;
 import appeng.api.config.TunnelType;
 import appeng.api.features.IP2PTunnelRegistry;
@@ -34,57 +25,55 @@ import appeng.helpers.Reflected;
 import appeng.integration.IIntegrationModule;
 import appeng.integration.IntegrationHelper;
 import appeng.integration.abstraction.IBuildCraftCore;
+import buildcraft.api.tools.IToolWrench;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 
 @Reflected
-public final class BuildCraftCore implements IBuildCraftCore, IIntegrationModule
-{
+public final class BuildCraftCore implements IBuildCraftCore, IIntegrationModule {
+
 	@Reflected
 	public static BuildCraftCore instance;
 
 	@Reflected
-	public BuildCraftCore()
-	{
-		IntegrationHelper.testClassExistence( this, buildcraft.BuildCraftCore.class );
-		IntegrationHelper.testClassExistence( this, buildcraft.BuildCraftTransport.class );
-		IntegrationHelper.testClassExistence( this, buildcraft.api.tools.IToolWrench.class );
+	public BuildCraftCore() {
+		IntegrationHelper.testClassExistence(this, buildcraft.BuildCraftCore.class);
+		IntegrationHelper.testClassExistence(this, buildcraft.BuildCraftTransport.class);
+		IntegrationHelper.testClassExistence(this, buildcraft.api.tools.IToolWrench.class);
 	}
 
 	@Override
-	public boolean isWrench( final Item eq )
-	{
+	public boolean isWrench(final Item eq) {
 		return eq instanceof IToolWrench;
 	}
 
 	@Override
-	public boolean canWrench( @Nonnull final Item wrench, final EntityPlayer wrencher, final int x, final int y, final int z )
-	{
-		return ( (IToolWrench) wrench ).canWrench( wrencher, x, y, z );
+	public boolean canWrench(@Nonnull final Item wrench, final EntityPlayer wrencher, final int x, final int y, final int z) {
+		return ((IToolWrench) wrench).canWrench(wrencher, x, y, z);
 	}
 
 	@Override
-	public void wrenchUsed( @Nonnull final Item wrench, final EntityPlayer wrencher, final int x, final int y, final int z )
-	{
-		( (IToolWrench) wrench ).wrenchUsed( wrencher, x, y, z );
+	public void wrenchUsed(@Nonnull final Item wrench, final EntityPlayer wrencher, final int x, final int y, final int z) {
+		((IToolWrench) wrench).wrenchUsed(wrencher, x, y, z);
 	}
 
 	@Override
-	public void init()
-	{
+	public void init() {
 	}
 
 	@Override
-	public void postInit()
-	{
+	public void postInit() {
 		this.registerPowerP2P();
 	}
 
-	private void registerPowerP2P()
-	{
+	private void registerPowerP2P() {
 		final IP2PTunnelRegistry registry = AEApi.instance().registries().p2pTunnel();
 
-		registry.addNewAttunement( new ItemStack( buildcraft.BuildCraftCore.engineBlock, 1, 0 ), TunnelType.RF_POWER );
-		registry.addNewAttunement( new ItemStack( buildcraft.BuildCraftCore.engineBlock, 1, 1 ), TunnelType.RF_POWER );
-		registry.addNewAttunement( new ItemStack( buildcraft.BuildCraftCore.engineBlock, 1, 2 ), TunnelType.RF_POWER );
+		registry.addNewAttunement(new ItemStack(buildcraft.BuildCraftCore.engineBlock, 1, 0), TunnelType.RF_POWER);
+		registry.addNewAttunement(new ItemStack(buildcraft.BuildCraftCore.engineBlock, 1, 1), TunnelType.RF_POWER);
+		registry.addNewAttunement(new ItemStack(buildcraft.BuildCraftCore.engineBlock, 1, 2), TunnelType.RF_POWER);
 	}
 }

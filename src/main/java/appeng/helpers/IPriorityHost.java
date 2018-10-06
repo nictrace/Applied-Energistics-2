@@ -18,9 +18,7 @@
 
 package appeng.helpers;
 
-
-public interface IPriorityHost
-{
+public interface IPriorityHost {
 
 	/**
 	 * get current priority.
@@ -30,5 +28,5 @@ public interface IPriorityHost
 	/**
 	 * set new priority
 	 */
-	void setPriority( int newValue );
+	void setPriority(int newValue);
 }

@@ -23,15 +23,13 @@
 
 package appeng.api.definitions;
 
-
 import appeng.api.util.AEColoredItemDefinition;
-
 
 /**
  * A list of all items in AE
  */
-public interface IItems
-{
+public interface IItems {
+
 	IItemDefinition certusQuartzAxe();
 
 	IItemDefinition certusQuartzHoe();

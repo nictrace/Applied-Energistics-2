@@ -18,10 +18,6 @@
 
 package appeng.me.storage;
 
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-
 import appeng.api.AEApi;
 import appeng.api.config.FuzzyMode;
 import appeng.api.config.IncludeExclude;
@@ -36,19 +32,17 @@ import appeng.api.storage.data.IItemList;
 import appeng.util.item.AEItemStack;
 import appeng.util.prioitylist.FuzzyPriorityList;
 import appeng.util.prioitylist.PrecisePriorityList;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
+public class CellInventoryHandler extends MEInventoryHandler<IAEItemStack> implements ICellInventoryHandler {
 
-public class CellInventoryHandler extends MEInventoryHandler<IAEItemStack> implements ICellInventoryHandler
-{
-
-	CellInventoryHandler( final IMEInventory<IAEItemStack> c )
-	{
-		super( c, StorageChannel.ITEMS );
+	CellInventoryHandler(final IMEInventory<IAEItemStack> c) {
+		super(c, StorageChannel.ITEMS);
 
 		final ICellInventory ci = this.getCellInv();
 
-		if( ci != null )
-		{
+		if (ci != null) {
 			final IItemList<IAEItemStack> priorityList = AEApi.instance().storage().createItemList();
 
 			final IInventory upgrades = ci.getUpgradesInventory();
@@ -58,16 +52,12 @@ public class CellInventoryHandler extends MEInventoryHandler<IAEItemStack> imple
 			boolean hasInverter = false;
 			boolean hasFuzzy = false;
 
-			for( int x = 0; x < upgrades.getSizeInventory(); x++ )
-			{
-				final ItemStack is = upgrades.getStackInSlot( x );
-				if( is != null && is.getItem() instanceof IUpgradeModule )
-				{
-					final Upgrades u = ( (IUpgradeModule) is.getItem() ).getType( is );
-					if( u != null )
-					{
-						switch( u )
-						{
+			for (int x = 0; x < upgrades.getSizeInventory(); x++) {
+				final ItemStack is = upgrades.getStackInSlot(x);
+				if (is != null && is.getItem() instanceof IUpgradeModule) {
+					final Upgrades u = ((IUpgradeModule) is.getItem()).getType(is);
+					if (u != null) {
+						switch (u) {
 							case FUZZY:
 								hasFuzzy = true;
 								break;
@@ -80,68 +70,55 @@ public class CellInventoryHandler extends MEInventoryHandler<IAEItemStack> imple
 				}
 			}
 
-			for( int x = 0; x < config.getSizeInventory(); x++ )
-			{
-				final ItemStack is = config.getStackInSlot( x );
-				if( is != null )
-				{
-					priorityList.add( AEItemStack.create( is ) );
+			for (int x = 0; x < config.getSizeInventory(); x++) {
+				final ItemStack is = config.getStackInSlot(x);
+				if (is != null) {
+					priorityList.add(AEItemStack.create(is));
 				}
 			}
 
-			this.setWhitelist( hasInverter ? IncludeExclude.BLACKLIST : IncludeExclude.WHITELIST );
+			this.setWhitelist(hasInverter ? IncludeExclude.BLACKLIST : IncludeExclude.WHITELIST);
 
-			if( !priorityList.isEmpty() )
-			{
-				if( hasFuzzy )
-				{
-					this.setPartitionList( new FuzzyPriorityList<IAEItemStack>( priorityList, fzMode ) );
-				}
-				else
-				{
-					this.setPartitionList( new PrecisePriorityList<IAEItemStack>( priorityList ) );
+			if (!priorityList.isEmpty()) {
+				if (hasFuzzy) {
+					this.setPartitionList(new FuzzyPriorityList<IAEItemStack>(priorityList, fzMode));
+				} else {
+					this.setPartitionList(new PrecisePriorityList<IAEItemStack>(priorityList));
 				}
 			}
 		}
 	}
 
 	@Override
-	public ICellInventory getCellInv()
-	{
+	public ICellInventory getCellInv() {
 		Object o = this.getInternal();
 
-		if( o instanceof MEPassThrough )
-		{
-			o = ( (MEPassThrough) o ).getInternal();
+		if (o instanceof MEPassThrough) {
+			o = ((MEPassThrough) o).getInternal();
 		}
 
-		return (ICellInventory) ( o instanceof ICellInventory ? o : null );
+		return (ICellInventory) (o instanceof ICellInventory ? o : null);
 	}
 
 	@Override
-	public boolean isPreformatted()
-	{
+	public boolean isPreformatted() {
 		return !this.getPartitionList().isEmpty();
 	}
 
 	@Override
-	public boolean isFuzzy()
-	{
+	public boolean isFuzzy() {
 		return this.getPartitionList() instanceof FuzzyPriorityList;
 	}
 
 	@Override
-	public IncludeExclude getIncludeExcludeMode()
-	{
+	public IncludeExclude getIncludeExcludeMode() {
 		return this.getWhitelist();
 	}
 
-	public int getStatusForCell()
-	{
+	public int getStatusForCell() {
 		int val = this.getCellInv().getStatusForCell();
 
-		if( val == 1 && this.isPreformatted() )
-		{
+		if (val == 1 && this.isPreformatted()) {
 			val = 2;
 		}
 

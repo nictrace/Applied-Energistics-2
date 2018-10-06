@@ -18,31 +18,26 @@
 
 package appeng.integration.modules;
 
-
 import appeng.helpers.Reflected;
 import appeng.integration.IIntegrationModule;
 import appeng.integration.IntegrationHelper;
 
+public class RotaryCraft implements IIntegrationModule {
 
-public class RotaryCraft implements IIntegrationModule
-{
 	@Reflected
 	public static RotaryCraft instance;
 
 	@Reflected
-	public RotaryCraft()
-	{
-		IntegrationHelper.testClassExistence( this, Reika.RotaryCraft.API.Power.AdvancedShaftPowerReceiver.class );
-		IntegrationHelper.testClassExistence( this, Reika.RotaryCraft.API.Interfaces.Transducerable.class );
+	public RotaryCraft() {
+		IntegrationHelper.testClassExistence(this, Reika.RotaryCraft.API.Power.AdvancedShaftPowerReceiver.class);
+		IntegrationHelper.testClassExistence(this, Reika.RotaryCraft.API.Interfaces.Transducerable.class);
 	}
 
 	@Override
-	public void init() throws Throwable
-	{
+	public void init() throws Throwable {
 	}
 
 	@Override
-	public void postInit()
-	{
+	public void postInit() {
 	}
 }

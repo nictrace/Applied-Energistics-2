@@ -18,23 +18,18 @@
 
 package appeng.recipes;
 
-
 import appeng.api.recipes.ResolverResultSet;
 
-
-public class MissedIngredientSet extends Throwable
-{
+public class MissedIngredientSet extends Throwable {
 
 	private static final long serialVersionUID = 2672951714376345807L;
 	private final ResolverResultSet resolverResultSet;
 
-	public MissedIngredientSet( final ResolverResultSet ro )
-	{
+	public MissedIngredientSet(final ResolverResultSet ro) {
 		this.resolverResultSet = ro;
 	}
 
-	ResolverResultSet getResolverResultSet()
-	{
+	ResolverResultSet getResolverResultSet() {
 		return this.resolverResultSet;
 	}
 }

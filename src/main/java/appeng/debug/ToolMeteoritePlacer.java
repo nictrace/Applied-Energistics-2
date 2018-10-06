@@ -18,50 +18,42 @@
 
 package appeng.debug;
 
-
-import java.util.EnumSet;
-
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.world.World;
-
 import appeng.client.texture.MissingIcon;
 import appeng.core.features.AEFeature;
 import appeng.items.AEBaseItem;
 import appeng.util.Platform;
 import appeng.worldgen.MeteoritePlacer;
 import appeng.worldgen.meteorite.StandardWorld;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
 
+import java.util.EnumSet;
 
-public class ToolMeteoritePlacer extends AEBaseItem
-{
-	public ToolMeteoritePlacer()
-	{
-		this.setFeature( EnumSet.of( AEFeature.UnsupportedDeveloperTools, AEFeature.Creative ) );
+public class ToolMeteoritePlacer extends AEBaseItem {
+
+	public ToolMeteoritePlacer() {
+		this.setFeature(EnumSet.of(AEFeature.UnsupportedDeveloperTools, AEFeature.Creative));
 	}
 
 	@Override
-	public void registerIcons( final IIconRegister par1IconRegister )
-	{
-		this.itemIcon = new MissingIcon( this );
+	public void registerIcons(final IIconRegister par1IconRegister) {
+		this.itemIcon = new MissingIcon(this);
 	}
 
 	@Override
-	public boolean onItemUseFirst( final ItemStack stack, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		if( Platform.isClient() )
-		{
+	public boolean onItemUseFirst(final ItemStack stack, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float hitX, final float hitY, final float hitZ) {
+		if (Platform.isClient()) {
 			return false;
 		}
 
 		final MeteoritePlacer mp = new MeteoritePlacer();
-		final boolean worked = mp.spawnMeteorite( new StandardWorld( world ), x, y, z );
+		final boolean worked = mp.spawnMeteorite(new StandardWorld(world), x, y, z);
 
-		if( !worked )
-		{
-			player.addChatMessage( new ChatComponentText( "Un-suitable Location." ) );
+		if (!worked) {
+			player.addChatMessage(new ChatComponentText("Un-suitable Location."));
 		}
 
 		return true;

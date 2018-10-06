@@ -18,75 +18,56 @@
 
 package appeng.core.features.registries.entries;
 
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-
 import appeng.api.implementations.tiles.IChestOrDrive;
-import appeng.api.storage.ICellHandler;
-import appeng.api.storage.ICellInventory;
-import appeng.api.storage.ICellInventoryHandler;
-import appeng.api.storage.IMEInventory;
-import appeng.api.storage.IMEInventoryHandler;
-import appeng.api.storage.ISaveProvider;
-import appeng.api.storage.StorageChannel;
+import appeng.api.storage.*;
 import appeng.client.texture.ExtraBlockTextures;
 import appeng.core.sync.GuiBridge;
 import appeng.me.storage.CellInventory;
 import appeng.me.storage.CellInventoryHandler;
 import appeng.util.Platform;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 
-
-public class BasicCellHandler implements ICellHandler
-{
+public class BasicCellHandler implements ICellHandler {
 
 	@Override
-	public boolean isCell( final ItemStack is )
-	{
-		return CellInventory.isCell( is );
+	public boolean isCell(final ItemStack is) {
+		return CellInventory.isCell(is);
 	}
 
 	@Override
-	public IMEInventoryHandler getCellInventory( final ItemStack is, final ISaveProvider container, final StorageChannel channel )
-	{
-		if( channel == StorageChannel.ITEMS )
-		{
-			return CellInventory.getCell( is, container );
+	public IMEInventoryHandler getCellInventory(final ItemStack is, final ISaveProvider container, final StorageChannel channel) {
+		if (channel == StorageChannel.ITEMS) {
+			return CellInventory.getCell(is, container);
 		}
 		return null;
 	}
 
 	@Override
-	public IIcon getTopTexture_Light()
-	{
+	public IIcon getTopTexture_Light() {
 		return ExtraBlockTextures.BlockMEChestItems_Light.getIcon();
 	}
 
 	@Override
-	public IIcon getTopTexture_Medium()
-	{
+	public IIcon getTopTexture_Medium() {
 		return ExtraBlockTextures.BlockMEChestItems_Medium.getIcon();
 	}
 
 	@Override
-	public IIcon getTopTexture_Dark()
-	{
+	public IIcon getTopTexture_Dark() {
 		return ExtraBlockTextures.BlockMEChestItems_Dark.getIcon();
 	}
 
 	@Override
-	public void openChestGui( final EntityPlayer player, final IChestOrDrive chest, final ICellHandler cellHandler, final IMEInventoryHandler inv, final ItemStack is, final StorageChannel chan )
-	{
-		Platform.openGUI( player, (TileEntity) chest, chest.getUp(), GuiBridge.GUI_ME );
+	public void openChestGui(final EntityPlayer player, final IChestOrDrive chest, final ICellHandler cellHandler, final IMEInventoryHandler inv, final ItemStack is, final StorageChannel chan) {
+		Platform.openGUI(player, (TileEntity) chest, chest.getUp(), GuiBridge.GUI_ME);
 	}
 
 	@Override
-	public int getStatusForCell( final ItemStack is, final IMEInventory handler )
-	{
-		if( handler instanceof CellInventoryHandler )
-		{
+	public int getStatusForCell(final ItemStack is, final IMEInventory handler) {
+		if (handler instanceof CellInventoryHandler) {
 			final CellInventoryHandler ci = (CellInventoryHandler) handler;
 			return ci.getStatusForCell();
 		}
@@ -94,9 +75,8 @@ public class BasicCellHandler implements ICellHandler
 	}
 
 	@Override
-	public double cellIdleDrain( final ItemStack is, final IMEInventory handler )
-	{
-		final ICellInventory inv = ( (ICellInventoryHandler) handler ).getCellInv();
+	public double cellIdleDrain(final ItemStack is, final IMEInventory handler) {
+		final ICellInventory inv = ((ICellInventoryHandler) handler).getCellInv();
 		return inv.getIdleDrain();
 	}
 }

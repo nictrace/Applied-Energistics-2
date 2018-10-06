@@ -18,19 +18,6 @@
 
 package appeng.items.tools.quartz;
 
-
-import java.util.EnumSet;
-
-import com.google.common.base.Optional;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.tools.IToolWrench;
-
 import appeng.api.implementations.items.IAEWrench;
 import appeng.api.util.DimensionalCoord;
 import appeng.core.features.AEFeature;
@@ -38,36 +25,38 @@ import appeng.integration.IntegrationType;
 import appeng.items.AEBaseItem;
 import appeng.transformer.annotations.Integration.Interface;
 import appeng.util.Platform;
+import buildcraft.api.tools.IToolWrench;
+import com.google.common.base.Optional;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.EnumSet;
 
-@Interface( iface = "buildcraft.api.tools.IToolWrench", iname = IntegrationType.BuildCraftCore )
-public class ToolQuartzWrench extends AEBaseItem implements IAEWrench, IToolWrench
-{
+@Interface(iface = "buildcraft.api.tools.IToolWrench", iname = IntegrationType.BuildCraftCore)
+public class ToolQuartzWrench extends AEBaseItem implements IAEWrench, IToolWrench {
 
-	public ToolQuartzWrench( final AEFeature type )
-	{
-		super( Optional.of( type.name() ) );
+	public ToolQuartzWrench(final AEFeature type) {
+		super(Optional.of(type.name()));
 
-		this.setFeature( EnumSet.of( type, AEFeature.QuartzWrench ) );
-		this.setMaxStackSize( 1 );
-		this.setHarvestLevel( "wrench", 0 );
+		this.setFeature(EnumSet.of(type, AEFeature.QuartzWrench));
+		this.setMaxStackSize(1);
+		this.setHarvestLevel("wrench", 0);
 	}
 
 	@Override
-	public boolean onItemUseFirst( final ItemStack is, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		final Block b = world.getBlock( x, y, z );
-		if( b != null && !player.isSneaking() && Platform.hasPermissions( new DimensionalCoord( world, x, y, z ), player ) )
-		{
-			if( Platform.isClient() )
-			{
+	public boolean onItemUseFirst(final ItemStack is, final EntityPlayer player, final World world, final int x, final int y, final int z, final int side, final float hitX, final float hitY, final float hitZ) {
+		final Block b = world.getBlock(x, y, z);
+		if (b != null && !player.isSneaking() && Platform.hasPermissions(new DimensionalCoord(world, x, y, z), player)) {
+			if (Platform.isClient()) {
 				return !world.isRemote;
 			}
 
-			final ForgeDirection mySide = ForgeDirection.getOrientation( side );
-			if( b.rotateBlock( world, x, y, z, mySide ) )
-			{
-				b.onNeighborBlockChange( world, x, y, z, Platform.AIR_BLOCK );
+			final ForgeDirection mySide = ForgeDirection.getOrientation(side);
+			if (b.rotateBlock(world, x, y, z, mySide)) {
+				b.onNeighborBlockChange(world, x, y, z, Platform.AIR_BLOCK);
 				player.swingItem();
 				return !world.isRemote;
 			}
@@ -77,26 +66,22 @@ public class ToolQuartzWrench extends AEBaseItem implements IAEWrench, IToolWren
 
 	@Override
 	// public boolean shouldPassSneakingClickToBlock(World w, int x, int y, int z)
-	public boolean doesSneakBypassUse( final World world, final int x, final int y, final int z, final EntityPlayer player )
-	{
+	public boolean doesSneakBypassUse(final World world, final int x, final int y, final int z, final EntityPlayer player) {
 		return true;
 	}
 
 	@Override
-	public boolean canWrench( final ItemStack is, final EntityPlayer player, final int x, final int y, final int z )
-	{
+	public boolean canWrench(final ItemStack is, final EntityPlayer player, final int x, final int y, final int z) {
 		return true;
 	}
 
 	@Override
-	public boolean canWrench( final EntityPlayer player, final int x, final int y, final int z )
-	{
+	public boolean canWrench(final EntityPlayer player, final int x, final int y, final int z) {
 		return true;
 	}
 
 	@Override
-	public void wrenchUsed( final EntityPlayer player, final int x, final int y, final int z )
-	{
+	public void wrenchUsed(final EntityPlayer player, final int x, final int y, final int z) {
 		player.swingItem();
 	}
 }

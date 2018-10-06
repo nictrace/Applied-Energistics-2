@@ -18,8 +18,6 @@
 
 package appeng.core.crash;
 
-
-public enum CrashInfo
-{
+public enum CrashInfo {
 	MOD_VERSION, INTEGRATION
 }

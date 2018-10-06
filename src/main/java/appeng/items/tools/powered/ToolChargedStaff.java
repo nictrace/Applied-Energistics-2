@@ -18,49 +18,39 @@
 
 package appeng.items.tools.powered;
 
-
-import java.util.EnumSet;
-
-import com.google.common.base.Optional;
-
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-
 import appeng.core.AEConfig;
 import appeng.core.features.AEFeature;
 import appeng.core.sync.packets.PacketLightning;
 import appeng.items.tools.powered.powersink.AEBasePoweredItem;
 import appeng.server.ServerHelper;
 import appeng.util.Platform;
+import com.google.common.base.Optional;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 
+import java.util.EnumSet;
 
-public class ToolChargedStaff extends AEBasePoweredItem
-{
+public class ToolChargedStaff extends AEBasePoweredItem {
 
-	public ToolChargedStaff()
-	{
-		super( AEConfig.instance.chargedStaffBattery, Optional.<String>absent() );
-		this.setFeature( EnumSet.of( AEFeature.ChargedStaff, AEFeature.PoweredTools ) );
+	public ToolChargedStaff() {
+		super(AEConfig.instance.chargedStaffBattery, Optional.<String>absent());
+		this.setFeature(EnumSet.of(AEFeature.ChargedStaff, AEFeature.PoweredTools));
 	}
 
 	@Override
-	public boolean hitEntity( final ItemStack item, final EntityLivingBase target, final EntityLivingBase hitter )
-	{
-		if( this.getAECurrentPower( item ) > 300 )
-		{
-			this.extractAEPower( item, 300 );
-			if( Platform.isServer() )
-			{
-				for( int x = 0; x < 2; x++ )
-				{
-					final float dx = (float) ( Platform.getRandomFloat() * target.width + target.boundingBox.minX );
-					final float dy = (float) ( Platform.getRandomFloat() * target.height + target.boundingBox.minY );
-					final float dz = (float) ( Platform.getRandomFloat() * target.width + target.boundingBox.minZ );
-					ServerHelper.proxy.sendToAllNearExcept( null, dx, dy, dz, 32.0, target.worldObj, new PacketLightning( dx, dy, dz ) );
+	public boolean hitEntity(final ItemStack item, final EntityLivingBase target, final EntityLivingBase hitter) {
+		if (this.getAECurrentPower(item) > 300) {
+			this.extractAEPower(item, 300);
+			if (Platform.isServer()) {
+				for (int x = 0; x < 2; x++) {
+					final float dx = (float) (Platform.getRandomFloat() * target.width + target.boundingBox.minX);
+					final float dy = (float) (Platform.getRandomFloat() * target.height + target.boundingBox.minY);
+					final float dz = (float) (Platform.getRandomFloat() * target.width + target.boundingBox.minZ);
+					ServerHelper.proxy.sendToAllNearExcept(null, dx, dy, dz, 32.0, target.worldObj, new PacketLightning(dx, dy, dz));
 				}
 			}
-			target.attackEntityFrom( DamageSource.magic, 6 );
+			target.attackEntityFrom(DamageSource.magic, 6);
 			return true;
 		}
 

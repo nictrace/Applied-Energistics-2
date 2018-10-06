@@ -18,12 +18,6 @@
 
 package appeng.parts.automation;
 
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-
 import appeng.api.config.RedstoneMode;
 import appeng.api.config.Upgrades;
 import appeng.api.networking.ticking.IGridTickable;
@@ -32,93 +26,81 @@ import appeng.me.GridAccessException;
 import appeng.tile.inventory.AppEngInternalAEInventory;
 import appeng.util.InventoryAdaptor;
 import appeng.util.Platform;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
+public abstract class PartSharedItemBus extends PartUpgradeable implements IGridTickable {
 
-public abstract class PartSharedItemBus extends PartUpgradeable implements IGridTickable
-{
-
-	private final AppEngInternalAEInventory config = new AppEngInternalAEInventory( this, 9 );
+	private final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, 9);
 	private int adaptorHash = 0;
 	private InventoryAdaptor adaptor;
 	private boolean lastRedstone = false;
 
-	public PartSharedItemBus( final ItemStack is )
-	{
-		super( is );
+	public PartSharedItemBus(final ItemStack is) {
+		super(is);
 	}
 
 	@Override
-	public void upgradesChanged()
-	{
+	public void upgradesChanged() {
 		this.updateState();
 	}
 
 	@Override
-	public void readFromNBT( final net.minecraft.nbt.NBTTagCompound extra )
-	{
-		super.readFromNBT( extra );
-		this.getConfig().readFromNBT( extra, "config" );
+	public void readFromNBT(final net.minecraft.nbt.NBTTagCompound extra) {
+		super.readFromNBT(extra);
+		this.getConfig().readFromNBT(extra, "config");
 	}
 
 	@Override
-	public void writeToNBT( final net.minecraft.nbt.NBTTagCompound extra )
-	{
-		super.writeToNBT( extra );
-		this.getConfig().writeToNBT( extra, "config" );
+	public void writeToNBT(final net.minecraft.nbt.NBTTagCompound extra) {
+		super.writeToNBT(extra);
+		this.getConfig().writeToNBT(extra, "config");
 	}
 
 	@Override
-	public IInventory getInventoryByName( final String name )
-	{
-		if( name.equals( "config" ) )
-		{
+	public IInventory getInventoryByName(final String name) {
+		if (name.equals("config")) {
 			return this.getConfig();
 		}
 
-		return super.getInventoryByName( name );
+		return super.getInventoryByName(name);
 	}
 
 	@Override
-	public void onNeighborChanged()
-	{
+	public void onNeighborChanged() {
 		this.updateState();
-		if( this.lastRedstone != this.getHost().hasRedstone( this.getSide() ) )
-		{
+		if (this.lastRedstone != this.getHost().hasRedstone(this.getSide())) {
 			this.lastRedstone = !this.lastRedstone;
-			if( this.lastRedstone && this.getRSMode() == RedstoneMode.SIGNAL_PULSE )
-			{
+			if (this.lastRedstone && this.getRSMode() == RedstoneMode.SIGNAL_PULSE) {
 				this.doBusWork();
 			}
 		}
 	}
 
-	protected InventoryAdaptor getHandler()
-	{
+	protected InventoryAdaptor getHandler() {
 		final TileEntity self = this.getHost().getTile();
-		final TileEntity target = this.getTileEntity( self, self.xCoord + this.getSide().offsetX, self.yCoord + this.getSide().offsetY, self.zCoord + this.getSide().offsetZ );
+		final TileEntity target = this.getTileEntity(self, self.xCoord + this.getSide().offsetX, self.yCoord + this.getSide().offsetY, self.zCoord + this.getSide().offsetZ);
 
-		final int newAdaptorHash = Platform.generateTileHash( target );
+		final int newAdaptorHash = Platform.generateTileHash(target);
 
-		if( this.adaptorHash == newAdaptorHash && newAdaptorHash != 0 )
-		{
+		if (this.adaptorHash == newAdaptorHash && newAdaptorHash != 0) {
 			return this.adaptor;
 		}
 
 		this.adaptorHash = newAdaptorHash;
-		this.adaptor = InventoryAdaptor.getAdaptor( target, this.getSide().getOpposite() );
+		this.adaptor = InventoryAdaptor.getAdaptor(target, this.getSide().getOpposite());
 
 		return this.adaptor;
 	}
 
-	protected int availableSlots()
-	{
-		return Math.min( 1 + this.getInstalledUpgrades( Upgrades.CAPACITY ) * 4, this.getConfig().getSizeInventory() );
+	protected int availableSlots() {
+		return Math.min(1 + this.getInstalledUpgrades(Upgrades.CAPACITY) * 4, this.getConfig().getSizeInventory());
 	}
 
-	protected int calculateItemsToSend()
-	{
-		switch( this.getInstalledUpgrades( Upgrades.SPEED ) )
-		{
+	protected int calculateItemsToSend() {
+		switch (this.getInstalledUpgrades(Upgrades.SPEED)) {
 			default:
 			case 0:
 				return 1;
@@ -135,47 +117,37 @@ public abstract class PartSharedItemBus extends PartUpgradeable implements IGrid
 
 	/**
 	 * Checks if the bus can actually do something.
-	 *
+	 * <p>
 	 * Currently this tests if the chunk for the target is actually loaded.
 	 *
 	 * @return true, if the the bus should do its work.
 	 */
-	protected boolean canDoBusWork()
-	{
+	protected boolean canDoBusWork() {
 		final TileEntity self = this.getHost().getTile();
 		final World world = self.getWorldObj();
 		final int xCoordinate = self.xCoord + this.getSide().offsetX;
 		final int zCoordinate = self.zCoord + this.getSide().offsetZ;
 
-		return world != null && world.getChunkProvider().chunkExists( xCoordinate >> 4, zCoordinate >> 4 );
+		return world != null && world.getChunkProvider().chunkExists(xCoordinate >> 4, zCoordinate >> 4);
 	}
 
-	private void updateState()
-	{
-		try
-		{
-			if( !this.isSleeping() )
-			{
-				this.getProxy().getTick().wakeDevice( this.getProxy().getNode() );
+	private void updateState() {
+		try {
+			if (!this.isSleeping()) {
+				this.getProxy().getTick().wakeDevice(this.getProxy().getNode());
+			} else {
+				this.getProxy().getTick().sleepDevice(this.getProxy().getNode());
 			}
-			else
-			{
-				this.getProxy().getTick().sleepDevice( this.getProxy().getNode() );
-			}
-		}
-		catch( final GridAccessException e )
-		{
+		} catch (final GridAccessException e) {
 			// :P
 		}
 	}
 
-	private TileEntity getTileEntity( final TileEntity self, final int x, final int y, final int z )
-	{
+	private TileEntity getTileEntity(final TileEntity self, final int x, final int y, final int z) {
 		final World w = self.getWorldObj();
 
-		if( w.getChunkProvider().chunkExists( x >> 4, z >> 4 ) )
-		{
-			return w.getTileEntity( x, y, z );
+		if (w.getChunkProvider().chunkExists(x >> 4, z >> 4)) {
+			return w.getTileEntity(x, y, z);
 		}
 
 		return null;
@@ -183,8 +155,7 @@ public abstract class PartSharedItemBus extends PartUpgradeable implements IGrid
 
 	protected abstract TickRateModulation doBusWork();
 
-	AppEngInternalAEInventory getConfig()
-	{
+	AppEngInternalAEInventory getConfig() {
 		return this.config;
 	}
 }

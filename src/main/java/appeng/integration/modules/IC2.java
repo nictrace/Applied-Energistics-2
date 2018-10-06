@@ -18,14 +18,6 @@
 
 package appeng.integration.modules;
 
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.MinecraftForge;
-
-import ic2.api.energy.tile.IEnergyTile;
-import ic2.api.recipe.RecipeInputItemStack;
-
 import appeng.api.AEApi;
 import appeng.api.IAppEngApi;
 import appeng.api.config.TunnelType;
@@ -37,74 +29,70 @@ import appeng.integration.IntegrationHelper;
 import appeng.integration.IntegrationRegistry;
 import appeng.integration.IntegrationType;
 import appeng.integration.abstraction.IIC2;
+import ic2.api.energy.tile.IEnergyTile;
+import ic2.api.recipe.RecipeInputItemStack;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
 
+public class IC2 implements IIC2, IIntegrationModule {
 
-public class IC2 implements IIC2, IIntegrationModule
-{
 	@Reflected
 	public static IC2 instance;
 
 	@Reflected
-	public IC2()
-	{
-		IntegrationHelper.testClassExistence( this, ic2.api.energy.tile.IEnergyTile.class );
-		IntegrationHelper.testClassExistence( this, ic2.api.recipe.RecipeInputItemStack.class );
+	public IC2() {
+		IntegrationHelper.testClassExistence(this, ic2.api.energy.tile.IEnergyTile.class);
+		IntegrationHelper.testClassExistence(this, ic2.api.recipe.RecipeInputItemStack.class);
 	}
 
 	@Override
-	public void init()
-	{
+	public void init() {
 		final IAppEngApi api = AEApi.instance();
 		final IPartHelper partHelper = api.partHelper();
 
-		if( IntegrationRegistry.INSTANCE.isEnabled( IntegrationType.IC2 ) )
-		{
-			partHelper.registerNewLayer( "appeng.parts.layers.LayerIEnergySink", "ic2.api.energy.tile.IEnergySink" );
-			partHelper.registerNewLayer( "appeng.parts.layers.LayerIEnergySource", "ic2.api.energy.tile.IEnergySource" );
+		if (IntegrationRegistry.INSTANCE.isEnabled(IntegrationType.IC2)) {
+			partHelper.registerNewLayer("appeng.parts.layers.LayerIEnergySink", "ic2.api.energy.tile.IEnergySink");
+			partHelper.registerNewLayer("appeng.parts.layers.LayerIEnergySource", "ic2.api.energy.tile.IEnergySource");
 		}
 	}
 
 	@Override
-	public void postInit()
-	{
+	public void postInit() {
 		final IP2PTunnelRegistry reg = AEApi.instance().registries().p2pTunnel();
-		reg.addNewAttunement( this.getItem( "copperCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "insulatedCopperCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "goldCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "insulatedGoldCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "ironCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "insulatedIronCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "insulatedTinCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "glassFiberCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "tinCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "detectorCableItem" ), TunnelType.IC2_POWER );
-		reg.addNewAttunement( this.getItem( "splitterCableItem" ), TunnelType.IC2_POWER );
+		reg.addNewAttunement(this.getItem("copperCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("insulatedCopperCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("goldCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("insulatedGoldCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("ironCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("insulatedIronCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("insulatedTinCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("glassFiberCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("tinCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("detectorCableItem"), TunnelType.IC2_POWER);
+		reg.addNewAttunement(this.getItem("splitterCableItem"), TunnelType.IC2_POWER);
 
 		// this is gone?
 		// AEApi.INSTANCE().registries().matterCannon().registerAmmo( getItem( "uraniumDrop" ), 238.0289 );
 	}
 
 	@Override
-	public void addToEnergyNet( final TileEntity appEngTile )
-	{
-		MinecraftForge.EVENT_BUS.post( new ic2.api.energy.event.EnergyTileLoadEvent( (IEnergyTile) appEngTile ) );
+	public void addToEnergyNet(final TileEntity appEngTile) {
+		MinecraftForge.EVENT_BUS.post(new ic2.api.energy.event.EnergyTileLoadEvent((IEnergyTile) appEngTile));
 	}
 
 	@Override
-	public void removeFromEnergyNet( final TileEntity appEngTile )
-	{
-		MinecraftForge.EVENT_BUS.post( new ic2.api.energy.event.EnergyTileUnloadEvent( (IEnergyTile) appEngTile ) );
+	public void removeFromEnergyNet(final TileEntity appEngTile) {
+		MinecraftForge.EVENT_BUS.post(new ic2.api.energy.event.EnergyTileUnloadEvent((IEnergyTile) appEngTile));
 	}
 
 	@Override
-	public ItemStack getItem( final String name )
-	{
-		return ic2.api.item.IC2Items.getItem( name );
+	public ItemStack getItem(final String name) {
+		return ic2.api.item.IC2Items.getItem(name);
 	}
 
 	@Override
-	public void maceratorRecipe( final ItemStack in, final ItemStack out )
-	{
-		ic2.api.recipe.Recipes.macerator.addRecipe( new RecipeInputItemStack( in, in.stackSize ), null, out );
+	public void maceratorRecipe(final ItemStack in, final ItemStack out) {
+		ic2.api.recipe.Recipes.macerator.addRecipe(new RecipeInputItemStack(in, in.stackSize), null, out);
 	}
 }

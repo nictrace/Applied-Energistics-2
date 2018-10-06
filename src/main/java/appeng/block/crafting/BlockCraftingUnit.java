@@ -18,10 +18,15 @@
 
 package appeng.block.crafting;
 
-
-import java.util.EnumSet;
-import java.util.List;
-
+import appeng.block.AEBaseTileBlock;
+import appeng.client.render.blocks.RenderBlockCraftingCPU;
+import appeng.client.texture.ExtraBlockTextures;
+import appeng.core.features.AEFeature;
+import appeng.core.sync.GuiBridge;
+import appeng.tile.crafting.TileCraftingTile;
+import appeng.util.Platform;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -32,46 +37,33 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.EnumSet;
+import java.util.List;
 
-import appeng.block.AEBaseTileBlock;
-import appeng.client.render.blocks.RenderBlockCraftingCPU;
-import appeng.client.texture.ExtraBlockTextures;
-import appeng.core.features.AEFeature;
-import appeng.core.sync.GuiBridge;
-import appeng.tile.crafting.TileCraftingTile;
-import appeng.util.Platform;
+public class BlockCraftingUnit extends AEBaseTileBlock {
 
-
-public class BlockCraftingUnit extends AEBaseTileBlock
-{
 	static final int FLAG_FORMED = 8;
 
-	public BlockCraftingUnit()
-	{
-		super( Material.iron );
+	public BlockCraftingUnit() {
+		super(Material.iron);
 
 		this.hasSubtypes = true;
-		this.setTileEntity( TileCraftingTile.class );
-		this.setFeature( EnumSet.of( AEFeature.CraftingCPU ) );
+		this.setTileEntity(TileCraftingTile.class);
+		this.setFeature(EnumSet.of(AEFeature.CraftingCPU));
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	protected RenderBlockCraftingCPU<? extends BlockCraftingUnit, ? extends TileCraftingTile> getRenderer()
-	{
+	@SideOnly(Side.CLIENT)
+	protected RenderBlockCraftingCPU<? extends BlockCraftingUnit, ? extends TileCraftingTile> getRenderer() {
 		return new RenderBlockCraftingCPU<BlockCraftingUnit, TileCraftingTile>();
 	}
 
 	@Override
-	public IIcon getIcon( final int direction, final int metadata )
-	{
-		switch( metadata )
-		{
+	public IIcon getIcon(final int direction, final int metadata) {
+		switch (metadata) {
 			default:
 			case 0:
-				return super.getIcon( 0, 0 );
+				return super.getIcon(0, 0);
 			case 1:
 				return ExtraBlockTextures.BlockCraftingAccelerator.getIcon();
 			case FLAG_FORMED:
@@ -82,17 +74,14 @@ public class BlockCraftingUnit extends AEBaseTileBlock
 	}
 
 	@Override
-	public boolean onActivated( final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ )
-	{
-		final TileCraftingTile tg = this.getTileEntity( w, x, y, z );
-		if( tg != null && !p.isSneaking() && tg.isFormed() && tg.isActive() )
-		{
-			if( Platform.isClient() )
-			{
+	public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ) {
+		final TileCraftingTile tg = this.getTileEntity(w, x, y, z);
+		if (tg != null && !p.isSneaking() && tg.isFormed() && tg.isActive()) {
+			if (Platform.isClient()) {
 				return true;
 			}
 
-			Platform.openGUI( p, tg, ForgeDirection.getOrientation( side ), GuiBridge.GUI_CRAFTING_CPU );
+			Platform.openGUI(p, tg, ForgeDirection.getOrientation(side), GuiBridge.GUI_CRAFTING_CPU);
 			return true;
 		}
 
@@ -100,69 +89,58 @@ public class BlockCraftingUnit extends AEBaseTileBlock
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public void getCheckedSubBlocks( final Item item, final CreativeTabs tabs, final List<ItemStack> itemStacks )
-	{
-		itemStacks.add( new ItemStack( this, 1, 0 ) );
-		itemStacks.add( new ItemStack( this, 1, 1 ) );
+	@SideOnly(Side.CLIENT)
+	public void getCheckedSubBlocks(final Item item, final CreativeTabs tabs, final List<ItemStack> itemStacks) {
+		itemStacks.add(new ItemStack(this, 1, 0));
+		itemStacks.add(new ItemStack(this, 1, 1));
 	}
 
 	@Override
-	public void setRenderStateByMeta( final int itemDamage )
-	{
-		final IIcon front = this.getIcon( ForgeDirection.SOUTH.ordinal(), itemDamage );
-		final IIcon other = this.getIcon( ForgeDirection.NORTH.ordinal(), itemDamage );
-		this.getRendererInstance().setTemporaryRenderIcons( other, other, front, other, other, other );
+	public void setRenderStateByMeta(final int itemDamage) {
+		final IIcon front = this.getIcon(ForgeDirection.SOUTH.ordinal(), itemDamage);
+		final IIcon other = this.getIcon(ForgeDirection.NORTH.ordinal(), itemDamage);
+		this.getRendererInstance().setTemporaryRenderIcons(other, other, front, other, other, other);
 	}
 
 	@Override
-	public void breakBlock( final World w, final int x, final int y, final int z, final Block a, final int b )
-	{
-		final TileCraftingTile cp = this.getTileEntity( w, x, y, z );
-		if( cp != null )
-		{
+	public void breakBlock(final World w, final int x, final int y, final int z, final Block a, final int b) {
+		final TileCraftingTile cp = this.getTileEntity(w, x, y, z);
+		if (cp != null) {
 			cp.breakCluster();
 		}
 
-		super.breakBlock( w, x, y, z, a, b );
+		super.breakBlock(w, x, y, z, a, b);
 	}
 
 	@Override
-	public String getUnlocalizedName( final ItemStack is )
-	{
-		if( is.getItemDamage() == 1 )
-		{
+	public String getUnlocalizedName(final ItemStack is) {
+		if (is.getItemDamage() == 1) {
 			return "tile.appliedenergistics2.BlockCraftingAccelerator";
 		}
 
-		return this.getItemUnlocalizedName( is );
+		return this.getItemUnlocalizedName(is);
 	}
 
-	protected String getItemUnlocalizedName( final ItemStack is )
-	{
-		return super.getUnlocalizedName( is );
+	protected String getItemUnlocalizedName(final ItemStack is) {
+		return super.getUnlocalizedName(is);
 	}
 
 	@Override
-	public void onNeighborBlockChange( final World w, final int x, final int y, final int z, final Block junk )
-	{
-		final TileCraftingTile cp = this.getTileEntity( w, x, y, z );
-		if( cp != null )
-		{
+	public void onNeighborBlockChange(final World w, final int x, final int y, final int z, final Block junk) {
+		final TileCraftingTile cp = this.getTileEntity(w, x, y, z);
+		if (cp != null) {
 			cp.updateMultiBlock();
 		}
 	}
 
 	@Override
-	public int damageDropped( final int meta )
-	{
+	public int damageDropped(final int meta) {
 		return meta & 3;
 	}
 
 	@Override
-	public int getDamageValue( final World w, final int x, final int y, final int z )
-	{
-		final int meta = w.getBlockMetadata( x, y, z );
-		return this.damageDropped( meta );
+	public int getDamageValue(final World w, final int x, final int y, final int z) {
+		final int meta = w.getBlockMetadata(x, y, z);
+		return this.damageDropped(meta);
 	}
 }

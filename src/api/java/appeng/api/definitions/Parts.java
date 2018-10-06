@@ -23,17 +23,15 @@
 
 package appeng.api.definitions;
 
-
 import appeng.api.util.AEColoredItemDefinition;
 import appeng.api.util.AEItemDefinition;
-
 
 /**
  * @deprecated use {@link IParts}
  */
 @Deprecated
-public class Parts
-{
+public class Parts {
+
 	public AEColoredItemDefinition partCableSmart;
 
 	public AEColoredItemDefinition partCableCovered;

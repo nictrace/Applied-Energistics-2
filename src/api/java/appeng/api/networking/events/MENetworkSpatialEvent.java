@@ -23,15 +23,13 @@
 
 package appeng.api.networking.events;
 
-
 import appeng.api.networking.IGridHost;
-
 
 /**
  * An event that is posted whenever a spatial IO is active, called for IGridCache
  */
-public class MENetworkSpatialEvent extends MENetworkEvent
-{
+public class MENetworkSpatialEvent extends MENetworkEvent {
+
 	public final IGridHost host;
 	public final double spatialEnergyUsage;
 
@@ -39,8 +37,7 @@ public class MENetworkSpatialEvent extends MENetworkEvent
 	 * @param SpatialIO   ( INSTANCE of the SpatialIO block )
 	 * @param EnergyUsage ( the amount of energy that the SpatialIO uses)
 	 */
-	public MENetworkSpatialEvent( final IGridHost SpatialIO, final double EnergyUsage )
-	{
+	public MENetworkSpatialEvent(final IGridHost SpatialIO, final double EnergyUsage) {
 		this.host = SpatialIO;
 		this.spatialEnergyUsage = EnergyUsage;
 	}

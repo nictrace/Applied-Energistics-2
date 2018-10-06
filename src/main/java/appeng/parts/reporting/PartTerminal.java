@@ -18,18 +18,13 @@
 
 package appeng.parts.reporting;
 
-
+import appeng.client.texture.CableBusTextures;
 import net.minecraft.item.ItemStack;
 
-import appeng.client.texture.CableBusTextures;
+public class PartTerminal extends AbstractPartTerminal {
 
-
-public class PartTerminal extends AbstractPartTerminal
-{
-
-	public PartTerminal( final ItemStack is )
-	{
-		super( is );
+	public PartTerminal(final ItemStack is) {
+		super(is);
 	}
 
 	private static final CableBusTextures FRONT_BRIGHT_ICON = CableBusTextures.PartTerminal_Bright;
@@ -37,20 +32,17 @@ public class PartTerminal extends AbstractPartTerminal
 	private static final CableBusTextures FRONT_COLORED_ICON = CableBusTextures.PartTerminal_Colored;
 
 	@Override
-	public CableBusTextures getFrontBright()
-	{
+	public CableBusTextures getFrontBright() {
 		return FRONT_BRIGHT_ICON;
 	}
 
 	@Override
-	public CableBusTextures getFrontColored()
-	{
+	public CableBusTextures getFrontColored() {
 		return FRONT_COLORED_ICON;
 	}
 
 	@Override
-	public CableBusTextures getFrontDark()
-	{
+	public CableBusTextures getFrontDark() {
 		return FRONT_DARK_ICON;
 	}
 }

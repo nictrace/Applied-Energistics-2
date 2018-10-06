@@ -18,46 +18,36 @@
 
 package appeng.core.features.registries;
 
-
-import java.util.HashMap;
-import java.util.Map;
-
-import net.minecraftforge.common.MinecraftForge;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-
 import appeng.api.events.LocatableEventAnnounce;
 import appeng.api.events.LocatableEventAnnounce.LocatableEvent;
 import appeng.api.features.ILocatable;
 import appeng.api.features.ILocatableRegistry;
 import appeng.util.Platform;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.common.MinecraftForge;
 
+import java.util.HashMap;
+import java.util.Map;
 
-public final class LocatableRegistry implements ILocatableRegistry
-{
+public final class LocatableRegistry implements ILocatableRegistry {
+
 	private final Map<Long, ILocatable> set;
 
-	public LocatableRegistry()
-	{
+	public LocatableRegistry() {
 		this.set = new HashMap<Long, ILocatable>();
-		MinecraftForge.EVENT_BUS.register( this );
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@SubscribeEvent
-	public void updateLocatable( final LocatableEventAnnounce e )
-	{
-		if( Platform.isClient() )
-		{
+	public void updateLocatable(final LocatableEventAnnounce e) {
+		if (Platform.isClient()) {
 			return; // IGNORE!
 		}
 
-		if( e.change == LocatableEvent.Register )
-		{
-			this.set.put( e.target.getLocatableSerial(), e.target );
-		}
-		else if( e.change == LocatableEvent.Unregister )
-		{
-			this.set.remove( e.target.getLocatableSerial() );
+		if (e.change == LocatableEvent.Register) {
+			this.set.put(e.target.getLocatableSerial(), e.target);
+		} else if (e.change == LocatableEvent.Unregister) {
+			this.set.remove(e.target.getLocatableSerial());
 		}
 	}
 
@@ -66,14 +56,12 @@ public final class LocatableRegistry implements ILocatableRegistry
 	 */
 	@Override
 	@Deprecated
-	public Object findLocatableBySerial( final long ser )
-	{
-		return this.set.get( ser );
+	public Object findLocatableBySerial(final long ser) {
+		return this.set.get(ser);
 	}
 
 	@Override
-	public ILocatable getLocatableBy( final long serial )
-	{
-		return this.set.get( serial );
+	public ILocatable getLocatableBy(final long serial) {
+		return this.set.get(serial);
 	}
 }

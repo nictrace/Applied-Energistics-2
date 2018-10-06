@@ -23,8 +23,6 @@
 
 package appeng.api.config;
 
-
-public enum OperationMode
-{
+public enum OperationMode {
 	FILL, EMPTY
 }

@@ -18,36 +18,27 @@
 
 package appeng.util.item;
 
+import appeng.api.storage.data.IAEStack;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import appeng.api.storage.data.IAEStack;
-
-
-public class MeaningfulFluidIterator<T extends IAEStack> implements Iterator<T>
-{
+public class MeaningfulFluidIterator<T extends IAEStack> implements Iterator<T> {
 
 	private final Iterator<T> parent;
 	private T next;
 
-	public MeaningfulFluidIterator( final Iterator<T> iterator )
-	{
+	public MeaningfulFluidIterator(final Iterator<T> iterator) {
 		this.parent = iterator;
 	}
 
 	@Override
-	public boolean hasNext()
-	{
-		while( this.parent.hasNext() )
-		{
+	public boolean hasNext() {
+		while (this.parent.hasNext()) {
 			this.next = this.parent.next();
-			if( this.next.isMeaningful() )
-			{
+			if (this.next.isMeaningful()) {
 				return true;
-			}
-			else
-			{
+			} else {
 				this.parent.remove(); // self cleaning :3
 			}
 		}
@@ -57,10 +48,8 @@ public class MeaningfulFluidIterator<T extends IAEStack> implements Iterator<T>
 	}
 
 	@Override
-	public T next()
-	{
-		if( this.next == null )
-		{
+	public T next() {
+		if (this.next == null) {
 			throw new NoSuchElementException();
 		}
 
@@ -68,8 +57,7 @@ public class MeaningfulFluidIterator<T extends IAEStack> implements Iterator<T>
 	}
 
 	@Override
-	public void remove()
-	{
+	public void remove() {
 		this.parent.remove();
 	}
 }

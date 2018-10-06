@@ -18,23 +18,19 @@
 
 package appeng.container.implementations;
 
-
-import javax.annotation.Nonnull;
-
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.util.ItemSorters;
 
+import javax.annotation.Nonnull;
 
-public class CraftingCPURecord implements Comparable<CraftingCPURecord>
-{
+public class CraftingCPURecord implements Comparable<CraftingCPURecord> {
 
 	private final String myName;
 	private final ICraftingCPU cpu;
 	private final long size;
 	private final int processors;
 
-	public CraftingCPURecord( final long size, final int coProcessors, final ICraftingCPU server )
-	{
+	public CraftingCPURecord(final long size, final int coProcessors, final ICraftingCPU server) {
 		this.size = size;
 		this.processors = coProcessors;
 		this.cpu = server;
@@ -42,33 +38,27 @@ public class CraftingCPURecord implements Comparable<CraftingCPURecord>
 	}
 
 	@Override
-	public int compareTo( @Nonnull final CraftingCPURecord o )
-	{
-		final int a = ItemSorters.compareLong( o.getProcessors(), this.getProcessors() );
-		if( a != 0 )
-		{
+	public int compareTo(@Nonnull final CraftingCPURecord o) {
+		final int a = ItemSorters.compareLong(o.getProcessors(), this.getProcessors());
+		if (a != 0) {
 			return a;
 		}
-		return ItemSorters.compareLong( o.getSize(), this.getSize() );
+		return ItemSorters.compareLong(o.getSize(), this.getSize());
 	}
 
-	ICraftingCPU getCpu()
-	{
+	ICraftingCPU getCpu() {
 		return this.cpu;
 	}
 
-	String getName()
-	{
+	String getName() {
 		return this.myName;
 	}
 
-	int getProcessors()
-	{
+	int getProcessors() {
 		return this.processors;
 	}
 
-	long getSize()
-	{
+	long getSize() {
 		return this.size;
 	}
 }

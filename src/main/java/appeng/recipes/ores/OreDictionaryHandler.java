@@ -18,22 +18,17 @@
 
 package appeng.recipes.ores;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
+import appeng.core.AELog;
+import appeng.recipes.game.IRecipeBakeable;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.oredict.OreDictionary;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import java.util.ArrayList;
+import java.util.List;
 
-import appeng.core.AELog;
-import appeng.recipes.game.IRecipeBakeable;
-
-
-public class OreDictionaryHandler
-{
+public class OreDictionaryHandler {
 
 	public static final OreDictionaryHandler INSTANCE = new OreDictionaryHandler();
 
@@ -42,23 +37,18 @@ public class OreDictionaryHandler
 	private boolean enableRebaking = false;
 
 	@SubscribeEvent
-	public void onOreDictionaryRegister( final OreDictionary.OreRegisterEvent event )
-	{
-		if( event.Name == null || event.Ore == null )
-		{
+	public void onOreDictionaryRegister(final OreDictionary.OreRegisterEvent event) {
+		if (event.Name == null || event.Ore == null) {
 			return;
 		}
 
-		if( this.shouldCare( event.Name ) )
-		{
-			for( final IOreListener v : this.oreListeners )
-			{
-				v.oreRegistered( event.Name, event.Ore );
+		if (this.shouldCare(event.Name)) {
+			for (final IOreListener v : this.oreListeners) {
+				v.oreRegistered(event.Name, event.Ore);
 			}
 		}
 
-		if( this.enableRebaking )
-		{
+		if (this.enableRebaking) {
 			this.bakeRecipes();
 		}
 	}
@@ -67,29 +57,21 @@ public class OreDictionaryHandler
 	 * Just limit what items are sent to the final listeners, I got sick of strange items showing up...
 	 *
 	 * @param name name about cared item
-	 *
 	 * @return true if it should care
 	 */
-	private boolean shouldCare( final String name )
-	{
+	private boolean shouldCare(final String name) {
 		return true;
 	}
 
-	public void bakeRecipes()
-	{
+	public void bakeRecipes() {
 		this.enableRebaking = true;
 
-		for( final Object o : CraftingManager.getInstance().getRecipeList() )
-		{
-			if( o instanceof IRecipeBakeable )
-			{
-				try
-				{
-					( (IRecipeBakeable) o ).bake();
-				}
-				catch( final Throwable e )
-				{
-					AELog.debug( e );
+		for (final Object o : CraftingManager.getInstance().getRecipeList()) {
+			if (o instanceof IRecipeBakeable) {
+				try {
+					((IRecipeBakeable) o).bake();
+				} catch (final Throwable e) {
+					AELog.debug(e);
 				}
 			}
 		}
@@ -101,20 +83,15 @@ public class OreDictionaryHandler
 	 *
 	 * @param n to be added ore listener
 	 */
-	public void observe( final IOreListener n )
-	{
-		this.oreListeners.add( n );
+	public void observe(final IOreListener n) {
+		this.oreListeners.add(n);
 
 		// notify the listener of any ore already in existence.
-		for( final String name : OreDictionary.getOreNames() )
-		{
-			if( name != null && this.shouldCare( name ) )
-			{
-				for( final ItemStack item : OreDictionary.getOres( name ) )
-				{
-					if( item != null )
-					{
-						n.oreRegistered( name, item );
+		for (final String name : OreDictionary.getOreNames()) {
+			if (name != null && this.shouldCare(name)) {
+				for (final ItemStack item : OreDictionary.getOres(name)) {
+					if (item != null) {
+						n.oreRegistered(name, item);
 					}
 				}
 			}

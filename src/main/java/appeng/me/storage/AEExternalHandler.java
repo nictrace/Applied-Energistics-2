@@ -18,10 +18,6 @@
 
 package appeng.me.storage;
 
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import appeng.api.implementations.tiles.ITileStorageMonitorable;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.storage.IExternalStorageHandler;
@@ -31,56 +27,44 @@ import appeng.api.storage.StorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.tile.misc.TileCondenser;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
-
-public class AEExternalHandler implements IExternalStorageHandler
-{
+public class AEExternalHandler implements IExternalStorageHandler {
 
 	@Override
-	public boolean canHandle( final TileEntity te, final ForgeDirection d, final StorageChannel channel, final BaseActionSource mySrc )
-	{
-		if( channel == StorageChannel.ITEMS && te instanceof ITileStorageMonitorable )
-		{
-			return ( (ITileStorageMonitorable) te ).getMonitorable( d, mySrc ) != null;
+	public boolean canHandle(final TileEntity te, final ForgeDirection d, final StorageChannel channel, final BaseActionSource mySrc) {
+		if (channel == StorageChannel.ITEMS && te instanceof ITileStorageMonitorable) {
+			return ((ITileStorageMonitorable) te).getMonitorable(d, mySrc) != null;
 		}
 
 		return te instanceof TileCondenser;
 	}
 
 	@Override
-	public IMEInventory getInventory( final TileEntity te, final ForgeDirection d, final StorageChannel channel, final BaseActionSource src )
-	{
-		if( te instanceof TileCondenser )
-		{
-			if( channel == StorageChannel.ITEMS )
-			{
-				return new VoidItemInventory( (TileCondenser) te );
-			}
-			else
-			{
-				return new VoidFluidInventory( (TileCondenser) te );
+	public IMEInventory getInventory(final TileEntity te, final ForgeDirection d, final StorageChannel channel, final BaseActionSource src) {
+		if (te instanceof TileCondenser) {
+			if (channel == StorageChannel.ITEMS) {
+				return new VoidItemInventory((TileCondenser) te);
+			} else {
+				return new VoidFluidInventory((TileCondenser) te);
 			}
 		}
 
-		if( te instanceof ITileStorageMonitorable )
-		{
+		if (te instanceof ITileStorageMonitorable) {
 			final ITileStorageMonitorable iface = (ITileStorageMonitorable) te;
-			final IStorageMonitorable sm = iface.getMonitorable( d, src );
+			final IStorageMonitorable sm = iface.getMonitorable(d, src);
 
-			if( channel == StorageChannel.ITEMS && sm != null )
-			{
+			if (channel == StorageChannel.ITEMS && sm != null) {
 				final IMEInventory<IAEItemStack> ii = sm.getItemInventory();
-				if( ii != null )
-				{
+				if (ii != null) {
 					return ii;
 				}
 			}
 
-			if( channel == StorageChannel.FLUIDS && sm != null )
-			{
+			if (channel == StorageChannel.FLUIDS && sm != null) {
 				final IMEInventory<IAEFluidStack> fi = sm.getFluidInventory();
-				if( fi != null )
-				{
+				if (fi != null) {
 					return fi;
 				}
 			}

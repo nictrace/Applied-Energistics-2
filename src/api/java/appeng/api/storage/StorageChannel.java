@@ -23,41 +23,33 @@
 
 package appeng.api.storage;
 
-
 import appeng.api.AEApi;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 
-
-public enum StorageChannel
-{
+public enum StorageChannel {
 	/**
 	 * AE2's Default Storage.
 	 */
-	ITEMS( IAEItemStack.class ),
+	ITEMS(IAEItemStack.class),
 
 	/**
 	 * AE2's Fluid Based Storage ( mainly added to better support ExtraCells )
 	 */
-	FLUIDS( IAEFluidStack.class );
+	FLUIDS(IAEFluidStack.class);
 
 	public final Class<? extends IAEStack> type;
 
-	StorageChannel( final Class<? extends IAEStack> t )
-	{
+	StorageChannel(final Class<? extends IAEStack> t) {
 		this.type = t;
 	}
 
-	public IItemList createList()
-	{
-		if( this == ITEMS )
-		{
+	public IItemList createList() {
+		if (this == ITEMS) {
 			return AEApi.instance().storage().createItemList();
-		}
-		else
-		{
+		} else {
 			return AEApi.instance().storage().createFluidList();
 		}
 	}

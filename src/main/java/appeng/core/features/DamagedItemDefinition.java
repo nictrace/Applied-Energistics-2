@@ -18,62 +18,49 @@
 
 package appeng.core.features;
 
-
-import javax.annotation.Nonnull;
-
+import appeng.api.definitions.IItemDefinition;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 
-import appeng.api.definitions.IItemDefinition;
+import javax.annotation.Nonnull;
 
+public final class DamagedItemDefinition implements IItemDefinition {
 
-public final class DamagedItemDefinition implements IItemDefinition
-{
 	private static final ItemTransformer ITEM_TRANSFORMER = new ItemTransformer();
 	private final Optional<IStackSrc> source;
 
-	public DamagedItemDefinition( @Nonnull final IStackSrc source )
-	{
-		Preconditions.checkNotNull( source );
+	public DamagedItemDefinition(@Nonnull final IStackSrc source) {
+		Preconditions.checkNotNull(source);
 
-		if( source.isEnabled() )
-		{
-			this.source = Optional.of( source );
-		}
-		else
-		{
+		if (source.isEnabled()) {
+			this.source = Optional.of(source);
+		} else {
 			this.source = Optional.absent();
 		}
 	}
 
 	@Override
-	public Optional<Item> maybeItem()
-	{
-		return this.source.transform( ITEM_TRANSFORMER );
+	public Optional<Item> maybeItem() {
+		return this.source.transform(ITEM_TRANSFORMER);
 	}
 
 	@Override
-	public Optional<ItemStack> maybeStack( final int stackSize )
-	{
-		return this.source.transform( new ItemStackTransformer( stackSize ) );
+	public Optional<ItemStack> maybeStack(final int stackSize) {
+		return this.source.transform(new ItemStackTransformer(stackSize));
 	}
 
 	@Override
-	public boolean isEnabled()
-	{
+	public boolean isEnabled() {
 		return this.source.isPresent();
 	}
 
 	@Override
-	public boolean isSameAs( final ItemStack comparableStack )
-	{
-		if( comparableStack == null )
-		{
+	public boolean isSameAs(final ItemStack comparableStack) {
+		if (comparableStack == null) {
 			return false;
 		}
 
@@ -81,35 +68,31 @@ public final class DamagedItemDefinition implements IItemDefinition
 	}
 
 	@Override
-	public boolean isSameAs( final IBlockAccess world, final int x, final int y, final int z )
-	{
+	public boolean isSameAs(final IBlockAccess world, final int x, final int y, final int z) {
 		return false;
 	}
 
-	private static class ItemTransformer implements Function<IStackSrc, Item>
-	{
+	private static class ItemTransformer implements Function<IStackSrc, Item> {
+
 		@Override
-		public Item apply( final IStackSrc input )
-		{
+		public Item apply(final IStackSrc input) {
 			return input.getItem();
 		}
 	}
 
-	private static class ItemStackTransformer implements Function<IStackSrc, ItemStack>
-	{
+	private static class ItemStackTransformer implements Function<IStackSrc, ItemStack> {
+
 		private final int stackSize;
 
-		public ItemStackTransformer( final int stackSize )
-		{
-			Preconditions.checkArgument( stackSize > 0 );
+		public ItemStackTransformer(final int stackSize) {
+			Preconditions.checkArgument(stackSize > 0);
 
 			this.stackSize = stackSize;
 		}
 
 		@Override
-		public ItemStack apply( final IStackSrc input )
-		{
-			return input.stack( this.stackSize );
+		public ItemStack apply(final IStackSrc input) {
+			return input.stack(this.stackSize);
 		}
 	}
 }

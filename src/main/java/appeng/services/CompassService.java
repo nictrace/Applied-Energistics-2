@@ -18,7 +18,6 @@
 
 package appeng.services;
 
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,12 +44,11 @@ import appeng.services.compass.CompassReader;
 import appeng.services.compass.ICompassCallback;
 import appeng.util.Platform;
 
+public final class CompassService {
 
-public final class CompassService
-{
 	private static final int CHUNK_SIZE = 16;
 
-	private final Map<World, CompassReader> worldSet = new HashMap<World, CompassReader>( 10 );
+	private final Map<World, CompassReader> worldSet = new HashMap<World, CompassReader>(10);
 	private final ExecutorService executor;
 
 	/**
@@ -60,19 +58,17 @@ public final class CompassService
 
 	private int jobSize;
 
-	public CompassService( @Nonnull final File worldCompassFolder, @Nonnull final ThreadFactory factory )
-	{
-		Preconditions.checkNotNull( worldCompassFolder );
+	public CompassService(@Nonnull final File worldCompassFolder, @Nonnull final ThreadFactory factory) {
+		Preconditions.checkNotNull(worldCompassFolder);
 
 		this.worldCompassFolder = worldCompassFolder;
-		this.executor = Executors.newSingleThreadExecutor( factory );
+		this.executor = Executors.newSingleThreadExecutor(factory);
 		this.jobSize = 0;
 	}
 
-	public Future<?> getCompassDirection( final DimensionalCoord coord, final int maxRange, final ICompassCallback cc )
-	{
+	public Future<?> getCompassDirection(final DimensionalCoord coord, final int maxRange, final ICompassCallback cc) {
 		this.jobSize++;
-		return this.executor.submit( new CMDirectionRequest( coord, maxRange, cc ) );
+		return this.executor.submit(new CMDirectionRequest(coord, maxRange, cc));
 	}
 
 	/**
@@ -81,47 +77,40 @@ public final class CompassService
 	 * @param event the event containing the unloaded world.
 	 */
 	@SubscribeEvent
-	public void unloadWorld( final WorldEvent.Unload event )
-	{
-		if( Platform.isServer() && this.worldSet.containsKey( event.world ) )
-		{
-			final CompassReader compassReader = this.worldSet.remove( event.world );
+	public void unloadWorld(final WorldEvent.Unload event) {
+		if (Platform.isServer() && this.worldSet.containsKey(event.world)) {
+			final CompassReader compassReader = this.worldSet.remove(event.world);
 
 			compassReader.close();
 		}
 	}
 
-	private int jobSize()
-	{
+	private int jobSize() {
 		return this.jobSize;
 	}
 
-	private void cleanUp()
-	{
-		for( final CompassReader cr : this.worldSet.values() )
-		{
+	private void cleanUp() {
+		for (final CompassReader cr : this.worldSet.values()) {
 			cr.close();
 		}
 	}
 
-	public void updateArea( final World w, final int chunkX, final int chunkZ )
-	{
+	public void updateArea(final World w, final int chunkX, final int chunkZ) {
 		final int x = chunkX << 4;
 		final int z = chunkZ << 4;
 
-		this.updateArea( w, x, CHUNK_SIZE, z );
-		this.updateArea( w, x, CHUNK_SIZE + 32, z );
-		this.updateArea( w, x, CHUNK_SIZE + 64, z );
-		this.updateArea( w, x, CHUNK_SIZE + 96, z );
+		this.updateArea(w, x, CHUNK_SIZE, z);
+		this.updateArea(w, x, CHUNK_SIZE + 32, z);
+		this.updateArea(w, x, CHUNK_SIZE + 64, z);
+		this.updateArea(w, x, CHUNK_SIZE + 96, z);
 
-		this.updateArea( w, x, CHUNK_SIZE + 128, z );
-		this.updateArea( w, x, CHUNK_SIZE + 160, z );
-		this.updateArea( w, x, CHUNK_SIZE + 192, z );
-		this.updateArea( w, x, CHUNK_SIZE + 224, z );
+		this.updateArea(w, x, CHUNK_SIZE + 128, z);
+		this.updateArea(w, x, CHUNK_SIZE + 160, z);
+		this.updateArea(w, x, CHUNK_SIZE + 192, z);
+		this.updateArea(w, x, CHUNK_SIZE + 224, z);
 	}
 
-	public Future<?> updateArea( final World w, final int x, final int y, final int z )
-	{
+	public Future<?> updateArea(final World w, final int x, final int y, final int z) {
 		this.jobSize++;
 
 		final int cx = x >> 4;
@@ -132,82 +121,67 @@ public final class CompassService
 		final int hi_y = low_y + 32;
 
 		// lower level...
-		final Chunk c = w.getChunkFromBlockCoords( x, z );
+		final Chunk c = w.getChunkFromBlockCoords(x, z);
 
-		for( final Block skyStoneBlock : AEApi.instance().definitions().blocks().skyStone().maybeBlock().asSet() )
-		{
-			for( int i = 0; i < CHUNK_SIZE; i++ )
-			{
-				for( int j = 0; j < CHUNK_SIZE; j++ )
-				{
-					for( int k = low_y; k < hi_y; k++ )
-					{
-						final Block blk = c.getBlock( i, k, j );
-						if( blk == skyStoneBlock && c.getBlockMetadata( i, k, j ) == 0 )
-						{
-							return this.executor.submit( new CMUpdatePost( w, cx, cz, cdy, true ) );
+		for (final Block skyStoneBlock : AEApi.instance().definitions().blocks().skyStone().maybeBlock().asSet()) {
+			for (int i = 0; i < CHUNK_SIZE; i++) {
+				for (int j = 0; j < CHUNK_SIZE; j++) {
+					for (int k = low_y; k < hi_y; k++) {
+						final Block blk = c.getBlock(i, k, j);
+						if (blk == skyStoneBlock && c.getBlockMetadata(i, k, j) == 0) {
+							return this.executor.submit(new CMUpdatePost(w, cx, cz, cdy, true));
 						}
 					}
 				}
 			}
 		}
 
-		return this.executor.submit( new CMUpdatePost( w, cx, cz, cdy, false ) );
+		return this.executor.submit(new CMUpdatePost(w, cx, cz, cdy, false));
 	}
 
-	public void kill()
-	{
+	public void kill() {
 		this.executor.shutdown();
 
-		try
-		{
-			this.executor.awaitTermination( 6, TimeUnit.MINUTES );
+		try {
+			this.executor.awaitTermination(6, TimeUnit.MINUTES);
 			this.jobSize = 0;
 
-			for( final CompassReader cr : this.worldSet.values() )
-			{
+			for (final CompassReader cr : this.worldSet.values()) {
 				cr.close();
 			}
 
 			this.worldSet.clear();
-		}
-		catch( final InterruptedException e )
-		{
+		} catch (final InterruptedException e) {
 			// wrap this up..
 		}
 	}
 
-	private CompassReader getReader( final World w )
-	{
-		CompassReader cr = this.worldSet.get( w );
+	private CompassReader getReader(final World w) {
+		CompassReader cr = this.worldSet.get(w);
 
-		if( cr == null )
-		{
-			cr = new CompassReader( w.provider.dimensionId, this.worldCompassFolder );
-			this.worldSet.put( w, cr );
+		if (cr == null) {
+			cr = new CompassReader(w.provider.dimensionId, this.worldCompassFolder);
+			this.worldSet.put(w, cr);
 		}
 
 		return cr;
 	}
 
-	private int dist( final int ax, final int az, final int bx, final int bz )
-	{
-		final int up = ( bz - az ) * CHUNK_SIZE;
-		final int side = ( bx - ax ) * CHUNK_SIZE;
+	private int dist(final int ax, final int az, final int bx, final int bz) {
+		final int up = (bz - az) * CHUNK_SIZE;
+		final int side = (bx - ax) * CHUNK_SIZE;
 
 		return up * up + side * side;
 	}
 
-	private double rad( final int ax, final int az, final int bx, final int bz )
-	{
+	private double rad(final int ax, final int az, final int bx, final int bz) {
 		final int up = bz - az;
 		final int side = bx - ax;
 
-		return Math.atan2( -up, side ) - Math.PI / 2.0;
+		return Math.atan2(-up, side) - Math.PI / 2.0;
 	}
 
-	private class CMUpdatePost implements Runnable
-	{
+	private class CMUpdatePost implements Runnable {
 
 		public final World world;
 
@@ -216,8 +190,7 @@ public final class CompassService
 		public final int doubleChunkY; // 32 blocks instead of 16.
 		public final boolean value;
 
-		public CMUpdatePost( final World w, final int cx, final int cz, final int dcy, final boolean val )
-		{
+		public CMUpdatePost(final World w, final int cx, final int cz, final int dcy, final boolean val) {
 			this.world = w;
 			this.chunkX = cx;
 			this.doubleChunkY = dcy;
@@ -226,51 +199,44 @@ public final class CompassService
 		}
 
 		@Override
-		public void run()
-		{
+		public void run() {
 			CompassService.this.jobSize--;
 
-			final CompassReader cr = CompassService.this.getReader( this.world );
-			cr.setHasBeacon( this.chunkX, this.chunkZ, this.doubleChunkY, this.value );
+			final CompassReader cr = CompassService.this.getReader(this.world);
+			cr.setHasBeacon(this.chunkX, this.chunkZ, this.doubleChunkY, this.value);
 
-			if( CompassService.this.jobSize() < 2 )
-			{
+			if (CompassService.this.jobSize() < 2) {
 				CompassService.this.cleanUp();
 			}
 		}
 	}
 
-	private class CMDirectionRequest implements Runnable
-	{
+	private class CMDirectionRequest implements Runnable {
 
 		public final int maxRange;
 		public final DimensionalCoord coord;
 		public final ICompassCallback callback;
 
-		public CMDirectionRequest( final DimensionalCoord coord, final int getMaxRange, final ICompassCallback cc )
-		{
+		public CMDirectionRequest(final DimensionalCoord coord, final int getMaxRange, final ICompassCallback cc) {
 			this.coord = coord;
 			this.maxRange = getMaxRange;
 			this.callback = cc;
 		}
 
 		@Override
-		public void run()
-		{
+		public void run() {
 			CompassService.this.jobSize--;
 
 			final int cx = this.coord.x >> 4;
 			final int cz = this.coord.z >> 4;
 
-			final CompassReader cr = CompassService.this.getReader( this.coord.getWorld() );
+			final CompassReader cr = CompassService.this.getReader(this.coord.getWorld());
 
 			// Am I standing on it?
-			if( cr.hasBeacon( cx, cz ) )
-			{
-				this.callback.calculatedDirection( true, true, -999, 0 );
+			if (cr.hasBeacon(cx, cz)) {
+				this.callback.calculatedDirection(true, true, -999, 0);
 
-				if( CompassService.this.jobSize() < 2 )
-				{
+				if (CompassService.this.jobSize() < 2) {
 					CompassService.this.cleanUp();
 				}
 
@@ -278,8 +244,7 @@ public final class CompassService
 			}
 
 			// spiral outward...
-			for( int offset = 1; offset < this.maxRange; offset++ )
-			{
+			for (int offset = 1; offset < this.maxRange; offset++) {
 				final int minX = cx - offset;
 				final int minZ = cz - offset;
 				final int maxX = cx + offset;
@@ -289,24 +254,19 @@ public final class CompassService
 				int chosen_x = cx;
 				int chosen_z = cz;
 
-				for( int z = minZ; z <= maxZ; z++ )
-				{
-					if( cr.hasBeacon( minX, z ) )
-					{
-						final int closeness = CompassService.this.dist( cx, cz, minX, z );
-						if( closeness < closest )
-						{
+				for (int z = minZ; z <= maxZ; z++) {
+					if (cr.hasBeacon(minX, z)) {
+						final int closeness = CompassService.this.dist(cx, cz, minX, z);
+						if (closeness < closest) {
 							closest = closeness;
 							chosen_x = minX;
 							chosen_z = z;
 						}
 					}
 
-					if( cr.hasBeacon( maxX, z ) )
-					{
-						final int closeness = CompassService.this.dist( cx, cz, maxX, z );
-						if( closeness < closest )
-						{
+					if (cr.hasBeacon(maxX, z)) {
+						final int closeness = CompassService.this.dist(cx, cz, maxX, z);
+						if (closeness < closest) {
 							closest = closeness;
 							chosen_x = maxX;
 							chosen_z = z;
@@ -314,24 +274,19 @@ public final class CompassService
 					}
 				}
 
-				for( int x = minX + 1; x < maxX; x++ )
-				{
-					if( cr.hasBeacon( x, minZ ) )
-					{
-						final int closeness = CompassService.this.dist( cx, cz, x, minZ );
-						if( closeness < closest )
-						{
+				for (int x = minX + 1; x < maxX; x++) {
+					if (cr.hasBeacon(x, minZ)) {
+						final int closeness = CompassService.this.dist(cx, cz, x, minZ);
+						if (closeness < closest) {
 							closest = closeness;
 							chosen_x = x;
 							chosen_z = minZ;
 						}
 					}
 
-					if( cr.hasBeacon( x, maxZ ) )
-					{
-						final int closeness = CompassService.this.dist( cx, cz, x, maxZ );
-						if( closeness < closest )
-						{
+					if (cr.hasBeacon(x, maxZ)) {
+						final int closeness = CompassService.this.dist(cx, cz, x, maxZ);
+						if (closeness < closest) {
 							closest = closeness;
 							chosen_x = x;
 							chosen_z = maxZ;
@@ -339,12 +294,10 @@ public final class CompassService
 					}
 				}
 
-				if( closest < Integer.MAX_VALUE )
-				{
-					this.callback.calculatedDirection( true, false, CompassService.this.rad( cx, cz, chosen_x, chosen_z ), CompassService.this.dist( cx, cz, chosen_x, chosen_z ) );
+				if (closest < Integer.MAX_VALUE) {
+					this.callback.calculatedDirection(true, false, CompassService.this.rad(cx, cz, chosen_x, chosen_z), CompassService.this.dist(cx, cz, chosen_x, chosen_z));
 
-					if( CompassService.this.jobSize() < 2 )
-					{
+					if (CompassService.this.jobSize() < 2) {
 						CompassService.this.cleanUp();
 					}
 
@@ -353,10 +306,9 @@ public final class CompassService
 			}
 
 			// didn't find shit...
-			this.callback.calculatedDirection( false, true, -999, 999 );
+			this.callback.calculatedDirection(false, true, -999, 999);
 
-			if( CompassService.this.jobSize() < 2 )
-			{
+			if (CompassService.this.jobSize() < 2) {
 				CompassService.this.cleanUp();
 			}
 		}

@@ -23,9 +23,7 @@
 
 package appeng.api.config;
 
-
-public enum PowerMultiplier
-{
+public enum PowerMultiplier {
 	ONE, CONFIG;
 
 	/**
@@ -33,13 +31,11 @@ public enum PowerMultiplier
 	 */
 	public double multiplier = 1.0;
 
-	public double multiply( final double in )
-	{
+	public double multiply(final double in) {
 		return in * this.multiplier;
 	}
 
-	public double divide( final double in )
-	{
+	public double divide(final double in) {
 		return in / this.multiplier;
 	}
 }

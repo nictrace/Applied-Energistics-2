@@ -18,12 +18,9 @@
 
 package appeng.core.localization;
 
-
 import net.minecraft.util.StatCollector;
 
-
-public enum WailaText
-{
+public enum WailaText {
 	Crafting,
 
 	DeviceOnline, DeviceOffline, DeviceMissingChannel,
@@ -34,23 +31,19 @@ public enum WailaText
 
 	private final String root;
 
-	WailaText()
-	{
+	WailaText() {
 		this.root = "waila.appliedenergistics2";
 	}
 
-	WailaText( final String r )
-	{
+	WailaText(final String r) {
 		this.root = r;
 	}
 
-	public String getLocal()
-	{
-		return StatCollector.translateToLocal( this.getUnlocalized() );
+	public String getLocal() {
+		return StatCollector.translateToLocal(this.getUnlocalized());
 	}
 
-	public String getUnlocalized()
-	{
+	public String getUnlocalized() {
 		return this.root + '.' + this.toString();
 	}
 

@@ -23,12 +23,11 @@
 
 package appeng.api.definitions;
 
-
 /**
  * A list of all materials in AE
  */
-public interface IMaterials
-{
+public interface IMaterials {
+
 	IItemDefinition cell2SpatialPart();
 
 	IItemDefinition cell16SpatialPart();

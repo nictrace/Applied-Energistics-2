@@ -1,15 +1,12 @@
 package appeng.api.definitions;
 
-
+import com.google.common.base.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.world.IBlockAccess;
 
-import com.google.common.base.Optional;
+public interface IBlockDefinition extends IItemDefinition {
 
-
-public interface IBlockDefinition extends IItemDefinition
-{
 	/**
 	 * @return the {@link Block} implementation if applicable
 	 */
@@ -27,8 +24,7 @@ public interface IBlockDefinition extends IItemDefinition
 	 * @param x     x pos of block
 	 * @param y     y pos of block
 	 * @param z     z pos of block
-	 *
 	 * @return if the block is placed in the world at the specific location.
 	 */
-	boolean isSameAs( IBlockAccess world, int x, int y, int z );
+	boolean isSameAs(IBlockAccess world, int x, int y, int z);
 }

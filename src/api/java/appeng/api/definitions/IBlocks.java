@@ -23,12 +23,11 @@
 
 package appeng.api.definitions;
 
-
 /**
  * A list of all blocks in AE
  */
-public interface IBlocks
-{
+public interface IBlocks {
+
 	/*
 	 * world gen
 	 */

@@ -18,105 +18,88 @@
 
 package appeng.me;
 
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-
-public class NetworkList implements Collection<Grid>
-{
+public class NetworkList implements Collection<Grid> {
 
 	private List<Grid> networks = new LinkedList<Grid>();
 
 	@Override
-	public int size()
-	{
+	public int size() {
 		return this.networks.size();
 	}
 
 	@Override
-	public boolean isEmpty()
-	{
+	public boolean isEmpty() {
 		return this.networks.isEmpty();
 	}
 
 	@Override
-	public boolean contains( final Object o )
-	{
-		return this.networks.contains( o );
+	public boolean contains(final Object o) {
+		return this.networks.contains(o);
 	}
 
 	@Override
-	public Iterator<Grid> iterator()
-	{
+	public Iterator<Grid> iterator() {
 		return this.networks.iterator();
 	}
 
 	@Override
-	public Object[] toArray()
-	{
+	public Object[] toArray() {
 		return this.networks.toArray();
 	}
 
 	@Override
-	public <T> T[] toArray( final T[] a )
-	{
-		return this.networks.toArray( a );
+	public <T> T[] toArray(final T[] a) {
+		return this.networks.toArray(a);
 	}
 
 	@Override
-	public boolean add( final Grid e )
-	{
+	public boolean add(final Grid e) {
 		this.copy();
-		return this.networks.add( e );
+		return this.networks.add(e);
 	}
 
 	@Override
-	public boolean remove( final Object o )
-	{
+	public boolean remove(final Object o) {
 		this.copy();
-		return this.networks.remove( o );
+		return this.networks.remove(o);
 	}
 
 	@Override
-	public boolean containsAll( final Collection<?> c )
-	{
-		return this.networks.containsAll( c );
+	public boolean containsAll(final Collection<?> c) {
+		return this.networks.containsAll(c);
 	}
 
 	@Override
-	public boolean addAll( final Collection<? extends Grid> c )
-	{
+	public boolean addAll(final Collection<? extends Grid> c) {
 		this.copy();
-		return this.networks.addAll( c );
+		return this.networks.addAll(c);
 	}
 
 	@Override
-	public boolean removeAll( final Collection<?> c )
-	{
+	public boolean removeAll(final Collection<?> c) {
 		this.copy();
-		return this.networks.removeAll( c );
+		return this.networks.removeAll(c);
 	}
 
 	@Override
-	public boolean retainAll( final Collection<?> c )
-	{
+	public boolean retainAll(final Collection<?> c) {
 		this.copy();
-		return this.networks.retainAll( c );
+		return this.networks.retainAll(c);
 	}
 
 	@Override
-	public void clear()
-	{
+	public void clear() {
 		this.networks = new LinkedList<Grid>();
 	}
 
-	private void copy()
-	{
+	private void copy() {
 		final List<Grid> old = this.networks;
 		this.networks = new LinkedList<Grid>();
-		this.networks.addAll( old );
+		this.networks.addAll(old);
 	}
 }

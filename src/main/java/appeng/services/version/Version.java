@@ -18,12 +18,11 @@
 
 package appeng.services.version;
 
-
 /**
  * Stores version information, which are easily compared
  */
-public interface Version
-{
+public interface Version {
+
 	/**
 	 * @return revision of this version
 	 */
@@ -47,11 +46,11 @@ public interface Version
 	 *
 	 * @return true if criteria are met
 	 */
-	boolean isNewerAs( Version maybeOlder );
+	boolean isNewerAs(Version maybeOlder);
 
 	/**
 	 * Prints the revision, channel and build into a common displayed way
-	 *
+	 * <p>
 	 * rv2-beta-8
 	 *
 	 * @return formatted version

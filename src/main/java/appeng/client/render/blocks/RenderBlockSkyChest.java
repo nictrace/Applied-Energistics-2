@@ -80,10 +80,15 @@ public class RenderBlockSkyChest extends BaseBlockRender<BlockSkyChest, TileSkyC
 			return;
 		}
 
+		final int metaData = skyChest.getWorldObj().getBlockMetadata(skyChest.xCoord, skyChest.yCoord, skyChest.zCoord);
+		if(metaData < 0 || metaData >= METADATA_TO_TEXTURE.length){
+			return;
+		}
+
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-		final int metaData = skyChest.getWorldObj().getBlockMetadata(skyChest.xCoord, skyChest.yCoord, skyChest.zCoord);
+
 		final ResourceLocation loc = METADATA_TO_TEXTURE[metaData];
 
 		Minecraft.getMinecraft().getTextureManager().bindTexture(loc);
@@ -125,4 +130,5 @@ public class RenderBlockSkyChest extends BaseBlockRender<BlockSkyChest, TileSkyC
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 	}
+
 }

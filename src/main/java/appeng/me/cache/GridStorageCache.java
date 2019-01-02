@@ -75,14 +75,18 @@ public class GridStorageCache implements IStorageGrid {
 	public void removeNode(final IGridNode node, final IGridHost machine) {
 		if (machine instanceof ICellContainer) {
 			final ICellContainer cc = (ICellContainer) machine;
+			final CellChangeTracker tracker = new CellChangeTracker();
 
-			this.getGrid().postEvent(new MENetworkCellArrayUpdate());
-			this.removeCellProvider(cc, new CellChangeTracker()).applyChanges();
+			this.removeCellProvider(cc, tracker);
 			this.inactiveCellProviders.remove(cc);
+			this.getGrid().postEvent(new MENetworkCellArrayUpdate());
+
+			tracker.applyChanges();
 		}
 
 		if (machine instanceof IStackWatcherHost) {
 			final IStackWatcher myWatcher = this.watchers.get(machine);
+
 			if (myWatcher != null) {
 				myWatcher.clear();
 				this.watchers.remove(machine);
@@ -97,8 +101,12 @@ public class GridStorageCache implements IStorageGrid {
 			this.inactiveCellProviders.add(cc);
 
 			this.getGrid().postEvent(new MENetworkCellArrayUpdate());
+
 			if (node.isActive()) {
-				this.addCellProvider(cc, new CellChangeTracker()).applyChanges();
+				final CellChangeTracker tracker = new CellChangeTracker();
+
+				this.addCellProvider(cc, tracker);
+				tracker.applyChanges();
 			}
 		}
 
@@ -149,10 +157,11 @@ public class GridStorageCache implements IStorageGrid {
 
 	private CellChangeTracker removeCellProvider(final ICellProvider cc, final CellChangeTracker tracker) {
 		if (this.activeCellProviders.contains(cc)) {
-			this.inactiveCellProviders.add(cc);
 			this.activeCellProviders.remove(cc);
+			this.inactiveCellProviders.add(cc);
 
 			BaseActionSource actionSrc = new BaseActionSource();
+
 			if (cc instanceof IActionHost) {
 				actionSrc = new MachineSource((IActionHost) cc);
 			}
@@ -181,18 +190,18 @@ public class GridStorageCache implements IStorageGrid {
 		final CellChangeTracker tracker = new CellChangeTracker();
 
 		for (final ICellProvider cc : ll) {
-			boolean Active = true;
+			boolean active = true;
 
 			if (cc instanceof IActionHost) {
 				final IGridNode node = ((IActionHost) cc).getActionableNode();
 				if (node != null && node.isActive()) {
-					Active = true;
+					active = true;
 				} else {
-					Active = false;
+					active = false;
 				}
 			}
 
-			if (Active) {
+			if (active) {
 				this.addCellProvider(cc, tracker);
 			} else {
 				this.removeCellProvider(cc, tracker);

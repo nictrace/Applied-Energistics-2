@@ -442,7 +442,7 @@ public class PartFormationPlane extends PartUpgradeable implements ICellContaine
 							}
 						}
 
-						if (!w.spawnEntityInWorld(result)) {
+						if (!w.spawnEntityInWorld(result) && !result.isDead) {
 							result.setDead();
 							worked = false;
 						}

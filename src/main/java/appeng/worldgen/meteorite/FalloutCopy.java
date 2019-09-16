@@ -41,7 +41,7 @@ public class FalloutCopy extends Fallout {
 		if (a > SPECIFIED_BLOCK_THRESHOLD) {
 			this.putter.put(w, x, y, z, this.block, this.meta);
 		} else if (a > AIR_BLOCK_THRESHOLD) {
-			this.putter.put(w, x, y, z, Platform.AIR_BLOCK);
+			this.putter.put(w, x, y, z, Platform.AIR_BLOCK); // Air may be replaced by atmosphere when GC world with no breathable?
 		} else {
 			this.getOther(w, x, y, z, a - BLOCK_THRESHOLD_STEP);
 		}

@@ -28,6 +28,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -36,6 +38,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
 import appeng.api.AEApi;
+import appeng.core.AELog;
 import appeng.api.definitions.IBlockDefinition;
 import appeng.api.definitions.IBlocks;
 import appeng.api.definitions.IMaterials;
@@ -50,6 +53,7 @@ import appeng.worldgen.meteorite.FalloutSand;
 import appeng.worldgen.meteorite.FalloutSnow;
 import appeng.worldgen.meteorite.IMeteoriteWorld;
 import appeng.worldgen.meteorite.MeteoriteBlockPutter;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class MeteoritePlacer {
 
@@ -72,7 +76,7 @@ public final class MeteoritePlacer {
 
 		this.skyChestDefinition = blocks.skyChest();
 		this.skyStoneDefinition = blocks.skyStone();
-
+/*
 		this.validSpawn.add(Blocks.stone);
 		this.validSpawn.add(Blocks.cobblestone);
 		this.validSpawn.add(Blocks.grass);
@@ -88,7 +92,7 @@ public final class MeteoritePlacer {
 		this.validSpawn.add(Blocks.ice);
 		this.validSpawn.add(Blocks.snow);
 		this.validSpawn.add(Blocks.stained_hardened_clay);
-
+*/
 		for (final Block skyStoneBlock : this.skyStoneDefinition.maybeBlock().asSet()) {
 			this.invalidSpawn.add(skyStoneBlock);
 		}
@@ -104,8 +108,129 @@ public final class MeteoritePlacer {
 
 		this.type = new Fallout(this.putter, this.skyStoneDefinition);
 	}
+	public boolean spawnMeteorite(final IMeteoriteWorld w, final int x, final int y, final int z) {
 
-	boolean spawnMeteorite(final IMeteoriteWorld w, final NBTTagCompound meteoriteBlob) {
+		if (!w.hasNoSky()) {
+			return false;
+		}
+
+		Block blk = w.getBlock(x, y, z);
+		AELog.info("MeteoritePlacer: Checking for %s...", blk.getUnlocalizedName());
+		if(!AEConfig.instance.meteorWhitelist.contains(blk)) {
+			AELog.info("MeteoritePlacer: Block %s is not whitelisted!", blk.getUnlocalizedName());
+			return false;
+		}
+		/*
+		if (!this.validSpawn.contains(blk)) {
+			AELog.warn("Cannot spawn on %s", blk.getUnlocalizedName());
+			return false; // must spawn on a valid block..
+		}
+		*/
+
+		this.settings = new NBTTagCompound();
+		this.settings.setInteger("x", x);
+		this.settings.setInteger("y", y);
+		this.settings.setInteger("z", z);
+		this.settings.setInteger("blk", Block.getIdFromBlock(blk));
+
+		this.settings.setDouble("real_sizeOfMeteorite", this.meteoriteSize);
+		this.settings.setDouble("realCrater", this.realCrater);
+		this.settings.setDouble("sizeOfMeteorite", this.squaredMeteoriteSize);
+		this.settings.setDouble("crater", this.crater);
+
+		this.settings.setBoolean("lava", Math.random() > 0.9);
+
+		if (blk == Blocks.sand) {
+			this.type = new FalloutSand(w, x, y, z, this.putter, this.skyStoneDefinition);
+		} else if (blk == Blocks.ice || blk == Blocks.snow) {
+			this.type = new FalloutSnow(w, x, y, z, this.putter, this.skyStoneDefinition);
+		} else if (blk == Blocks.hardened_clay) {
+			this.type = new FalloutCopy(w, x, y, z, this.putter, this.skyStoneDefinition);
+		}
+		else this.type = new FalloutCopy(w, x, y, z, this.putter, this.skyStoneDefinition); /* custom biome */
+		
+
+		int realValidBlocks = 0;
+
+		for (int i = x - 6; i < x + 6; i++) {
+			for (int j = y - 6; j < y + 6; j++) {
+				for (int k = z - 6; k < z + 6; k++) {
+					blk = w.getBlock(i, j, k);
+					//if (this.validSpawn.contains(blk)) {
+					if(AEConfig.instance.meteorWhitelist.contains(blk)) {
+						realValidBlocks++;					//он все равно лазит по этой временной таблице
+					}
+				}
+			}
+		}
+
+		int validBlocks = 0;
+		for (int i = x - 15; i < x + 15; i++) {
+			for (int j = y - 15; j < y + 15; j++) {
+				for (int k = z - 15; k < z + 15; k++) {
+					blk = w.getBlock(i, j, k);
+					if (this.invalidSpawn.contains(blk)) {
+						return false;				// если кратер затронет хотя бы один стоп-блок - 
+					}
+					//if (this.validSpawn.contains(blk)) {
+					if(AEConfig.instance.meteorWhitelist.contains(blk)) {
+						validBlocks++;
+					}
+				}
+			}
+		}
+
+		final int minBLocks = 200;
+		if (validBlocks > minBLocks && realValidBlocks > 80) {	// в радиусе 15 должно быть 200 валидов (!)
+			// we can spawn here!
+			AELog.info("spawnMeteorite: All Checks ok!");
+
+			int skyMode = 0;
+
+			for (int i = x - 15; i < x + 15; i++) {
+				for (int j = y - 15; j < y + 11; j++) {
+					for (int k = z - 15; k < z + 15; k++) {
+						if (w.canBlockSeeTheSky(i, j, k)) {
+							skyMode++;
+						}
+					}
+				}
+			}
+
+			boolean solid = true;
+			for (int j = y - 15; j < y - 1; j++) {
+				if (w.getBlock(x, j, z) == Platform.AIR_BLOCK) {
+					solid = false;
+				}
+			}
+
+			if (!solid) {
+				skyMode = 0;
+			}
+
+			// creator
+			if (skyMode > 10) {
+				this.placeCrater(w, x, y, z);
+			}
+
+			this.placeMeteorite(w, x, y, z);
+
+			// collapse blocks...
+			if (skyMode > 3) {
+				this.decay(w, x, y, z);
+			}
+
+			this.settings.setInteger("skyMode", skyMode);
+			w.done();
+
+			WorldData.instance().spawnData().addNearByMeteorites(w.getWorld().provider.dimensionId, x >> 4, z >> 4, this.settings);
+			return true;
+		}
+		AELog.info("Sorry, not enough enabled blocks for spawning! validBlocks=%s and realValidBlocks=%s", validBlocks, realValidBlocks);
+		return false;
+	}
+
+	public boolean spawnMeteorite(final IMeteoriteWorld w, final NBTTagCompound meteoriteBlob) {
 		this.settings = meteoriteBlob;
 
 		final int x = this.settings.getInteger("x");
@@ -376,114 +501,6 @@ public final class MeteoritePlacer {
 		final int chunkZ = this.settings.getInteger("z") - z;
 
 		return chunkX * chunkX + chunkZ * chunkZ;
-	}
-
-	public boolean spawnMeteorite(final IMeteoriteWorld w, final int x, final int y, final int z) {
-
-		if (!w.hasNoSky()) {
-			return false;
-		}
-
-		Block blk = w.getBlock(x, y, z);
-		if (!this.validSpawn.contains(blk)) {
-			return false; // must spawn on a valid block..
-		}
-
-		this.settings = new NBTTagCompound();
-		this.settings.setInteger("x", x);
-		this.settings.setInteger("y", y);
-		this.settings.setInteger("z", z);
-		this.settings.setInteger("blk", Block.getIdFromBlock(blk));
-
-		this.settings.setDouble("real_sizeOfMeteorite", this.meteoriteSize);
-		this.settings.setDouble("realCrater", this.realCrater);
-		this.settings.setDouble("sizeOfMeteorite", this.squaredMeteoriteSize);
-		this.settings.setDouble("crater", this.crater);
-
-		this.settings.setBoolean("lava", Math.random() > 0.9);
-
-		if (blk == Blocks.sand) {
-			this.type = new FalloutSand(w, x, y, z, this.putter, this.skyStoneDefinition);
-		} else if (blk == Blocks.hardened_clay) {
-			this.type = new FalloutCopy(w, x, y, z, this.putter, this.skyStoneDefinition);
-		} else if (blk == Blocks.ice || blk == Blocks.snow) {
-			this.type = new FalloutSnow(w, x, y, z, this.putter, this.skyStoneDefinition);
-		}
-
-		int realValidBlocks = 0;
-
-		for (int i = x - 6; i < x + 6; i++) {
-			for (int j = y - 6; j < y + 6; j++) {
-				for (int k = z - 6; k < z + 6; k++) {
-					blk = w.getBlock(i, j, k);
-					if (this.validSpawn.contains(blk)) {
-						realValidBlocks++;
-					}
-				}
-			}
-		}
-
-		int validBlocks = 0;
-		for (int i = x - 15; i < x + 15; i++) {
-			for (int j = y - 15; j < y + 15; j++) {
-				for (int k = z - 15; k < z + 15; k++) {
-					blk = w.getBlock(i, j, k);
-					if (this.invalidSpawn.contains(blk)) {
-						return false;
-					}
-					if (this.validSpawn.contains(blk)) {
-						validBlocks++;
-					}
-				}
-			}
-		}
-
-		final int minBLocks = 200;
-		if (validBlocks > minBLocks && realValidBlocks > 80) {
-			// we can spawn here!
-
-			int skyMode = 0;
-
-			for (int i = x - 15; i < x + 15; i++) {
-				for (int j = y - 15; j < y + 11; j++) {
-					for (int k = z - 15; k < z + 15; k++) {
-						if (w.canBlockSeeTheSky(i, j, k)) {
-							skyMode++;
-						}
-					}
-				}
-			}
-
-			boolean solid = true;
-			for (int j = y - 15; j < y - 1; j++) {
-				if (w.getBlock(x, j, z) == Platform.AIR_BLOCK) {
-					solid = false;
-				}
-			}
-
-			if (!solid) {
-				skyMode = 0;
-			}
-
-			// creator
-			if (skyMode > 10) {
-				this.placeCrater(w, x, y, z);
-			}
-
-			this.placeMeteorite(w, x, y, z);
-
-			// collapse blocks...
-			if (skyMode > 3) {
-				this.decay(w, x, y, z);
-			}
-
-			this.settings.setInteger("skyMode", skyMode);
-			w.done();
-
-			WorldData.instance().spawnData().addNearByMeteorites(w.getWorld().provider.dimensionId, x >> 4, z >> 4, this.settings);
-			return true;
-		}
-		return false;
 	}
 
 	NBTTagCompound getSettings() {

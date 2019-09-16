@@ -31,13 +31,21 @@ import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class AEConfig extends Configuration implements IConfigurableObject, IConfigManagerHost {
 
@@ -88,6 +96,13 @@ public final class AEConfig extends Configuration implements IConfigurableObject
 	public double meteoriteClusterChance = 0.1;
 	public double meteoriteSpawnChance = 0.3;
 	public int[] meteoriteDimensionWhitelist = {0};
+	public String[] meteoriteCanDropsOn = {
+			// Whitelist 
+			"minecraft:stone", "minecraft:cobblestone", "minecraft:grass", "minecraft:sand", "minecraft:dirt",
+			"minecraft:gravel", "minecraft:netherrack", "forge:oreIron", "forge:oreGold", "forge:odeDiamond",
+			"forge:oreRedstone", "minecraft:hardened_clay", "minecraft:ice", "minecraft:snow", "minecraft:snow_layer",
+			"minecraft:packed_ice", "minecraft:stained_hardened_clay" }; 
+	public Set<Block> meteorWhitelist;
 	public int craftingCalculationTimePerTick = 5;
 	PowerUnits selectedPowerUnit = PowerUnits.AE;
 	private double WirelessBaseCost = 8;
@@ -102,6 +117,8 @@ public final class AEConfig extends Configuration implements IConfigurableObject
 		this.configFile = configFile;
 
 		FMLCommonHandler.instance().bus().register(this);
+		
+		meteorWhitelist = new HashSet<Block>();
 
 		final double DEFAULT_MEKANISM_EXCHANGE = 0.2;
 
@@ -131,6 +148,7 @@ public final class AEConfig extends Configuration implements IConfigurableObject
 		this.meteoriteClusterChance = this.get("worldGen", "meteoriteClusterChance", this.meteoriteClusterChance).getDouble(this.meteoriteClusterChance);
 		this.meteoriteSpawnChance = this.get("worldGen", "meteoriteSpawnChance", this.meteoriteSpawnChance).getDouble(this.meteoriteSpawnChance);
 		this.meteoriteDimensionWhitelist = this.get("worldGen", "meteoriteDimensionWhitelist", this.meteoriteDimensionWhitelist).getIntList();
+		this.meteoriteCanDropsOn = this.get("worldGen", "meteoriteCanDropsOn", this.meteoriteCanDropsOn, "Blocks on which the meteorite may fall").getStringList();
 
 		this.quartzOresPerCluster = this.get("worldGen", "quartzOresPerCluster", this.quartzOresPerCluster).getInt(this.quartzOresPerCluster);
 		this.quartzOresClusterAmount = this.get("worldGen", "quartzOresClusterAmount", this.quartzOresClusterAmount).getInt(this.quartzOresClusterAmount);
@@ -199,6 +217,34 @@ public final class AEConfig extends Configuration implements IConfigurableObject
 		this.updatable = true;
 	}
 
+	//@SideOnly(Side.SERVER)
+	public void initWhitelist() {
+		for(String s: this.meteoriteCanDropsOn) {
+			String [] part = s.split(":");
+			if(part.length > 1 && part[0] == "forge") {
+				List<ItemStack> tis = OreDictionary.getOres(part[1], true);
+				for(ItemStack x: tis) {
+					if(x.getItem() instanceof ItemBlock)
+						meteorWhitelist.add(Block.getBlockFromItem(x.getItem()));
+				}
+			}
+			else {
+				Block b = Block.getBlockFromName(s);
+				if(b != null) {
+					AELog.info("Added block %s from [%s]", b.getUnlocalizedName(), s);
+					meteorWhitelist.add(b);
+				}
+				else AELog.info("Block [%s] not found!", s);
+					
+			}
+		}
+		//meteorWhitelist.forEach(bc -> { AELog.info(bc.getUnlocalizedName());}); // כÿלבהû םו הכÿ 1.6
+		AELog.info("%s", "Meteor Whitelist:");
+		for(Block bx: meteorWhitelist) {
+			AELog.info("%s", bx.getUnlocalizedName());
+		}
+	}
+	
 	private void clientSync() {
 		this.disableColoredCableRecipesInNEI = this.get("Client", "disableColoredCableRecipesInNEI", true).getBoolean(true);
 		this.enableEffects = this.get("Client", "enableEffects", true).getBoolean(true);

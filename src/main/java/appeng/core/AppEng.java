@@ -43,6 +43,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.Configuration;
 
 import javax.annotation.Nonnull;
@@ -170,6 +171,8 @@ public final class AppEng {
 
 		this.registration.initialize(event, this.recipeDirectory, this.customRecipeConfig);
 		IntegrationRegistry.INSTANCE.init();
+
+		AEConfig.instance.initWhitelist();
 
 		AELog.info("Initialization ( ended after " + start.elapsed(TimeUnit.MILLISECONDS) + "ms )");
 	}

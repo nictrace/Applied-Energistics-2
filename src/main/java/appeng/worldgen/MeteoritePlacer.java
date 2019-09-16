@@ -247,13 +247,13 @@ public final class MeteoritePlacer {
 
 		final Block blk = Block.getBlockById(this.settings.getInteger("blk"));
 
-		if (blk == Blocks.sand) {
-			this.type = new FalloutSand(w, x, y, z, this.putter, this.skyStoneDefinition);
-		} else if (blk == Blocks.hardened_clay) {
-			this.type = new FalloutCopy(w, x, y, z, this.putter, this.skyStoneDefinition);
-		} else if (blk == Blocks.ice || blk == Blocks.snow) {
-			this.type = new FalloutSnow(w, x, y, z, this.putter, this.skyStoneDefinition);
-		}
+		if(blk == Blocks.grass || blk == Blocks.stone || blk == Blocks.dirt || blk == Blocks.cobblestone || blk == Blocks.gravel)
+			AELog.info("spawnMeteorite:Doing standard Fallout!");
+		else if (blk == Blocks.sand || blk == Blocks.sandstone)
+			this.type = new FalloutSand(w, x, y, z, this.putter, this.skyStoneDefinition);	/* special fallout for sand */
+		else if (blk == Blocks.ice || blk == Blocks.snow)
+			this.type = new FalloutSnow(w, x, y, z, this.putter, this.skyStoneDefinition);	/* special fallout for snowy */
+		else this.type = new FalloutCopy(w, x, y, z, this.putter, this.skyStoneDefinition); /* common fallout for custom biome */
 
 		final int skyMode = this.settings.getInteger("skyMode");
 

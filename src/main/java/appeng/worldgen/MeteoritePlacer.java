@@ -412,7 +412,8 @@ public final class MeteoritePlacer {
 							}
 							break;
 						case 1:
-							final List<ItemStack> possibles = new LinkedList<ItemStack>();
+							//final List<ItemStack> possibles = new LinkedList<ItemStack>();
+							/*
 							possibles.addAll(OreDictionary.getOres("nuggetIron"));
 							possibles.addAll(OreDictionary.getOres("nuggetCopper"));
 							possibles.addAll(OreDictionary.getOres("nuggetTin"));
@@ -423,12 +424,16 @@ public final class MeteoritePlacer {
 							possibles.addAll(OreDictionary.getOres("nuggetAluminium"));
 							possibles.addAll(OreDictionary.getOres("nuggetElectrum"));
 							possibles.add(new ItemStack(net.minecraft.init.Items.gold_nugget));
-
-							ItemStack nugget = Platform.pickRandom(possibles);
-							if (nugget != null) {
-								nugget = nugget.copy();
-								nugget.stackSize = (int) (Math.random() * 12) + 1;
-								ap.addItems(nugget);
+							*/
+							ItemStack loot;
+							for(int zu=0; zu < 3; zu++) {
+								loot = Platform.pickRandom(AEConfig.instance.meteorLoot);
+								if (loot != null) {
+									loot = loot.copy();
+									if(loot.getMaxStackSize() > 1)
+										loot.stackSize = (int) (Math.random() * 12) + 1;
+									ap.addItems(loot);
+								}
 							}
 							break;
 					}

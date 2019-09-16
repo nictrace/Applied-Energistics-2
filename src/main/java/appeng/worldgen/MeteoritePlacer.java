@@ -28,8 +28,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -53,14 +51,13 @@ import appeng.worldgen.meteorite.FalloutSand;
 import appeng.worldgen.meteorite.FalloutSnow;
 import appeng.worldgen.meteorite.IMeteoriteWorld;
 import appeng.worldgen.meteorite.MeteoriteBlockPutter;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class MeteoritePlacer {
 
 	private static final double PRESSES_SPAWN_CHANCE = 0.7;
 	private static final int SKYSTONE_SPAWN_LIMIT = 12;
-	private final Collection<Block> validSpawn = new HashSet<Block>();
-	private final Collection<Block> invalidSpawn = new HashSet<Block>();
+	//private final Collection<Block> validSpawn = new HashSet<Block>();
+	//private final Collection<Block> invalidSpawn = new HashSet<Block>();
 	private final IBlockDefinition skyChestDefinition;
 	private final IBlockDefinition skyStoneDefinition;
 	private final MeteoriteBlockPutter putter = new MeteoriteBlockPutter();
@@ -94,8 +91,10 @@ public final class MeteoritePlacer {
 		this.validSpawn.add(Blocks.stained_hardened_clay);
 */
 		for (final Block skyStoneBlock : this.skyStoneDefinition.maybeBlock().asSet()) {
-			this.invalidSpawn.add(skyStoneBlock);
+			//this.invalidSpawn.add(skyStoneBlock);
+			AEConfig.instance.meteorBlacklist.add(skyStoneBlock);
 		}
+		/*
 		this.invalidSpawn.add(Blocks.planks);
 		this.invalidSpawn.add(Blocks.iron_door);
 		this.invalidSpawn.add(Blocks.iron_bars);
@@ -105,6 +104,7 @@ public final class MeteoritePlacer {
 		this.invalidSpawn.add(Blocks.water);
 		this.invalidSpawn.add(Blocks.log);
 		this.invalidSpawn.add(Blocks.log2);
+		*/
 
 		this.type = new Fallout(this.putter, this.skyStoneDefinition);
 	}
@@ -140,53 +140,43 @@ public final class MeteoritePlacer {
 
 		this.settings.setBoolean("lava", Math.random() > 0.9);
 
-		if (blk == Blocks.sand) {
-			this.type = new FalloutSand(w, x, y, z, this.putter, this.skyStoneDefinition);
-		} else if (blk == Blocks.ice || blk == Blocks.snow) {
-			this.type = new FalloutSnow(w, x, y, z, this.putter, this.skyStoneDefinition);
-		} else if (blk == Blocks.hardened_clay) {
-			this.type = new FalloutCopy(w, x, y, z, this.putter, this.skyStoneDefinition);
-		}
-		else this.type = new FalloutCopy(w, x, y, z, this.putter, this.skyStoneDefinition); /* custom biome */
+		if(blk == Blocks.grass || blk == Blocks.stone || blk == Blocks.dirt || blk == Blocks.cobblestone || blk == Blocks.gravel)
+			AELog.info("spawnMeteorite:Doing standard Fallout!");
+		else if (blk == Blocks.sand || blk == Blocks.sandstone)
+			this.type = new FalloutSand(w, x, y, z, this.putter, this.skyStoneDefinition);	/* special fallout for sand */
+		else if (blk == Blocks.ice || blk == Blocks.snow)
+			this.type = new FalloutSnow(w, x, y, z, this.putter, this.skyStoneDefinition);	/* special fallout for snowy */
+		else this.type = new FalloutCopy(w, x, y, z, this.putter, this.skyStoneDefinition); /* common fallout for custom biome */
 		
-
+		int validBlocks = 0;
 		int realValidBlocks = 0;
 
-		for (int i = x - 6; i < x + 6; i++) {
-			for (int j = y - 6; j < y + 6; j++) {
-				for (int k = z - 6; k < z + 6; k++) {
-					blk = w.getBlock(i, j, k);
-					//if (this.validSpawn.contains(blk)) {
-					if(AEConfig.instance.meteorWhitelist.contains(blk)) {
-						realValidBlocks++;					//он все равно лазит по этой временной таблице
-					}
-				}
-			}
-		}
-
-		int validBlocks = 0;
 		for (int i = x - 15; i < x + 15; i++) {
 			for (int j = y - 15; j < y + 15; j++) {
 				for (int k = z - 15; k < z + 15; k++) {
 					blk = w.getBlock(i, j, k);
-					if (this.invalidSpawn.contains(blk)) {
-						return false;				// если кратер затронет хотя бы один стоп-блок - 
+					//if (this.invalidSpawn.contains(blk)) {
+					if(AEConfig.instance.meteorBlacklist.contains(blk)) {
+						return false;				// crater can'd destroy any of stop-blocks (villages) 
 					}
 					//if (this.validSpawn.contains(blk)) {
 					if(AEConfig.instance.meteorWhitelist.contains(blk)) {
+						if(i > (x-7) && i < (x+7) && j > (y-7) && j < (y+7) && k > (z-7) && k < (z+7)) {
+							realValidBlocks++;
+						}
 						validBlocks++;
 					}
 				}
 			}
 		}
 
-		final int minBLocks = 200;
-		if (validBlocks > minBLocks && realValidBlocks > 80) {	// в радиусе 15 должно быть 200 валидов (!)
+		if (validBlocks > 200 && realValidBlocks > 80) {	// 200 of valid blocks need)
 			// we can spawn here!
 			AELog.info("spawnMeteorite: All Checks ok!");
 
 			int skyMode = 0;
 
+			// finding amount of blocks from that sky is visible 
 			for (int i = x - 15; i < x + 15; i++) {
 				for (int j = y - 15; j < y + 11; j++) {
 					for (int k = z - 15; k < z + 15; k++) {

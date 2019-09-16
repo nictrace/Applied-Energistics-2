@@ -172,7 +172,7 @@ public final class AppEng {
 		this.registration.initialize(event, this.recipeDirectory, this.customRecipeConfig);
 		IntegrationRegistry.INSTANCE.init();
 
-		AEConfig.instance.initWhitelist();
+		AEConfig.instance.initBlackWhitelist();
 
 		AELog.info("Initialization ( ended after " + start.elapsed(TimeUnit.MILLISECONDS) + "ms )");
 	}

@@ -38,6 +38,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
@@ -107,9 +108,13 @@ public final class AEConfig extends Configuration implements IConfigurableObject
 		// blacklist
 			"forge:plankWood", "minecraft:wooden_door", "minecraft:iron_door", "minecraft:iron_bars",
 			"minecraft:brick_block", "minecraft:clay", "minecraft:water", "forge:logWood" };
-
+	public String[] lootMeteorite = {
+		"forge:nuggetIron", "forge:nuggetCopper", "forge:nuggetTin", "forge:nuggetLead"	
+	};
 	public Set<Block> meteorWhitelist;
 	public Set<Block> meteorBlacklist;
+	public Set<ItemStack> meteorLoot;
+	
 	public int craftingCalculationTimePerTick = 5;
 	PowerUnits selectedPowerUnit = PowerUnits.AE;
 	private double WirelessBaseCost = 8;
@@ -158,6 +163,8 @@ public final class AEConfig extends Configuration implements IConfigurableObject
 		this.meteoriteDimensionWhitelist = this.get("worldGen", "meteoriteDimensionWhitelist", this.meteoriteDimensionWhitelist).getIntList();
 		this.meteoriteCanDropsOn = this.get("worldGen", "meteoriteCanDropsOn", this.meteoriteCanDropsOn, "Blocks on which the meteorite may fall").getStringList();
 		this.meteoriteCantDestroyBlocks = this.get("worldGet", "meteoriteCantDestroyBlocks", this.meteoriteCantDestroyBlocks, "Blocks that meteorites can't destroys").getStringList();
+		this.lootMeteorite = this.get("worldGen", "lootMeteorite", this.lootMeteorite, "Possible loot in SkyChests of meteorites").getStringList();
+		
 		this.quartzOresPerCluster = this.get("worldGen", "quartzOresPerCluster", this.quartzOresPerCluster).getInt(this.quartzOresPerCluster);
 		this.quartzOresClusterAmount = this.get("worldGen", "quartzOresClusterAmount", this.quartzOresClusterAmount).getInt(this.quartzOresClusterAmount);
 
@@ -280,6 +287,20 @@ public final class AEConfig extends Configuration implements IConfigurableObject
 		AELog.info("%s", "Meteor Blacklist:");
 		for(final Block bx: meteorBlacklist) {
 			AELog.info("%s", bx.getUnlocalizedName());
+		}
+		
+		// meteor loot
+		this.meteorLoot = new HashSet<ItemStack>();
+		for(final String s: this.lootMeteorite) {
+			String [] part = s.split(":");
+			if(part.length > 1 && part[0] == "forge") {
+				this.meteorLoot.addAll(OreDictionary.getOres(part[1]));
+			}
+			else {
+				Object obj = Block.blockRegistry.getObject(s);
+				if(obj == null) obj = Item.itemRegistry.getObject(s);
+				if(!(obj == null)) this.meteorLoot.add((ItemStack) obj);
+			}
 		}
 	}
 	

@@ -32,7 +32,7 @@ public class FalloutCopy extends Fallout {
 	}
 
 	public void getOther(final IMeteoriteWorld w, final int x, final int y, final int z, final double a) {
-
+		// no any putter.put
 	}
 
 	@Override

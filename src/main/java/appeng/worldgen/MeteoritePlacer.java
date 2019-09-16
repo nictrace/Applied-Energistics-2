@@ -176,7 +176,8 @@ public final class MeteoritePlacer {
 
 			int skyMode = 0;
 
-			// finding amount of blocks from that sky is visible 
+			// finding amount of blocks from that sky is visible
+			/*
 			for (int i = x - 15; i < x + 15; i++) {
 				for (int j = y - 15; j < y + 11; j++) {
 					for (int k = z - 15; k < z + 15; k++) {
@@ -186,8 +187,20 @@ public final class MeteoritePlacer {
 					}
 				}
 			}
+			*/
+			for(int i = x-15; i<= x+15; i++) {
+				for(int j = z-15; j <= z+15; j++) {
+					int k = y+15; // top of cuboid
+					while(w.getBlock(i, k, j) == Platform.AIR_BLOCK) {
+						k--;
+						if(k == Math.max(0, y-15)) break;
+					}
+					if(w.canBlockSeeTheSky(i, k, j)) skyMode++;
+				}
+			}
 
 			boolean solid = true;
+			// check if any block of column below meteor is Air (maybe cave)
 			for (int j = y - 15; j < y - 1; j++) {
 				if (w.getBlock(x, j, z) == Platform.AIR_BLOCK) {
 					solid = false;

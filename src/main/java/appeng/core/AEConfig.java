@@ -31,6 +31,7 @@ import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
@@ -107,9 +108,9 @@ public final class AEConfig extends Configuration implements IConfigurableObject
 	public String[] meteoriteCantDestroyBlocks = {
 		// blacklist
 			"forge:plankWood", "minecraft:wooden_door", "minecraft:iron_door", "minecraft:iron_bars",
-			"minecraft:brick_block", "minecraft:clay", "minecraft:water", "forge:logWood" };
+			"minecraft:brick_block", "minecraft:clay", "minecraft:water", "minecraft:log", "minecraft:log2" };
 	public String[] lootMeteorite = {
-		"forge:nuggetIron", "forge:nuggetCopper", "forge:nuggetTin", "forge:nuggetLead"	
+		"forge:nuggetIron", "forge:nuggetCopper", "forge:nuggetTin", "forge:nuggetLead", "minecraft:diamond"	
 	};
 	public Set<Block> meteorWhitelist;
 	public Set<Block> meteorBlacklist;
@@ -291,17 +292,27 @@ public final class AEConfig extends Configuration implements IConfigurableObject
 		
 		// meteor loot
 		this.meteorLoot = new HashSet<ItemStack>();
+		/*
 		for(final String s: this.lootMeteorite) {
 			String [] part = s.split(":");
 			if(part.length > 1 && part[0] == "forge") {
 				this.meteorLoot.addAll(OreDictionary.getOres(part[1]));
 			}
 			else {
-				Object obj = Block.blockRegistry.getObject(s);
-				if(obj == null) obj = Item.itemRegistry.getObject(s);
-				if(!(obj == null)) this.meteorLoot.add((ItemStack) obj);
+				
+				Block blk1 = GameRegistry.findBlock(part[0], part[1]);
+				if(blk1 != null) this.meteorLoot.add(new ItemStack(blk1, 1));
+				else {
+					Item itm = GameRegistry.findItem(part[0], part[1]);
+					if(!(itm == null)) {
+						
+						if(part.length > 2) this.meteorLoot.add(new ItemStack(itm,1, Integer.parseInt( part[2])));
+						else this.meteorLoot.add(new ItemStack(itm, 1));
+					}
+				}
 			}
 		}
+		*/
 	}
 	
 	private void clientSync() {
